@@ -18,7 +18,6 @@ library(VennDiagram)
 library(ggplot2)
 
 # load preprocessed data 
-setwd("C:/Users/Maria/Desktop/learn/0_PhD/Projects/vascular_depression_trajectories/1_ELSA")
 load("data/processed/elsa_proc_data.RData")
 
 

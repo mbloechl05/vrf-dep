@@ -20,9 +20,6 @@ library(dplyr)
 library(lavaan)
 library(psych)
 
-# set working directory
-setwd("C:/Users/Maria/Desktop/learn/0_PhD/Projects/vascular_depression_trajectories/2_MIDUS") 
-
 
 # --------------------------------------
 # 1) Get raw data and select variables

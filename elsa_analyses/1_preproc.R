@@ -21,8 +21,6 @@ library(data.table) # for setnames
 library(dplyr)      # for reaname_at
 library(lavaan)     # for cfa models
 
-# set working directory
-setwd("C:/Users/Maria/Desktop/learn/0_PhD/Projects/vascular_depression_trajectories/1_ELSA") 
 
 # --------------------------------------
 # 1) Get raw data and select variables
