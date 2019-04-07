@@ -3,7 +3,6 @@
 # (contact maria.bloechl@gmail.com in case of questions)
 # ==============================================================
 
-
 # clean work space
 rm(list = ls())
 
@@ -23,12 +22,11 @@ library(cobalt)
 load("data/processed/midus_proc_data.RData")
 
 
-# ---------------------------------
-# 1) Test measurement invariance
-# ---------------------------------
+# -----------------------------------------
+# 1) Configural measurement invariance 
+# -----------------------------------------
 
-# 1.a) configural measurement invariance 
-
+# define model
 model.configural <- '
 
 # measurement models without constrained factor loadings
@@ -46,14 +44,21 @@ B1SA24D ~~ C1SA20D
 A1SA13E ~~ B1SA24E 
 B1SA24E ~~ C1SA20E
 A1SA13F ~~ B1SA24F 
-B1SA24F ~~ C1SA20F'
+B1SA24F ~~ C1SA20F
+'
 
+# fit model 
 fit_configural <- cfa(model.configural, data = data, missing = 'fiml')
-summary(fit_configural, fit.measures = T) # = model without any constraints but correlations between residuls of equal indicators
+
+# fit results
+summary(fit_configural, fit.measures = T) 
 
 
-# 1.b) weak measurement invariance 
+# -----------------------------------
+# 2) weak measurement invariance 
+# -----------------------------------
 
+# define model 
 model.weak <- '
 
 # measurement models with constrained factor loadings
@@ -71,14 +76,20 @@ B1SA24D ~~ C1SA20D
 A1SA13E ~~ B1SA24E 
 B1SA24E ~~ C1SA20E
 A1SA13F ~~ B1SA24F 
-B1SA24F ~~ C1SA20F'
+B1SA24F ~~ C1SA20F
+'
 
+# fit model
 fit_weak <- cfa(model.weak, data = data, missing='fiml')
-summary(fit_weak,  fit.measures=T) # = same as model above but with constrained factor loadings
 
+# fit results
+summary(fit_weak,  fit.measures=T) 
 
-# 1.c) strong measurement invariance 
+# ------------------------------------
+# 3) strong measurement invariance 
+# ------------------------------------
 
+# define model
 model_strong <- '
 
 # measurement models with constrained factor loadings
@@ -120,12 +131,18 @@ A1SA13F ~~ B1SA24F + C1SA20F
 B1SA24F ~~ C1SA20F
 '
 
+# fit model
 fit_strong <- cfa(model_strong, data = data, missing = 'fiml')
+
+# fit results
 summary(fit_strong, fit.measures = T) # = same as model above but with additional constraints of intercepts of indicators
 
 
-# 1.d) strict measurement invariance 
+# ------------------------------------
+# 4) strict measurement invariance 
+# ------------------------------------
 
+# define model
 model_strict <- '
 
 # measurement models with constrained factor loadings
@@ -185,16 +202,26 @@ C1SA20E ~~ ee*C1SA20E
 
 A1SA13F ~~ fe*A1SA13F
 B1SA24F ~~ fe*B1SA24F
-C1SA20F ~~ fe*C1SA20F'
+C1SA20F ~~ fe*C1SA20F
+'
 
+# fit model
 fit_strict <- cfa(model_strict, data = data, missing = 'fiml')
-summary(fit_strict, fit.measures = T) # = same as model above but wit additional constraints of residuals of indicators
+
+# fit results
+summary(fit_strict, fit.measures = T) 
 
 
-# 1.e) model comparisons 
+# -------------------------
+# 5) Model comparisons 
+# -------------------------
 
-fitMeasures(fit_configural, c("rmsea", "cfi", "tli", "srmr"))
-fitMeasures(fit_weak,       c("rmsea", "cfi", "tli", "srmr"))
-fitMeasures(fit_strong,     c("rmsea", "cfi", "tli", "srmr"))
-fitMeasures(fit_strict,     c("rmsea", "cfi", "tli", "srmr"))
+# fit measures for each model
+fitMeasures(fit_configural, c("rmsea", "cfi", "srmr"))
+fitMeasures(fit_weak,       c("rmsea", "cfi", "srmr"))
+fitMeasures(fit_strong,     c("rmsea", "cfi", "srmr"))
+fitMeasures(fit_strict,     c("rmsea", "cfi", "srmr"))
+
+# model test
 anova(fit_configural, fit_weak, fit_strong, fit_strict)
+

@@ -21,6 +21,7 @@ load("data/processed/elsa_proc_data.RData")
 
 # define model 
 model.baseline <- '
+
 # measurement models without constrained factor loadings
 
 W2_DEP =~ 1*w2_psceda + w2_pscedb + w2_pscedd + w2_pscede + w2_pscedg
@@ -169,6 +170,7 @@ summary(fit.baseline, fit.measures = T)
 
 # define model
 model.weak <- '
+
 # measurement models with constrained factor loadings
 W2_DEP =~ 1*w2_psceda + l1*w2_pscedb + l2*w2_pscedd + l3*w2_pscede + l4*w2_pscedg
 W3_DEP =~ 1*w3_psceda + l1*w3_pscedb + l2*w3_pscedd + l3*w3_pscede + l4*w3_pscedg
@@ -316,6 +318,7 @@ summary(fit.weak, fit.measures = T)
 
 # define model
 model.strict <- '
+
 # measurement models wit constrained factor loadings
 W2_DEP =~ 1*w2_psceda + l1*w2_pscedb + l2*w2_pscedd + l3*w2_pscede + l4*w2_pscedg
 W3_DEP =~ 1*w3_psceda + l1*w3_pscedb + l2*w3_pscedd + l3*w3_pscede + l4*w3_pscedg
@@ -458,7 +461,7 @@ summary(fit.strict, fit.measures = T)
 
 
 # -------------------------
-# 4.) Model comparisons 
+# 4) Model comparisons 
 # -------------------------
 
 # fit measures for each model
