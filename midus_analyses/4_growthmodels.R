@@ -449,7 +449,6 @@ fit.all <- sem(m.all, data = data, missing = 'fiml')
 summary(fit.all,  fit.measures = T, standardized = T)
 
 
-
 # --------------------
 # 5) Create figures
 # --------------------
