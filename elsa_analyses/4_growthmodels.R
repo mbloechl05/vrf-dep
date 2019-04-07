@@ -862,7 +862,7 @@ summary(fit.all,  fit.measures = T, standardized = T)
 
 # 5.1) Figure 2: Single risk factors
 
-# code function to extract parameters for each risk factor from the simple and the full model
+# create get_parameters() function to extract parameters from the simple and the full model
 get_parameters <- function(fit.simple, i.simple, s.simple, i.all, s.all){
   beta         <- standardizedSolution(fit.simple)$est.std[c(i.simple, s.simple)]
   ci.l         <- standardizedSolution(fit.simple)$ci.lower[c(i.simple, s.simple)]
@@ -880,7 +880,8 @@ get_parameters <- function(fit.simple, i.simple, s.simple, i.all, s.all){
   return(coeff)
 }
 
-# create plotting function
+# create get_plot() function to plot models with both model results
+# note that plot is automatically saved using ggsave 
 get_plot <- function(coeffs, title) {
   ggplot(coeffs, aes(x = parameter, y = beta, ymin = ci.l, ymax = ci.u)) +
     geom_hline(yintercept = 0, linetype = "dashed", size = 0.4) +
@@ -902,7 +903,7 @@ get_plot <- function(coeffs, title) {
 }
 
 
-# now make and save figures for single risk factors using functions
+# now create and save plots using functions
 coeff.hyp <- get_parameters(fit.simple = fit.hyp, i.simple = 193, s.simple = 198, i.all = 193, s.all = 201)
 get_plot(coeffs = coeff.hyp, title = "Hypertension")
 
@@ -918,7 +919,7 @@ get_plot(coeffs = coeff.dia, title = "Diabetes")
 
 # 5.2) Figure 3: Multiple risk factors 
 
-# code function to extract parameters for risk factor from the simple model
+# create get_parameters_s() function to extract parameters from the simple model
 get_parameters_s  <- function(fit.simple, i.simple, s.simple, i.all, s.all){
   beta            <- standardizedSolution(fit.simple)$est.std[c(i.simple, s.simple)]
   ci.l            <- standardizedSolution(fit.simple)$ci.lower[c(i.simple, s.simple)]
@@ -928,7 +929,8 @@ get_parameters_s  <- function(fit.simple, i.simple, s.simple, i.all, s.all){
   return(coeff.simple)
 }
 
-# plot function with only simple model results
+# create get_plot_s() function to plot models with one model result
+# note that plot is automatically saved using ggsave 
 get_plot_s <- function(coeffs, title) {
   ggplot(coeffs, aes(x = parameter, y = beta, ymin = ci.l, ymax = ci.u)) +
     geom_hline(yintercept = 0, linetype = "dashed", size = 0.4) +
@@ -946,7 +948,7 @@ get_plot_s <- function(coeffs, title) {
 }
 
 
-# now make and save plot using functions
+# now create and save plot using functions
 coeff.mul <- get_parameters_s(fit.simple = fit.mul, i.simple = 193, s.simple = 198)
 get_plot_s(coeffs = coeff.mul, title = "")
 
