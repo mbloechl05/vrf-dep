@@ -169,7 +169,7 @@ fit.uc <- sem(m.uc, data = data, ordered = c("w2_psceda","w2_pscedb","w2_pscedd"
            missing = "pairwise", estimator = "WLSMV", 
            parameterization = "theta" )
 
-# summary results
+# fit results
 summary(fit.uc,  fit.measures = T, standardized = T)
 
 
@@ -331,7 +331,7 @@ fit.cov <- sem(m.cov, data = data, ordered = c("w2_psceda","w2_pscedb","w2_psced
            missing = "pairwise", estimator = "WLSMV", 
            parameterization = "theta" )
 
-# summary results
+# fit results
 summary(fit.cov,  fit.measures = T, standardized = T)
 
 
@@ -500,7 +500,7 @@ fit.hyp <- sem(m.pred, data = data,
                missing = "pairwise", estimator = "WLSMV", 
                parameterization = "theta")
 
-# results summary
+# fit results
 summary(fit.hyp,  fit.measures = T, standardized = T)
 
 
@@ -524,7 +524,7 @@ fit.smo <- sem(m.pred, data = data, ordered = c("w2_psceda","w2_pscedb","w2_psce
                missing = "pairwise", estimator = "WLSMV", 
                parameterization = "theta")
 
-# results summary
+# fit results
 summary(fit.smo,  fit.measures = T, standardized = T)
 
 
@@ -548,7 +548,7 @@ fit.bmi <- sem(m.pred, data = data, ordered = c("w2_psceda","w2_pscedb","w2_psce
                missing = "pairwise", estimator = "WLSMV", 
                parameterization = "theta")
 
-# summary results
+# fit results
 summary(fit.bmi,  fit.measures = T, standardized = T) # results
 
 
@@ -568,7 +568,8 @@ fit.dia <- sem(m.pred, data = data, ordered = c("w2_psceda","w2_pscedb","w2_psce
                                                 "w7_pscede","w7_pscedg"), 
                missing = "pairwise", estimator = "WLSMV", 
                parameterization = "theta")
-# reults summary
+
+# fit results
 summary(fit.dia,  fit.measures = T, standardized = T)
 
 
@@ -593,7 +594,7 @@ fit.sbp <- sem(m.pred, data = data,
                missing = "pairwise", estimator = "WLSMV", 
                parameterization = "theta")
 
-# summary results
+# fit results
 summary(fit.sbp,  fit.measures = T, standardized = T)
 
 
@@ -617,7 +618,7 @@ fit.cho <- sem(m.pred, data = data, ordered = c("w2_psceda","w2_pscedb","w2_psce
                missing = "pairwise", estimator = "WLSMV", 
                parameterization = "theta")
 
-# summary results
+# fit results
 summary(fit.cho,  fit.measures = T, standardized = T)
 
 
@@ -641,7 +642,7 @@ fit.hdl <- sem(m.pred,data = data, ordered = c("w2_psceda","w2_pscedb","w2_psced
                missing = "pairwise", estimator = "WLSMV", 
                parameterization = "theta")
 
-# summary results
+# fit results
 summary(fit.hdl,  fit.measures = T, standardized = T)
 
 
@@ -665,7 +666,7 @@ fit.ldl <- sem(m.pred,data = data, ordered = c("w2_psceda","w2_pscedb","w2_psced
                missing = "pairwise", estimator = "WLSMV", 
                parameterization = "theta")
 
-# summary results
+# fit results
 summary(fit.ldl,  fit.measures = T, standardized = T)
 
 
@@ -689,8 +690,9 @@ fit.mul <- sem(m.pred,data = data, ordered = c("w2_psceda","w2_pscedb","w2_psced
                 missing = "pairwise", estimator = "WLSMV", 
                 parameterization = "theta")
 
-# summary results
+# fit results
 summary(fit.mul,  fit.measures=T, standardized = T)
+
 
 # ----------------------------------------------------------
 # 4) Conditional LGM with all risk factors simultaneously
@@ -850,7 +852,7 @@ fit.all <- sem(m.all, data = data, ordered = c("w2_psceda","w2_pscedb","w2_psced
                missing = "pairwise", estimator = "WLSMV", 
                parameterization = "theta")
 
-# summary results
+# fit results
 summary(fit.all,  fit.measures = T, standardized = T)
 
 

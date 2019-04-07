@@ -159,7 +159,7 @@ fit.baseline <- cfa(model.baseline, data = data,
                     missing = "pairwise", estimator = "WLSMV", 
                     parameterization = "theta" )
 
-# summary results
+# fit results
 summary(fit.baseline, fit.measures = T)    
 
 
@@ -306,7 +306,7 @@ fit.weak <- cfa(model.weak, data = data,
                 missing = "pairwise", estimator = "WLSMV", 
                 parameterization = "theta" )
 
-# summary results
+# fit results
 summary(fit.weak, fit.measures = T)     
 
 
@@ -453,7 +453,7 @@ fit.strict <- cfa(model.strict, data = data,
                   missing = "pairwise", estimator = "WLSMV", 
                   parameterization = "theta" )
 
-# summary results
+# fit results
 summary(fit.strict, fit.measures = T)   
 
 
@@ -466,5 +466,5 @@ fitMeasures(fit.baseline, c("rmsea", "cfi", "srmr"))
 fitMeasures(fit.weak,     c("rmsea", "cfi", "srmr"))
 fitMeasures(fit.strict,   c("rmsea", "cfi", "srmr"))
 
-# test model comparison
+# model comparison
 anova(fit.baseline, fit.weak, fit.strict)
