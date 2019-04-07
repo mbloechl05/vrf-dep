@@ -1,13 +1,10 @@
-## ===============================================================
-## ELSA: Data analysis descriptive stats
-## (contact maria.bloechl@uni-leipzig.de in case of questions)
-## ==============================================================
+# ===============================================================
+# ELSA: Descriptive stats
+# (contact maria.bloechl@gmail.com in case of questions)
+# ==============================================================
 
-# -----------------
-# 0) Preparations 
-# -----------------
 
-# clean work space
+# clear work space
 rm(list = ls()) 
 
 # load packages 

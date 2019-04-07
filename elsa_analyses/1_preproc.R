@@ -1,18 +1,10 @@
-## ===============================================================
-## ELSA: Data preprocessing of data set for 
-## (contact maria.bloechl@uni-leipzig.de in case of questions)
-## ==============================================================
+# ===============================================================
+# ELSA: Data preprocessing 
+# (contact maria.bloechl@gmail.com in case of questions)
+# ==============================================================
 
-# Delimited data files can be downloaded from the ... website (login necessary)
-# data wave 1:
-# data wave 2:
-# data wave 3: 
 
-# -------------------------
-# 0) Preparations 
-# -------------------------
-
-# clean work space
+# clear work space
 rm(list = ls()) 
 
 # load packages

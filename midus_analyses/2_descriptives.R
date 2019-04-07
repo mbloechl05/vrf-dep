@@ -1,11 +1,8 @@
-## ===============================================================
-## MIDUS: Data analysis: Descriptive stats
-## (contact maria.bloechl@uni-leipzig.de in case of questions)
-## ==============================================================
+# ===============================================================
+# MIDUS: Data analysis: Descriptive stats
+# (contact maria.bloechl@gmail.com in case of questions)
+# ==============================================================
 
-# -----------------
-# 0) Preparations 
-# -----------------
 
 # clean work space
 rm(list = ls()) 

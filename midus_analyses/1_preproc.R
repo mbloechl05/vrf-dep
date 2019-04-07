@@ -1,16 +1,8 @@
-## ===============================================================
-## MIDUS: Data preprocessing of data set for 
-## (contact maria.bloechl@uni-leipzig.de in case of questions)
-## ==============================================================
+# ===============================================================
+# MIDUS: Data preprocessing 
+# (contact maria.bloechl@gmail.com in case of questions)
+# ==============================================================
 
-# Delimited data files can be downloaded from the ICPR website (login necessary)
-# data wave 1: https://www.icpsr.umich.edu/icpsrweb/ICPSR/studies/2760
-# data wave 2: https://www.icpsr.umich.edu/icpsrweb/ICPSR/studies/4652 
-# data wave 3: https://www.icpsr.umich.edu/icpsrweb/ICPSR/studies/36346 
-
-# -------------------------
-# 0) Preparations 
-# -------------------------
 
 # clean work space
 rm(list = ls()) 
