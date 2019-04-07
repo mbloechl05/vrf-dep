@@ -34,7 +34,7 @@ wave5  <- read.table("data/raw/tab/wave_5_elsa_data_v4.tab",      sep = "\t", he
 wave6  <- read.table("data/raw/tab/wave_6_elsa_data_v2.tab",      sep = "\t", header = T)
 wave7  <- read.table("data/raw/tab/wave_7_elsa_data.tab"   ,      sep = "\t", header = T)
 
-# select relevant variables from waves
+# select relevant variables from waves (see codebook for explanations)
 wave0_s  <- wave0[,c("idauniq", "ager", "educend", "topqual2", "topqual3")]
 
 wave2_s  <- wave2[,c("idauniq", "DhSex",   "dhager", "fqethnr", "FqEnd", "hedia01", "hedia02", 
@@ -103,6 +103,7 @@ data = merge(data,    wave7_s,  all.x = T, by = "idauniq", sort = T)
 
 # add wave 0 data 
 data = merge(data, wave0_s, all = F, all.x = T, by = "idauniq", sort = T)
+
 
 # ------------------------
 # 2) Recode variables
