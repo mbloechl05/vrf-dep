@@ -7,7 +7,7 @@ Two datasets were analysed:
 1. The English Longitudinal Study of Ageing (ELSA), and
 2. Midlife in the United States (MIDUS)
 
-For each dataset, the analysis code is split into different subscripts:
+For both datasets, the analysis code is split into different subscripts:
 
 1. Data preprocessing ('1_preproc.R')
 2. Descriptive statistics ('2_descriptives.R')
