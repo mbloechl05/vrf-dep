@@ -3,6 +3,7 @@
 This git lab repro contains analyses for the project "Vascular risk factors and the long-term course of depressed mood". 
 
 Analyses comprise two data sets: 
+
 1. Midlife in the United States (MIDUS) and the 
 2. English Longitudinal Study of Ageing (ELSA). 
 
