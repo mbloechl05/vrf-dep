@@ -14,6 +14,6 @@ For each dataset, the analysis code is split into different subscripts:
 3. Testing measurement invariance (3_measurementinvar.R)
 4. Fitting the growth models (4_growthmodels.R)
 
-All data can be downloaded [here](https://www.icpsr.umich.edu/icpsrweb/ICPSR/series/203)* and [here](https://beta.ukdataservice.ac.uk/datacatalogue/series/series?id=200011), respectively. 
+All data to run the analyses can be downloaded [here](https://www.icpsr.umich.edu/icpsrweb/ICPSR/series/203)* and [here](https://beta.ukdataservice.ac.uk/datacatalogue/series/series?id=200011), respectively. 
 
 *MIDUS 1: ICPSR 2760, MIDUS 2: ICPSR 4652, MIDUS 3: ICPSR 36346
