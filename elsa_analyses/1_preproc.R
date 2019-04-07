@@ -126,6 +126,9 @@ data <- data %>% mutate_all(funs(na_if(., -1)))
 # recode age variable; 109 adults aged > 89 have age coded as 99; these are set as missings
 data$w2_dhager[data$w2_dhager == 99] <- NA
 
+# center age variable for analyses
+data$w2_dhager.c <- scale(data$w2_dhager, center = T, scale = F) # center age variable
+
 # 2.3. Dichotomous variables
 # recode all dichotomous variables to dummies (0 = no, 1 = yes)
 for (i in names(data[,c(grep("psced", colnames(data)), 
