@@ -3,7 +3,6 @@
 # (contact maria.bloechl@gmail.com in case of questions)
 # ==============================================================
 
-
 # clean work space
 rm(list = ls())
 
@@ -15,10 +14,14 @@ library(ggplot2)
 # Load pre-processed data
 load("data/processed/elsa_proc_data.RData")
 
+# All the following models are defined accoriding to Liu et al., Psych Methods, 2017
 
 
-# 1.a) baseline model (see Liu et al., 2017)
+# ---------------------
+# 1) Baseline model 
+# ---------------------
 
+# define model 
 model.baseline <- '
 # measurement models without constrained factor loadings
 
@@ -141,6 +144,7 @@ w5_pscedg ~~ w6_pscedg + w7_pscedg
 w6_pscedg ~~ w7_pscedg
 '
 
+# fit model
 fit.baseline <- cfa(model.baseline, data = data, 
                     ordered = c("w2_psceda","w2_pscedb","w2_pscedd",
                                 "w2_pscede","w2_pscedg", 
@@ -157,11 +161,15 @@ fit.baseline <- cfa(model.baseline, data = data,
                     missing = "pairwise", estimator = "WLSMV", 
                     parameterization = "theta" )
 
+# summary results
 summary(fit.baseline, fit.measures = T)    
 
 
-# 1.b) loading invariance model:
+# --------------------------------
+# 2.) Loading invariance model
+# --------------------------------
 
+# define model
 model.weak <- '
 # measurement models with constrained factor loadings
 W2_DEP =~ 1*w2_psceda + l1*w2_pscedb + l2*w2_pscedd + l3*w2_pscede + l4*w2_pscedg
@@ -283,6 +291,7 @@ w5_pscedg ~~ w6_pscedg + w7_pscedg
 w6_pscedg ~~ w7_pscedg
 '
 
+# fit model
 fit.weak <- cfa(model.weak, data = data, 
                 ordered = c("w2_psceda","w2_pscedb","w2_pscedd",
                             "w2_pscede","w2_pscedg", 
@@ -299,11 +308,15 @@ fit.weak <- cfa(model.weak, data = data,
                 missing = "pairwise", estimator = "WLSMV", 
                 parameterization = "theta" )
 
+# summary results
 summary(fit.weak, fit.measures = T)     
 
 
-# 1.c) unique factor invariance model:
+# -------------------------------------
+# 3) Unique factor invariance model
+# -------------------------------------
 
+# define model
 model.strict <- '
 # measurement models wit constrained factor loadings
 W2_DEP =~ 1*w2_psceda + l1*w2_pscedb + l2*w2_pscedd + l3*w2_pscede + l4*w2_pscedg
@@ -425,6 +438,7 @@ w5_pscedg ~~ w6_pscedg + w7_pscedg
 w6_pscedg ~~ w7_pscedg
 '
 
+# fit model
 fit.strict <- cfa(model.strict, data = data, 
                   ordered = c("w2_psceda","w2_pscedb","w2_pscedd",
                               "w2_pscede","w2_pscedg", 
@@ -441,12 +455,18 @@ fit.strict <- cfa(model.strict, data = data,
                   missing = "pairwise", estimator = "WLSMV", 
                   parameterization = "theta" )
 
+# summary results
 summary(fit.strict, fit.measures = T)   
 
 
-# 1.d) model comparisons 
+# -------------------------
+# 4.) Model comparisons 
+# -------------------------
 
+# fit measures for each model
 fitMeasures(fit.baseline, c("rmsea", "cfi", "srmr"))
 fitMeasures(fit.weak,     c("rmsea", "cfi", "srmr"))
 fitMeasures(fit.strict,   c("rmsea", "cfi", "srmr"))
+
+# test model comparison
 anova(fit.baseline, fit.weak, fit.strict)
