@@ -8,8 +8,6 @@ rm(list = ls())
 
 # load packages 
 library(lavaan)
-library(semTools)
-library(ggplot2)
 
 # Load pre-processed data
 load("data/processed/elsa_proc_data.RData")
