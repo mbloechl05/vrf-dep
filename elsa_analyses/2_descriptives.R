@@ -19,11 +19,11 @@ load("data/processed/elsa_proc_data.RData")
 # 1) Baseline descriptives
 # ---------------------------
 
-# descriptive stats for continuous variables (#binary vars only included to get valid Ns)
+# descriptive stats for continuous variables (binary vars only included to get valid Ns)
 psych::describe(data[,c("w2_dhager", "w2_bmival", "w2_meansys", "w2_chol_f", "w2_hdl_f", "w2_ldl_f",  
                         "w2_DhSex", "w2_fqethnr", "w0_educ", "hyp", "diab", "w2_HESka", "n_rf")]) 
 
-# descriptive stats for binary vars  
+# descriptive stats for binary variables
 tables <- lapply(data[,c("w2_DhSex", "w2_fqethnr", "w0_educ", "hyp", "diab", "w2_HESka", "n_rf")], table)
 tables # absolute frequencies
 lapply(tables, prop.table) # relative frequencies

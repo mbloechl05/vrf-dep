@@ -3,7 +3,6 @@
 # (contact maria.bloechl@gmail.com in case of questions)
 # ==============================================================
 
-
 # clean work space
 rm(list = ls()) 
 
@@ -13,9 +12,9 @@ library(lavaan)
 library(psych)
 
 
-# --------------------------------------
-# 1) Get raw data and select variables
-# --------------------------------------
+# ----------------------------------------------------
+# 1) Read in raw data, select variables, and merge 
+# ----------------------------------------------------
 
 # load raw data all waves
 load("data/raw/02760-0001-Data.rda") # wave 1
@@ -23,10 +22,9 @@ load("data/raw/04652-0001-Data.rda") # wave 2
 load("data/raw/36346-0001-Data.rda") # wave 3
 
 
-# select only relevant varibales (see codebooks for variable labels)
+# select only relevant varibales from waves (see codebook for explanations)
 wave1_s <- da02760.0001[,c("M2ID", "A1PAGE_M2", "A1SS7", "A1PRSEX", "A1PB1", 
                            "A1PA4", "A1PA5", "A1PA11BC", "A1SA9X", "A1PA40", "A1SBMI",
-                           "A1PDEPAF", "A1PANHED", "A1PDEPRE",
                            "A1PA36", "A1SA9Y", "A1SA9S", "A1SA10A", "A1SA10C", 
                            "A1SA13A", "A1SA13B", "A1SA13C", "A1SA13D", "A1SA13E", "A1SA13F", 
                            "A1SA15A", "A1SA15B", "A1SA15C", "A1SA15D", "A1SA15E", "A1SA15F",
@@ -69,7 +67,7 @@ wave3_s$wave3 <- 1
 
 # We have to code missing values from wave 2 for smoking to "NO", because question was actually inapplicable
 # to some participants who responded that they never smoked (A1PA41) or never smoked regularly (A1PA40).
-wave1_s$A1PA43[wave1_s$A1PA41 == 96]         <- "(2) NO"
+wave1_s$A1PA43[wave1_s$A1PA41 ==  96     ]   <- "(2) NO"
 wave1_s$A1PA43[wave1_s$A1PA40 == "(2) NO"]   <- "(2) NO"
 
 # merge data from all waves into one dataframe (wide format)
@@ -81,45 +79,35 @@ data = merge(data,    wave3_s, all = T, by = "M2ID", sort = T )
 # 2) Recode variables
 # ------------------------
 
-# Variables indicating participation in specific wave: NO
-data$wave1[is.na(data$wave1)] <- 0
-data$wave2[is.na(data$wave2)] <- 0
-data$wave3[is.na(data$wave3)] <- 0
-
-# gender 
+# 2.1) Sex
+# recode to dummy (0 = female, 1 = male)
 data$A1PRSEX  <- recode_factor(data$A1PRSEX, `(1) MALE` = 1, `(2) FEMALE` = 0)
 
-# ethnicity (decided to code as binary variable since most participnats identified themself as "white")
+# 2.2) Ethnicity 
+# recode variable from wave 1 to dummy (0 = "white", 1 = "non-white")
 data$A1SS7    <- ifelse(data$A1SS7 == "(1) WHITE",  0, 1) 
 
-table(data$A1SS7, exclude = NULL) # about 900 missings on this variable
-table(data$A1SS7, data$B1PF7A, exclude = NULL) # > 350 people with missing in wave 1 have data in wave 2
+# recode variable from wave 2 to dummy (0 = "white", 1 = "non-white")
 data$B1PF7A <- ifelse(data$B1PF7A == "(1) WHITE", 1,
                       ifelse(data$B1PF7A == "(7) DON'T KNOW", NA, 
                              ifelse(data$B1PF7A == "(8) REFUSED", NA, 0)
                              )
                       )
 
-# top up ethnicity variable with wave 2 data to replace missing values from wave 1 (racial identiication is assumed to be relatively stable)
+# a lot of people (about 900) do not have data on this variable at wave 1, but at wave 2
+# so this replaces missing values from wave 1 with data from wave 2
 for(i in 1:nrow(data)){
        if (is.na(data$A1SS7[i]) == T){
          data$A1SS7[i] <- data$B1PF7A[i]}} 
   
-# education 
+# 2.3) Education 
+# recode to dummy (0 = lower education, 1 = higher education)
 data$A1PB1    <- as.integer(data$A1PB1) 
 data$A1PB1    <- ifelse(data$A1PB1 <= 5, 0, 1) # now indicates higher education level
 
-data$B1PB1    <- as.integer(data$B1PB1) 
-data$B1PB1    <- ifelse(data$B1PB1 <= 5, 0, 1) # now indicates higher education level
 
-
-# creating a variable indicating: married or living wit someone, wave 2
-data$B1PB19 <- ifelse(data$B1PB19 == "(1) MARRIED", 1, 0) # now indicates married or not
-data$B1PB30 <- ifelse(data$B1PB30 == "(1) YES", 1, 0) # variable cohabitation
-
-data$livsome <- ifelse(data$B1PB19 == 1 | data$B1PB30 == 1, 1,0)
-
-# recode all binary variables
+# 2.4) Dichotomous variables
+# recode all dichotomous variables to dummies (0 = no, 1 = yes)
 binary.vars <- data[,c("A1PA11BC", "A1SA9S", "A1SA9X", "A1PA40", "A1SA10A", "A1SA10C", "A1SA10K", 
                        "A1PA33", "A1PA36", "A1PA43", "A1SA9Y", "A1SA9Z", 
                        
@@ -133,110 +121,69 @@ binary.vars <- data[,c("A1PA11BC", "A1SA9S", "A1SA9X", "A1PA40", "A1SA10A", "A1S
 for (i in names(binary.vars)) {
   data[[i]] <- recode_factor(data[[i]],`(1) YES` = 1, `(2) NO` = 0)}
 
+# 2.5) Recode factors
 # recode factors to numeric for modelling in lavaan (doesn't like factors)
 data$A1PRSEX.n   <- as.integer(as.character(data$A1PRSEX))
-data$A1SS7.n     <- as.integer(as.character(data$A1SS7)) # ethnicity
-data$A1PB1.n     <- as.integer(as.character(data$A1PB1)) # education
-data$A1SA9S.n    <- as.integer(as.character(data$A1SA9S)) # hypertension
-data$A1PA43.n    <- as.integer(as.character(data$A1PA43)) # smoking
-data$A1SA9X.n    <- as.integer(as.character(data$A1SA9X)) # diabetes
-#data$A1SA10A.n   <- as.integer(as.character(data$A1SA10A)) # hypertension medication
+data$A1SS7.n     <- as.integer(as.character(data$A1SS7)) 
+data$A1PB1.n     <- as.integer(as.character(data$A1PB1))
+data$A1SA9S.n    <- as.integer(as.character(data$A1SA9S)) 
+data$A1PA43.n    <- as.integer(as.character(data$A1PA43)) 
+data$A1SA9X.n    <- as.integer(as.character(data$A1SA9X)) 
 
-# create variable that indicates the number of risk factors
+# 2.6.) Number of risk factors
+# create a variable that indicates obesity (BMI >= 30)
 data$A1SBMI.b <- ifelse(data$A1SBMI >=30,1,0)
+
+# create variable that indicates the number of reported risk factors
 rf            <- data[,c("A1SA9X.n","A1SA9S.n","A1PA43.n", "A1SBMI.b")]
 data$n_rf     <- rowSums(rf)
 
-# depressed affect 
+# 2.7) K-6 scale
+# define values of items of the scale and how they should be recoded
 oldvalues.depr <- c("(1) ALL THE TIME", "(2) MOST OF THE TIME", "(3) SOME OF THE TIME", "(4) A LITTLE OF THE TIME", "(5) NONE OF THE TIME")
 newvalues.depr <- (c(5,4,3,2,1))  
 
+# for all K-6 items, recode values so higher values indicate poorer mood
 for (i in names(data[,c(grep("A1SA13", colnames(data)), # wave 1
                         grep("B1SA24", colnames(data)), # wave 2
                         grep("C1SA20", colnames(data)) # wave 3
-                        )])) {
+)])) {
   data[[i]] <- newvalues.depr[ match(data[[i]], oldvalues.depr) ]}
 
 
 # ----------------------------------------------
-# 3) Unidimensionality: depressed affect scale
+# 3) K-6 scale
 # ----------------------------------------------
 
-# 3.a.) CFA models: all items 
-
-### wave 1
+# 3.1) Unidimensionality
+# CFA full 6-item scale
 depr.1.m <- 'depr.1 =~ A1SA13A + A1SA13B + A1SA13C + A1SA13D + A1SA13E + A1SA13F'
 depr.1.f <- cfa(model = depr.1.m, data = data)
 summary(depr.1.f, fit.measures = TRUE, standardized = TRUE)
 modindices(depr.1.f, sort = TRUE, minimum.value = 100) # modification indices
 
-### wave 2 
-depr.2.m <- 'depr.2 =~ B1SA24A + B1SA24B + B1SA24C + B1SA24D + B1SA24E + B1SA24F'
-depr.2.f <- cfa(model = depr.2.m, data = data)
-summary(depr.2.f, fit.measures = TRUE, standardized = TRUE)
-modindices(depr.2.f, sort = TRUE, minimum.value = 100) # modification indices
-
-### wave 3 
-depr.3.m <- 'depr.3 =~ C1SA20A + C1SA20B +  C1SA20C + C1SA20D + C1SA20E + C1SA20F'
-depr.3.f <- cfa(model = depr.3.m, data = data)
-summary(depr.3.f, fit.measures = TRUE, standardized = TRUE)
-modindices(depr.3.f, sort = TRUE, minimum.value = 100) # modification indices
-
-
-# 3.b) CFA models: without item 3 
-# Given the poor fit of all of the above specified CFA models and the high residual correlation
-# between items '-B' ('restless') and '-C' ('nervous'), item C was excluded from the following CFA models. 
-
-### wave 1
+# CFA reduced 5-item scale
 depr.1.m.r <- 'depr.1 =~ A1SA13A + A1SA13B + A1SA13D + A1SA13E + A1SA13F'
 depr.1.r <- cfa(model = depr.1.m.r, data = data)
 summary(depr.1.r, fit.measures = TRUE, standardized = TRUE)
 modindices(depr.1.r, sort = TRUE, minimum.value = 100) # modification indices
 
-### wave 2 
-depr.2.m <- 'depr.2 =~ B1SA24A + B1SA24B +  B1SA24D + B1SA24E + B1SA24F'
-depr.2.f <- cfa(model = depr.2.m, data = data)
-summary(depr.2.f, fit.measures = TRUE, standardized = TRUE)
-modindices(depr.2.f, sort = TRUE, minimum.value = 100) # modification indices
 
-### wave 3
-depr.3.m <- 'depr.3 =~ C1SA20A + C1SA20B + C1SA20D + C1SA20E + C1SA20F'
-depr.3.f <- cfa(model = depr.3.m, data = data)
-summary(depr.3.f, fit.measures = TRUE, standardized = TRUE)
-modindices(depr.3.f, sort = TRUE, minimum.value = 100) # modification indices
-
-
-# -----------------------------------------
-# 4) Reliability: depressed affect scale
-# -----------------------------------------
-
+# 3.2) Internal consistency
 # select items depressed affect for each wave (note tis eclude item -C (nervous))
 depr.items.1 <- data[,c("A1SA13A", "A1SA13B", "A1SA13D", "A1SA13E", "A1SA13F")] # wave 1
 depr.items.2 <- data[,c("B1SA24A", "B1SA24B", "B1SA24D", "B1SA24E", "B1SA24F")] # wave 2
 depr.items.3 <- data[,c("C1SA20A", "C1SA20B", "C1SA20D", "C1SA20E", "C1SA20F")] # wavw 3
 
-# cronbachs alpha
+# calculate Cronbach's alpha
 psych::alpha(depr.items.1) # wave 1
 psych::alpha(depr.items.2) # wave 2
 psych::alpha(depr.items.3) # wave 3
 
 
-# --------------------------------------
-# 5) Calculate depression mean scores
-# --------------------------------------
-
-depr.items.1 <- data[,c("A1SA13A", "A1SA13B",  "A1SA13D", "A1SA13E", "A1SA13F")]
-depr.items.2 <- data[,c("B1SA24A", "B1SA24B",  "B1SA24D", "B1SA24E", "B1SA24F")]
-depr.items.3 <- data[,c("C1SA20A", "C1SA20B",  "C1SA20D", "C1SA20E", "C1SA20F")]
-
-data$w1.deprmean <- rowMeans(depr.items.1) 
-data$w2.deprmean <- rowMeans(depr.items.2)
-data$w3.deprmean <- rowMeans(depr.items.3)
-
-
-# ---------------------------
-# 6) Save preprocessed data
-# ---------------------------
+# ----------------------------
+# 4) Save preprocessed data
+# ----------------------------
 
 save(data, wave1_s, wave2_s, wave3_s, file = "data/processed/midus_proc_data.RData")
 

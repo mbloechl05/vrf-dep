@@ -622,8 +622,8 @@ fit.cho <- sem(m.pred, data = data, ordered = c("w2_psceda","w2_pscedb","w2_psce
 summary(fit.cho,  fit.measures = T, standardized = T)
 
 
-# 3.7) HDL
-# set hdl for placeholder
+# 3.7) HDL cholesterol
+# set hdl cholesterol for placeholder
 data$pred <- data$w2_hdl_f 
 
 # fit model
@@ -646,8 +646,8 @@ fit.hdl <- sem(m.pred,data = data, ordered = c("w2_psceda","w2_pscedb","w2_psced
 summary(fit.hdl,  fit.measures = T, standardized = T)
 
 
-# 3.8) LDL
-# set ldl for placeholder
+# 3.8) LDL cholesterol
+# set ldl cholesterol for placeholder
 data$pred <- data$w2_ldl_f 
 
 # fit model

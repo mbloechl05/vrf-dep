@@ -83,7 +83,7 @@ wave5_s  <- wave5_s  %>% rename_at(vars(-idauniq), ~ paste0("w5_",.))
 wave6_s  <- wave6_s  %>% rename_at(vars(-idauniq), ~ paste0("w6_",.))
 wave7_s  <- wave7_s  %>% rename_at(vars(-idauniq), ~ paste0("w7_",.))
 
-# create variables indicating whether people participated in that wave (1 = YES)
+# create variables indicating whether people participated in that wave (1 = yes)
 wave0_s$wave0 <- 1
 wave2_s$wave2 <- 1
 wave3_s$wave3 <- 1
@@ -109,7 +109,7 @@ data = merge(data, wave0_s, all = F, all.x = T, by = "idauniq", sort = T)
 # 2) Recode variables
 # ------------------------
 
-# 2.1. NAs
+# 2.1) NAs
 # recode different negative values for missing data to NAs
 data <- data %>% mutate_all(funs(na_if(., -11)))
 data <- data %>% mutate_all(funs(na_if(., -10)))
@@ -123,14 +123,14 @@ data <- data %>% mutate_all(funs(na_if(., -3)))
 data <- data %>% mutate_all(funs(na_if(., -2)))
 data <- data %>% mutate_all(funs(na_if(., -1)))
 
-# 2.2. Age
-# recode age variable; 109 adults aged > 89 have age coded as 99; these are set as missings
+# 2.2) Age
+# recode variable because 109 adults aged > 89 have age coded as 99 --> set these as missings
 data$w2_dhager[data$w2_dhager == 99] <- NA
 
 # center age variable for analyses
 data$w2_dhager.c <- scale(data$w2_dhager, center = T, scale = F) # center age variable
 
-# 2.3. Dichotomous variables
+# 2.3) Dichotomous variables
 # recode all dichotomous variables to dummies (0 = no, 1 = yes)
 for (i in names(data[,c(grep("psced", colnames(data)), 
                         grep("w2_DhSex", colnames(data)), # 0 = female (same as midus)
@@ -138,17 +138,17 @@ for (i in names(data[,c(grep("psced", colnames(data)),
                         )])) {
   data[[i]][data[[i]] == 2] <- 0}
 
-# 2.4. Ethnicity
-# dummy-code (0 = "white", 1 = "non-white")
+# 2.4) Ethnicity
+# recode to dummy (0 = "white", 1 = "non-white")
 data$w2_fqethnr <- ifelse(data$w2_fqethnr == 1, 0, 1)
 
-# 2.5. Education
-# dummy-code (0 = lower education, 1 = higher education)
+# 2.5) Education
+# recode to dummy (0 = lower education, 1 = higher education)
 data$w0_topqual2[data$w0_topqual2 == 6] <- NA # recode foreign / other qual to NA
 data$w0_topqual2[data$w0_topqual2 == 8] <- NA # recode full-time students to NA
 data$w0_educ <- ifelse(data$w0_topqual2 == 1, 1, 0) 
 
-# 2.6. Hypertension
+# 2.6) Hypertension
 # create hypertension variable from CVD-variables at wave 1
 data$w1_hypt <- ifelse(data$w2_behdia01 == 1, 1, 0)
 data$w1_hypt[data$w2_behdia02 == 1 | data$w2_behdia03 == 1 | data$w2_behdia04 == 1 |
@@ -166,7 +166,7 @@ data$w2_hypt[data$w2_hedia02 == 1 | data$w2_hedia03 == 1 | data$w2_hedia04 == 1 
 data$hyp <- ifelse(data$w1_hypt == 1, 1, 0)
 data$hyp[data$w2_hypt == 1] <- 1
 
-# 2.7. Diabetes
+# 2.7) Diabetes
 # create diabetes variable from CVD-variables at wave 1
 data$w1_diab <- ifelse(data$w2_behdia01 == 7, 1, 0)
 data$w1_diab[data$w2_behdia02 == 7 | data$w2_behdia03 == 7 | data$w2_behdia04 == 7 |
@@ -184,18 +184,19 @@ data$w2_diab[data$w2_hedia02 == 7 | data$w2_hedia03 == 7 | data$w2_hedia04 == 7 
 data$diab <- ifelse(data$w1_diab == 1, 1, 0)
 data$diab[data$w2_diab == 1] <- 1
 
-# 2.8. Number of risk factors
-# create variable that indicates obesity (BMI >= 30)
+# 2.8) Number of risk factors
+# create a variable that indicates obesity (BMI >= 30)
 data$w2_bmi.b <- ifelse(data$w2_bmi >=30,1,0)
+
 # create variable that indicates the number of reported risk factors
 rf         <- data[,c("hyp","diab","w2_HESka", "w2_bmi.b")]
 data$n_rf  <- rowSums(rf)
 
-# 2.9. Systolic blood pressure
+# 2.9) Systolic blood pressure
 # average all three systolic blood pressure values from wave 2 
 data$w2_meansys <- rowMeans(data[,c("w2_sys1", "w2_sys2", "w2_sys3")], na.rm = T)
 
-# 2.10. Cholesterol variables
+# 2.10) Cholesterol variables
 # for all cholesterol variables, only select participants with valid fasting blood samples 
 data$w2_chol_f <- ifelse(data$w2_fasteli == 2, NA, data$w2_chol) # total cholesterol
 data$w2_hdl_f  <- ifelse(data$w2_fasteli == 2, NA, data$w2_hdl ) # hdl cholesterol
@@ -206,34 +207,26 @@ data$w2_ldl_f  <- ifelse(data$w2_fasteli == 2, NA, data$w2_ldl ) # ldl cholester
 # 3) CESD-Scale
 # -----------------
 
-# 3.1.) Unidimensionality
-# note that unidimensionality is assessed using data from wave 2
-
-# 3.1.1.) Full 8-item scale
-# define model
+# 3.1) Unidimensionality 
+# CFA Full 8-item scale
 depr.1.m <- 
   'depr.1 =~ w2_psceda + w2_pscedb + w2_pscedc + w2_pscedd + w2_pscede + 
              w2_pscedf + w2_pscedg + w2_pscedh'
-
-# fit CFA and get results
 depr.1.f <- cfa(model = depr.1.m, data = data, ordered = c("w2_psceda","w2_pscedb","w2_pscedc", 
                                                            "w2_pscedd","w2_pscede","w2_pscedf", 
                                                            "w2_pscedg", "w2_pscedh"))
 summary(depr.1.f, fit.measures = TRUE, standardized = TRUE)
 modindices(depr.1.f, sort = TRUE, minimum.value = 100) # modification indices
 
-# 3.1.1.) Reduced 5-item scale
-# define model
+# CFA reduced 5-item scale
 depr.1.m <- 'depr.1 =~ w2_psceda + w2_pscedb + w2_pscedd + w2_pscede + w2_pscedg'
-
-# fit CFA and get results
 depr.1.f <- cfa(model = depr.1.m, data = data, ordered = c("w2_psceda","w2_pscedb", "w2_pscedd", 
                                                            "w2_pscede", "w2_pscedg"))
 summary(depr.1.f, fit.measures = TRUE, standardized = TRUE)
 modindices(depr.1.f, sort = TRUE, minimum.value = 100) # modification indices
 
 
-# 3.2.) Internal consistency
+# 3.2) Internal consistency
 # item d has to be reversed for calculations of alpha
 data$w2_pscedd_r <- 1 - data$w2_pscedd
 data$w3_pscedd_r <- 1 - data$w3_pscedd
@@ -248,8 +241,8 @@ depr.items.4 <- data[,c("w4_psceda", "w4_pscedb", "w4_pscedd_r", "w4_pscede", "w
 depr.items.5 <- data[,c("w5_psceda", "w5_pscedb", "w5_pscedd_r", "w5_pscede", "w5_pscedg")] # wave 5
 depr.items.6 <- data[,c("w6_psceda", "w6_pscedb", "w6_pscedd_r", "w6_pscede", "w6_pscedg")] # wave 6
 
-# calculate cronbachs alpha 
-# note: alpha reduces to Kuder-Richardson formula for dichotomous items (implemented in alpha())
+# calculate Cronbach's alpha 
+# note: reduces to Kuder-Richardson formula for dichotomous items (implemented in alpha())
 psych::alpha(depr.items.2) # wave 2
 psych::alpha(depr.items.3) # wave 3
 psych::alpha(depr.items.4) # wave 4
