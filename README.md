@@ -1,4 +1,4 @@
-# vrf-dep
+# Vascular risk factors and depressed mood
 
 This git lab repro contains analyses for the project "Vascular risk factors and the long-term course of depressed mood". 
 
