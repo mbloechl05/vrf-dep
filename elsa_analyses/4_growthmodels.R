@@ -3,7 +3,6 @@
 # (contact maria.bloechl@gmail.com in case of questions)
 # ==============================================================
 
-
 # clean work space
 rm(list = ls())
 
@@ -16,17 +15,11 @@ library(ggplot2)
 load("data/processed/elsa_proc_data.RData")
 
 
-# -------------------------------
-# 2) Latent growth models (LGMs)
-# -------------------------------
+# --------------------------------------------------------
+# 1) Unconditional LGM without covariates or predictors
+# --------------------------------------------------------
 
-# Variable transformations
-
-### center age variable
-data$w2_dhager.c <- scale(data$w2_dhager, center = T, scale = F) # center age variable
-
-# 2.b) Conditional LGM with covariates (no predictors)
-
+# define model
 m.uc <- '
 
 # measurement models wit constrained factor loadings
@@ -160,6 +153,7 @@ i ~ 0*1
 s ~ 1
 '
 
+# fit model
 fit.uc <- sem(m.uc, data = data, ordered = c("w2_psceda","w2_pscedb","w2_pscedd",
                                        "w2_pscede","w2_pscedg", 
                                        "w3_psceda","w3_pscedb","w3_pscedd",
@@ -174,10 +168,16 @@ fit.uc <- sem(m.uc, data = data, ordered = c("w2_psceda","w2_pscedb","w2_pscedd"
                                        "w7_pscede","w7_pscedg"), 
            missing = "pairwise", estimator = "WLSMV", 
            parameterization = "theta" )
+
+# summary results
 summary(fit.uc,  fit.measures = T, standardized = T)
 
-# 2.b) Conditional LGM with covariates (no predictors)
 
+# -----------------------------------------------------------
+# 2) Conditional LGM with covariates (but no predictors)
+# -----------------------------------------------------------
+
+# define model
 m.cov <- '
 
 # measurement models wit constrained factor loadings
@@ -315,6 +315,7 @@ i ~ w2_dhager.c + w2_DhSex + w2_fqethnr + w0_educ
 s ~ w2_dhager.c + w2_DhSex + w2_fqethnr + w0_educ
 '
 
+# fit model
 fit.cov <- sem(m.cov, data = data, ordered = c("w2_psceda","w2_pscedb","w2_pscedd",
                                        "w2_pscede","w2_pscedg", 
                                        "w3_psceda","w3_pscedb","w3_pscedd",
@@ -329,14 +330,18 @@ fit.cov <- sem(m.cov, data = data, ordered = c("w2_psceda","w2_pscedb","w2_psced
                                        "w7_pscede","w7_pscedg"), 
            missing = "pairwise", estimator = "WLSMV", 
            parameterization = "theta" )
+
+# summary results
 summary(fit.cov,  fit.measures = T, standardized = T)
 
 
-# 2.c) Conditional LGMs with VRFs as preditors 
+# ----------------------------------------------------------
+# 3) Conditional LGMs with single vascular risk factors 
+# ----------------------------------------------------------
+# The following model is a generic model, in which "pred" is used as a place holder for predictors 
+# (i.e. vascular risk factors) that will be introduced before fitting the model.
 
-### The following model is an extension of the previous model with one additional predictor (pred), 
-### In the modelpred is used as a place holder to subsequently introduce VRFs in the model.
-
+# define generic model
 m.pred <- '
 
 # measurement models wit constrained factor loadings
@@ -474,8 +479,11 @@ i ~ w2_dhager.c + w2_DhSex + w2_fqethnr + w0_educ + pred
 s ~ w2_dhager.c + w2_DhSex + w2_fqethnr + w0_educ + pred
 '
 
-### Self-reported hypertension
-data$pred <- data$hyp # set hypertension for placeholder
+# 3.1) Hypertension
+# set hypertension variable for placeholder
+data$pred <- data$hyp 
+
+# fit model 
 fit.hyp <- sem(m.pred, data = data, 
                ordered = c("w2_psceda","w2_pscedb","w2_pscedd",
                            "w2_pscede","w2_pscedg", 
@@ -491,11 +499,16 @@ fit.hyp <- sem(m.pred, data = data,
                            "w7_pscede","w7_pscedg"), 
                missing = "pairwise", estimator = "WLSMV", 
                parameterization = "theta")
+
+# results summary
 summary(fit.hyp,  fit.measures = T, standardized = T)
 
-### Smoking  
 
-data$pred <- data$w2_HESka # set smoking for placeholder
+# 3.2) Smoking  
+# set smoking for placeholder
+data$pred <- data$w2_HESka 
+
+# fit model
 fit.smo <- sem(m.pred, data = data, ordered = c("w2_psceda","w2_pscedb","w2_pscedd",
                                                 "w2_pscede","w2_pscedg", 
                                                 "w3_psceda","w3_pscedb","w3_pscedd",
@@ -510,12 +523,16 @@ fit.smo <- sem(m.pred, data = data, ordered = c("w2_psceda","w2_pscedb","w2_psce
                                                 "w7_pscede","w7_pscedg"), 
                missing = "pairwise", estimator = "WLSMV", 
                parameterization = "theta")
+
+# results summary
 summary(fit.smo,  fit.measures = T, standardized = T)
 
 
-### BMI 
+# 3.3) BMI 
+# set BMI for placeholder
+data$pred <- data$w2_bmival 
 
-data$pred <- data$w2_bmival # set BMI for placeholder
+# fit model
 fit.bmi <- sem(m.pred, data = data, ordered = c("w2_psceda","w2_pscedb","w2_pscedd",
                                                 "w2_pscede","w2_pscedg", 
                                                 "w3_psceda","w3_pscedb","w3_pscedd",
@@ -530,11 +547,12 @@ fit.bmi <- sem(m.pred, data = data, ordered = c("w2_psceda","w2_pscedb","w2_psce
                                                 "w7_pscede","w7_pscedg"), 
                missing = "pairwise", estimator = "WLSMV", 
                parameterization = "theta")
-summary(fit.bmi,  fit.measures = T, standardized = T)
+
+# summary results
+summary(fit.bmi,  fit.measures = T, standardized = T) # results
 
 
-### Diabetes
-
+# 3.4) Diabetes
 data$pred <- data$diab # set diabetes for placeholder
 fit.dia <- sem(m.pred, data = data, ordered = c("w2_psceda","w2_pscedb","w2_pscedd",
                                                 "w2_pscede","w2_pscedg", 
@@ -550,14 +568,15 @@ fit.dia <- sem(m.pred, data = data, ordered = c("w2_psceda","w2_pscedb","w2_psce
                                                 "w7_pscede","w7_pscedg"), 
                missing = "pairwise", estimator = "WLSMV", 
                parameterization = "theta")
+# reults summary
 summary(fit.dia,  fit.measures = T, standardized = T)
 
 
-### additionally in ELSA:
+# 3.5) Systolic blood pressure (Supplementary)
+# set blood pressure for placeholder
+data$pred <- data$w2_meansys 
 
-### Systolic blood pressure  
-
-data$pred <- data$w2_meansys # set hypertension for placeholder
+# fit model
 fit.sbp <- sem(m.pred, data = data, 
                ordered = c("w2_psceda","w2_pscedb","w2_pscedd",
                            "w2_pscede","w2_pscedg", 
@@ -573,12 +592,16 @@ fit.sbp <- sem(m.pred, data = data,
                            "w7_pscede","w7_pscedg"), 
                missing = "pairwise", estimator = "WLSMV", 
                parameterization = "theta")
+
+# summary results
 summary(fit.sbp,  fit.measures = T, standardized = T)
 
 
-### Total chlesterol
+# 3.6) Total chlesterol
+# set cholesterol for placeholder
+data$pred <- data$w2_chol_f 
 
-data$pred <- data$w2_chol_f # set cholesterol for placeholder
+# fit model
 fit.cho <- sem(m.pred, data = data, ordered = c("w2_psceda","w2_pscedb","w2_pscedd",
                                                 "w2_pscede","w2_pscedg", 
                                                 "w3_psceda","w3_pscedb","w3_pscedd",
@@ -593,12 +616,16 @@ fit.cho <- sem(m.pred, data = data, ordered = c("w2_psceda","w2_pscedb","w2_psce
                                                 "w7_pscede","w7_pscedg"), 
                missing = "pairwise", estimator = "WLSMV", 
                parameterization = "theta")
+
+# summary results
 summary(fit.cho,  fit.measures = T, standardized = T)
 
 
-### HDL
+# 3.7) HDL
+# set hdl for placeholder
+data$pred <- data$w2_hdl_f 
 
-data$pred <- data$w2_hdl_f # set hdl for placeholder
+# fit model
 fit.hdl <- sem(m.pred,data = data, ordered = c("w2_psceda","w2_pscedb","w2_pscedd",
                                                "w2_pscede","w2_pscedg", 
                                                "w3_psceda","w3_pscedb","w3_pscedd",
@@ -613,12 +640,16 @@ fit.hdl <- sem(m.pred,data = data, ordered = c("w2_psceda","w2_pscedb","w2_psced
                                                "w7_pscede","w7_pscedg"), 
                missing = "pairwise", estimator = "WLSMV", 
                parameterization = "theta")
+
+# summary results
 summary(fit.hdl,  fit.measures = T, standardized = T)
 
 
-### LDL
+# 3.8) LDL
+# set ldl for placeholder
+data$pred <- data$w2_ldl_f 
 
-data$pred <- data$w2_ldl_f # set hdl for placeholder
+# fit model
 fit.ldl <- sem(m.pred,data = data, ordered = c("w2_psceda","w2_pscedb","w2_pscedd",
                                                "w2_pscede","w2_pscedg", 
                                                "w3_psceda","w3_pscedb","w3_pscedd",
@@ -633,12 +664,16 @@ fit.ldl <- sem(m.pred,data = data, ordered = c("w2_psceda","w2_pscedb","w2_psced
                                                "w7_pscede","w7_pscedg"), 
                missing = "pairwise", estimator = "WLSMV", 
                parameterization = "theta")
+
+# summary results
 summary(fit.ldl,  fit.measures = T, standardized = T)
 
 
-### Multiple risk factors (accumulated)
+# 3.9) Multiple risk factors (accumulated)
+# set number of risk factors for placeholder
+data$pred <- data$n_rf 
 
-data$pred <- data$n_rf # set accumulated for placeholder
+# fit model
 fit.mul <- sem(m.pred,data = data, ordered = c("w2_psceda","w2_pscedb","w2_pscedd",
                                                 "w2_pscede","w2_pscedg", 
                                                 "w3_psceda","w3_pscedb","w3_pscedd",
@@ -653,11 +688,15 @@ fit.mul <- sem(m.pred,data = data, ordered = c("w2_psceda","w2_pscedb","w2_psced
                                                 "w7_pscede","w7_pscedg"), 
                 missing = "pairwise", estimator = "WLSMV", 
                 parameterization = "theta")
+
+# summary results
 summary(fit.mul,  fit.measures=T, standardized = T)
 
+# ----------------------------------------------------------
+# 4) Conditional LGM with all risk factors simultaneously
+# ----------------------------------------------------------
 
-### All risk factors simultaneously
-
+# define model
 m.all <- '
 
 # measurement models wit constrained factor loadings
@@ -795,6 +834,7 @@ i ~ w2_dhager.c + w2_DhSex + w2_fqethnr + w0_educ + hyp + w2_HESka + w2_bmival +
 s ~ w2_dhager.c + w2_DhSex + w2_fqethnr + w0_educ + hyp + w2_HESka + w2_bmival + diab
 '
 
+# fit model
 fit.all <- sem(m.all, data = data, ordered = c("w2_psceda","w2_pscedb","w2_pscedd",
                                                "w2_pscede","w2_pscedg", 
                                                "w3_psceda","w3_pscedb","w3_pscedd",
@@ -809,17 +849,18 @@ fit.all <- sem(m.all, data = data, ordered = c("w2_psceda","w2_pscedb","w2_psced
                                                "w7_pscede","w7_pscedg"), 
                missing = "pairwise", estimator = "WLSMV", 
                parameterization = "theta")
+
+# summary results
 summary(fit.all,  fit.measures = T, standardized = T)
 
 
+# --------------------
+# 5. Create figures
+# --------------------
 
-# -------------
-# plots LGMs
-# -------------
+# 5.1) Figure 2: Single risk factors
 
-# Figure 2: single risk factors
-
-### code function to extract parameters for each risk factor from the simple and the full model
+# code function to extract parameters for each risk factor from the simple and the full model
 get_parameters <- function(fit.simple, i.simple, s.simple, i.all, s.all){
   beta         <- standardizedSolution(fit.simple)$est.std[c(i.simple, s.simple)]
   ci.l         <- standardizedSolution(fit.simple)$ci.lower[c(i.simple, s.simple)]
@@ -837,7 +878,7 @@ get_parameters <- function(fit.simple, i.simple, s.simple, i.all, s.all){
   return(coeff)
 }
 
-### create plotting function
+# create plotting function
 get_plot <- function(coeffs, title) {
   ggplot(coeffs, aes(x = parameter, y = beta, ymin = ci.l, ymax = ci.u)) +
     geom_hline(yintercept = 0, linetype = "dashed", size = 0.4) +
@@ -858,29 +899,24 @@ get_plot <- function(coeffs, title) {
   ggsave(paste("output/", title, ".pdf", sep = ""), width = 4, height = 4)
 }
 
-### now make and saveplots for risk factors
 
-### Hypertension
+# now make and save figures for single risk factors using functions
 coeff.hyp <- get_parameters(fit.simple = fit.hyp, i.simple = 193, s.simple = 198, i.all = 193, s.all = 201)
 get_plot(coeffs = coeff.hyp, title = "Hypertension")
 
-### Smoking
 coeff.smo <- get_parameters(fit.simple = fit.smo, i.simple = 193, s.simple = 198, i.all = 194, s.all = 202)
 get_plot(coeffs = coeff.smo, title = "Current smoking") 
 
-### BMI
 coeff.bmi <- get_parameters(fit.simple = fit.bmi, i.simple = 193, s.simple = 198, i.all = 195, s.all = 203)
 get_plot(coeffs = coeff.bmi, title = "Body mass index")
 
-### Diabetes
 coeff.dia <- get_parameters(fit.simple = fit.dia, i.simple = 193, s.simple = 198, i.all = 196, s.all = 204)
 get_plot(coeffs = coeff.dia, title = "Diabetes") 
 
 
+# 5.2) Figure 3: Multiple risk factors 
 
-# Figure 3: multiple risk factors 
-
-### code function to extract parameters for risk factor from the simple model
+# code function to extract parameters for risk factor from the simple model
 get_parameters_s  <- function(fit.simple, i.simple, s.simple, i.all, s.all){
   beta            <- standardizedSolution(fit.simple)$est.std[c(i.simple, s.simple)]
   ci.l            <- standardizedSolution(fit.simple)$ci.lower[c(i.simple, s.simple)]
@@ -907,29 +943,27 @@ get_plot_s <- function(coeffs, title) {
   ggsave(paste("output/", title, ".pdf", sep = ""), dpi = 600, width = 4, height = 4)
 }
 
-### now make and save plot 
 
-### Multiple risk factors
+# now make and save plot using functions
 coeff.mul <- get_parameters_s(fit.simple = fit.mul, i.simple = 193, s.simple = 198)
 get_plot_s(coeffs = coeff.mul, title = "")
 
 
+# 5.3) Supplementary: additional figures for ELSA only
 
-# Supplementary: additional figures for ELSA only
-
-### Systolic blood pressure
+# systolic blood pressure
 coeff.sbp <- get_parameters_s(fit.simple = fit.sbp, i.simple = 193, s.simple = 198)
 get_plot_s(coeffs = coeff.sbp, title = "Systolic blood pressure")
 
-### Total cholesterol
+# total cholesterol
 coeff.cho <- get_parameters_s(fit.simple = fit.cho, i.simple = 193, s.simple = 198)
 get_plot_s(coeffs = coeff.cho, title = "Total cholesterol")
 
-### HDL cholesterol
+# HDL cholesterol
 coeff.hdl <- get_parameters_s(fit.simple = fit.hdl, i.simple = 193, s.simple = 198)
 get_plot_s(coeffs = coeff.hdl, title = "HDL cholesterol")
 
-### LDL cholesterol
+# LDL cholesterol
 coeff.ldl <- get_parameters_s(fit.simple = fit.ldl, i.simple = 193, s.simple = 198)
 get_plot_s(coeffs = coeff.ldl, title = "LDL cholesterol")
 
