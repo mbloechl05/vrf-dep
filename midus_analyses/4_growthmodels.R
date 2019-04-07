@@ -1,8 +1,7 @@
 ## ===============================================================
-## MIDUS: Fitting growth models
+## MIDUS: Fitting latent growth models (LGMs)
 ## (contact maria.bloechl@gmail.com in case of questions)
 ## ==============================================================
-
 
 # clean work space
 rm(list = ls())
@@ -23,28 +22,11 @@ library(cobalt)
 load("data/processed/midus_proc_data.RData")
 
 
+# --------------------------------------------------------
+# 1) Unconditional LGM without covariates or predictors
+# --------------------------------------------------------
 
-
-# -------------------------------
-# 2) Latent growth models (LGMs)
-# -------------------------------
-
-# Variable transformations
-
-### center age variable
-data$A1PAGE_M2.c <- scale(data$A1PAGE_M2, center = T, scale = F) # center age variable
-
-### recode factors because lavaan doesn't like factors
-data$A1PRSEX.n   <- as.integer(as.character(data$A1PRSEX))
-data$A1SS7.n     <- as.integer(as.character(data$A1SS7))  # ethnicity
-data$A1PB1.n     <- as.integer(as.character(data$A1PB1))  # education
-data$A1SA9S.n    <- as.integer(as.character(data$A1SA9S)) # hypertension
-data$A1SA9X.n    <- as.integer(as.character(data$A1SA9X)) # diabetes
-data$A1PA43.n    <- as.integer(as.character(data$A1PA43)) # smoking
-#data$A1SA10A.n   <- as.integer(as.character(data$A1SA10A)) # hypertension medication
-
-# 2.a) Unconditional growth model with covariates (no predictors)
-
+# define model
 m.uc <- '
 
 # measurement models with constrained factor loadings
@@ -125,12 +107,18 @@ i ~ 0*1
 s ~ 1
 '
 
-fit.uc <- sem(m.uc, data = data, missing='fiml')
-summary(fit.uc,  fit.measures=T, standardized = T)
+# fit model
+fit.uc <- sem(m.uc, data = data, missing = 'fiml')
+
+# fit results
+summary(fit.uc,  fit.measures = T, standardized = T)
 
 
-# 2.b) Conditional LGM with covariates (no predictors)
+# --------------------------------------------------------
+# 2) Conditional LGM with covariates (but no predictors)
+# --------------------------------------------------------
 
+# define model
 m.cov <- '
 
 # measurement models with constrained factor loadings
@@ -212,17 +200,25 @@ s ~ 1
 
 # regressions
 i ~ A1PAGE_M2.c + A1PRSEX.n + A1SS7.n + A1PB1.n 
-s ~ A1PAGE_M2.c + A1PRSEX.n + A1SS7.n + A1PB1.n '
+s ~ A1PAGE_M2.c + A1PRSEX.n + A1SS7.n + A1PB1.n 
+'
 
-fit.cov <- sem(m.cov, data = data, missing='fiml')
-summary(fit.cov,  fit.measures=T, standardized = T)
+# fit model 
+fit.cov <- sem(m.cov, data = data, missing = 'fiml')
+
+# fit results
+summary(fit.cov,  fit.measures = T, standardized = T)
 
 
-# 2.c) Conditional LGMs with VRFs as preditors 
+# ----------------------------------------------------------
+# 3) Conditional LGMs with single vascular risk factors 
+# ----------------------------------------------------------
 
-### The following model is an extension of the previous model with one additional predictor (pred), 
-### In the modelpred is used as a place holder to subsequently introduce VRFs in the model.
+# The following model is an extension of the previous model with one additional predictor ("pred"). 
+# It is coded as a generic model. That is "pred" is used as a place holder for vascular risk factors
+# that will be introduced successively.
 
+# define generic model
 m.pred <- '
 
 # measurement models with constrained factor loadings
@@ -301,46 +297,70 @@ W3_DEP ~ 0*1
 
 # regressions
 i ~ A1PAGE_M2.c + A1PRSEX.n + A1SS7.n + A1PB1.n + pred
-s ~ A1PAGE_M2.c + A1PRSEX.n + A1SS7.n + A1PB1.n + pred'
+s ~ A1PAGE_M2.c + A1PRSEX.n + A1SS7.n + A1PB1.n + pred
+'
 
 
-### Hpertension  
+# 3.1) Hypertension
+# set hypertension variable for placeholder
+data$pred <- data$A1SA9S.n 
 
-data$pred <- data$A1SA9S.n # set hypertension for placeholder
-fit.hyp   <- sem(m.pred, data = data, missing='fiml')
+# fit model
+fit.hyp   <- sem(m.pred, data = data, missing = 'fiml')
+
+# fit results
 summary(fit.hyp,  fit.measures = T, standardized = T)
 
 
-### Smoking 
+# 3.2) Smoking  
+# set smoking for placeholder
+data$pred <- data$A1PA43.n 
 
-data$pred <- data$A1PA43.n # set smoking for placeholder
-fit.smo   <- sem(m.pred, data = data, missing='fiml')
+# fit model
+fit.smo   <- sem(m.pred, data = data, missing = 'fiml')
+
+# fit results
 summary(fit.smo,  fit.measures = T, standardized = T)
 
 
-### BMI 
+# 3.3) BMI 
+# set BMI for placeholder
+data$pred <- data$A1SBMI 
 
-data$pred <- data$A1SBMI # set BMI for placeholder
-fit.bmi   <- sem(m.pred, data = data, missing='fiml')
+# fit model
+fit.bmi   <- sem(m.pred, data = data, missing = 'fiml')
+
+# fit results
 summary(fit.bmi,  fit.measures = T, standardized = T)
 
 
-### Diabetes
+# 3.4) Diabetes
+# set diabetes for placeholder
+data$pred <- data$A1SA9X.n 
 
-data$pred <- data$A1SA9X.n # set diabetes for placeholder
-fit.dia <- sem(m.pred, data = data, missing='fiml')
+# fit model
+fit.dia <- sem(m.pred, data = data, missing = 'fiml')
+
+# fit results
 summary(fit.dia,  fit.measures = T, standardized = T)
 
 
-### Multiple risk factors 
+# 3.9) Multiple risk factors (accumulated)
+# set number of risk factors for placeholder
+data$pred <- data$n_rf 
 
-data$pred <- data$n_rf # set accumulated for placeholder
-fit.mul   <- sem(m.pred, data = data, missing='fiml')
+# fit model
+fit.mul   <- sem(m.pred, data = data, missing = 'fiml')
+
+# fit results
 summary(fit.mul,  fit.measures = T, standardized = T)
 
 
-### All risk factors simultaneously
+# ----------------------------------------------------------
+# 4) Conditional LGM with all risk factors simultaneously
+# ----------------------------------------------------------
 
+# define model
 m.all <- '
 
 # measurement models with constrained factor loadings
@@ -419,20 +439,24 @@ W3_DEP ~ 0*1
 
 # regressions
 i ~ A1PAGE_M2.c + A1PRSEX.n + A1SS7.n + A1PB1.n + A1PA43.n + A1SA9S.n + A1SBMI + A1SA9X.n
-s ~ A1PAGE_M2.c + A1PRSEX.n + A1SS7.n + A1PB1.n + A1PA43.n + A1SA9S.n + A1SBMI + A1SA9X.n'
+s ~ A1PAGE_M2.c + A1PRSEX.n + A1SS7.n + A1PB1.n + A1PA43.n + A1SA9S.n + A1SBMI + A1SA9X.n
+'
 
-fit.all <- sem(m.all, data = data, missing='fiml')
+# fit model
+fit.all <- sem(m.all, data = data, missing = 'fiml')
+
+# fit results
 summary(fit.all,  fit.measures = T, standardized = T)
 
 
 
-# --------------
-# plots LGMs
-# --------------
+# --------------------
+# 5) Create figures
+# --------------------
 
-# Figure 2: single risk factors
+# 5.1) Figure 2 A-D: Single risk factors
 
-### code function to extract parameters for each risk factor from the simple and the full model
+# create get_parameters() function to extract parameters from the simple and the full model
 get_parameters <- function(fit.simple, i.simple, s.simple, i.all, s.all){
   beta         <- standardizedSolution(fit.simple)$est.std[c(i.simple, s.simple)]
   ci.l         <- standardizedSolution(fit.simple)$ci.lower[c(i.simple, s.simple)]
@@ -450,7 +474,8 @@ get_parameters <- function(fit.simple, i.simple, s.simple, i.all, s.all){
   return(coeff)
 }
 
-### create plotting function
+# create get_plot() function to plot models with both model results
+# note that plot is automatically saved using ggsave 
 get_plot <- function(coeffs, title) {
   ggplot(coeffs, aes(x = parameter, y = beta, ymin = ci.l, ymax = ci.u)) +
     geom_hline(yintercept = 0, linetype = "dashed", size = 0.4) +    
@@ -471,29 +496,27 @@ get_plot <- function(coeffs, title) {
   ggsave(paste("output/", title, ".pdf", sep = ""), width = 4, height = 4)
 }
 
-### now make and save plots for risk factors
-
-### Hypertension
+# now create and save plots using functions
+# hypertension
 coeff.hyp <- get_parameters(fit.simple = fit.hyp, i.simple = 79, s.simple = 84, i.all = 80, s.all = 88)
 get_plot(coeffs = coeff.hyp, title = "Hypertension")
 
-### Smoking
+# smoking
 coeff.smo <- get_parameters(fit.simple = fit.smo, i.simple = 79, s.simple = 84, i.all = 79, s.all = 87)
 get_plot(coeffs = coeff.smo, title = "Current smoking") # A1PA43.n
 
-### BMI
+# bmi
 coeff.bmi <- get_parameters(fit.simple = fit.bmi, i.simple = 79, s.simple = 84, i.all = 81, s.all = 89)
 get_plot(coeffs = coeff.bmi, title = "Body mass index")
 
-### Diabetes
+# diabetes
 coeff.dia <- get_parameters(fit.simple = fit.dia, i.simple = 79, s.simple = 84, i.all = 82, s.all = 90)
 get_plot(coeffs = coeff.dia, title = "Diabetes") # A1SA9X.n
 
 
+# 5.2) Figure 2 E: Multiple risk factors 
 
-# Figure 2: multiple risk factors 
-
-### code function to extract parameters for risk factor from the simple model
+# create get_parameters_s() function to extract parameters from the simple model
 get_parameters_s  <- function(fit.simple, i.simple, s.simple, i.all, s.all){
   beta            <- standardizedSolution(fit.simple)$est.std[c(i.simple, s.simple)]
   ci.l            <- standardizedSolution(fit.simple)$ci.lower[c(i.simple, s.simple)]
@@ -503,7 +526,8 @@ get_parameters_s  <- function(fit.simple, i.simple, s.simple, i.all, s.all){
   return(coeff.simple)
 }
 
-# plot function with only simple model results
+# create get_plot_s() function to plot models with one model result
+# note that plot is automatically saved using ggsave 
 get_plot_s <- function(coeffs, title) {
   ggplot(coeffs, aes(x = parameter, y = beta, ymin = ci.l, ymax = ci.u)) +
     geom_hline(yintercept = 0, linetype = "dashed", size = 0.4) +
@@ -520,8 +544,6 @@ get_plot_s <- function(coeffs, title) {
   ggsave(paste("output/", title, ".pdf", sep = ""), dpi = 600, width = 4, height = 4)
 }
 
-### now make and save plot 
-
-### Multiple risk factors
+# now create and save plot using functions
 coeff.mul <- get_parameters_s(fit.simple = fit.mul, i.simple = 79, s.simple = 84)
 get_plot_s(coeffs = coeff.mul, title = "Multiple risk factors")

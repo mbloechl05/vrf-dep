@@ -1,5 +1,5 @@
 # ===============================================================
-# ELSA: Fit growth models
+# ELSA: Fitting latent growth models (LGMs)
 # (contact maria.bloechl@gmail.com in case of questions)
 # ==============================================================
 
@@ -338,8 +338,10 @@ summary(fit.cov,  fit.measures = T, standardized = T)
 # ----------------------------------------------------------
 # 3) Conditional LGMs with single vascular risk factors 
 # ----------------------------------------------------------
-# The following model is a generic model, in which "pred" is used as a place holder for predictors 
-# (i.e. vascular risk factors) that will be introduced before fitting the model.
+
+# The following model is an extension of the previous model with one additional predictor ("pred"). 
+# It is coded as a generic model. That is "pred" is used as a place holder for vascular risk factors
+# that will be introduced successively.
 
 # define generic model
 m.pred <- '
@@ -553,7 +555,10 @@ summary(fit.bmi,  fit.measures = T, standardized = T) # results
 
 
 # 3.4) Diabetes
-data$pred <- data$diab # set diabetes for placeholder
+# set diabetes for placeholder
+data$pred <- data$diab 
+
+# fit model
 fit.dia <- sem(m.pred, data = data, ordered = c("w2_psceda","w2_pscedb","w2_pscedd",
                                                 "w2_pscede","w2_pscedg", 
                                                 "w3_psceda","w3_pscedb","w3_pscedd",
@@ -598,7 +603,7 @@ fit.sbp <- sem(m.pred, data = data,
 summary(fit.sbp,  fit.measures = T, standardized = T)
 
 
-# 3.6) Total chlesterol
+# 3.6) Total chlesterol (Supplementary)
 # set cholesterol for placeholder
 data$pred <- data$w2_chol_f 
 
@@ -622,7 +627,7 @@ fit.cho <- sem(m.pred, data = data, ordered = c("w2_psceda","w2_pscedb","w2_psce
 summary(fit.cho,  fit.measures = T, standardized = T)
 
 
-# 3.7) HDL cholesterol
+# 3.7) HDL cholesterol (Supplementary)
 # set hdl cholesterol for placeholder
 data$pred <- data$w2_hdl_f 
 
@@ -646,7 +651,7 @@ fit.hdl <- sem(m.pred,data = data, ordered = c("w2_psceda","w2_pscedb","w2_psced
 summary(fit.hdl,  fit.measures = T, standardized = T)
 
 
-# 3.8) LDL cholesterol
+# 3.8) LDL cholesterol (Supplementary)
 # set ldl cholesterol for placeholder
 data$pred <- data$w2_ldl_f 
 
@@ -857,10 +862,10 @@ summary(fit.all,  fit.measures = T, standardized = T)
 
 
 # --------------------
-# 5. Create figures
+# 5) Create figures
 # --------------------
 
-# 5.1) Figure 2: Single risk factors
+# 5.1) Figure 2 F-I: Single risk factors
 
 # create get_parameters() function to extract parameters from the simple and the full model
 get_parameters <- function(fit.simple, i.simple, s.simple, i.all, s.all){
@@ -904,20 +909,24 @@ get_plot <- function(coeffs, title) {
 
 
 # now create and save plots using functions
+# hypertension
 coeff.hyp <- get_parameters(fit.simple = fit.hyp, i.simple = 193, s.simple = 198, i.all = 193, s.all = 201)
 get_plot(coeffs = coeff.hyp, title = "Hypertension")
 
+# smoking
 coeff.smo <- get_parameters(fit.simple = fit.smo, i.simple = 193, s.simple = 198, i.all = 194, s.all = 202)
 get_plot(coeffs = coeff.smo, title = "Current smoking") 
 
+# bmi
 coeff.bmi <- get_parameters(fit.simple = fit.bmi, i.simple = 193, s.simple = 198, i.all = 195, s.all = 203)
 get_plot(coeffs = coeff.bmi, title = "Body mass index")
 
+# diabetes
 coeff.dia <- get_parameters(fit.simple = fit.dia, i.simple = 193, s.simple = 198, i.all = 196, s.all = 204)
 get_plot(coeffs = coeff.dia, title = "Diabetes") 
 
 
-# 5.2) Figure 3: Multiple risk factors 
+# 5.2) Figure 2J: Multiple risk factors 
 
 # create get_parameters_s() function to extract parameters from the simple model
 get_parameters_s  <- function(fit.simple, i.simple, s.simple, i.all, s.all){
@@ -953,7 +962,7 @@ coeff.mul <- get_parameters_s(fit.simple = fit.mul, i.simple = 193, s.simple = 1
 get_plot_s(coeffs = coeff.mul, title = "")
 
 
-# 5.3) Supplementary: additional figures for ELSA only
+# 5.3) Supplementary: Figure S1 (additionally for ELSA)
 
 # systolic blood pressure
 coeff.sbp <- get_parameters_s(fit.simple = fit.sbp, i.simple = 193, s.simple = 198)

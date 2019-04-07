@@ -79,6 +79,10 @@ data = merge(data,    wave3_s, all = T, by = "M2ID", sort = T )
 # 2) Recode variables
 # ------------------------
 
+# 2.1) Age
+# center age variable for analyses
+data$A1PAGE_M2.c <- scale(data$A1PAGE_M2, center = T, scale = F) 
+
 # 2.1) Sex
 # recode to dummy (0 = female, 1 = male)
 data$A1PRSEX  <- recode_factor(data$A1PRSEX, `(1) MALE` = 1, `(2) FEMALE` = 0)
