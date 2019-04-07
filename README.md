@@ -4,8 +4,8 @@ This gitLab-repro contains analysis codes for the project 'Vascular risk factors
 
 Two datasets were analysed: 
 
-1. ELSA: English Longitudinal Study of Ageing, and
-2. MIDUS: Midlife in the United States
+1. The English Longitudinal Study of Ageing (ELSA), and
+2. Midlife in the United States (MIDUS)
 
 For each dataset, the analysis code is split into different subscripts:
 
