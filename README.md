@@ -1,4 +1,4 @@
-# Analyses: Vascular risk factors and depressed mood
+# Vascular risk factors and depressed mood
 
 This git-lab-repro contains analysis codes for the project 'Vascular risk factors and the long-term course of depressed mood'. 
 
