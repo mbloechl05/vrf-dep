@@ -23,7 +23,7 @@ load("data/processed/elsa_proc_data.RData")
 psych::describe(data[,c("w2_dhager", "w2_bmival", "w2_meansys", "w2_chol_f", "w2_hdl_f", "w2_ldl_f",  
                         "w2_DhSex", "w2_fqethnr", "w0_educ", "hyp", "diab", "w2_HESka", "n_rf")]) 
 
-# descriptive stats for binary variables
+# descriptive stats for dichotomous variables
 tables <- lapply(data[,c("w2_DhSex", "w2_fqethnr", "w0_educ", "hyp", "diab", "w2_HESka", "n_rf")], table)
 tables # absolute frequencies
 lapply(tables, prop.table) # relative frequencies
