@@ -17,22 +17,22 @@ library(lavaan)     # for cfa models
 # ----------------------------------------------------
 
 # load raw data from wave 0 (for basic demographic information)
-wave01 <- read.table("data/raw/tab/wave_0_1998_data.tab", sep = "\t", header = T)
-wave02 <- read.table("data/raw/tab/wave_0_1999_data.tab", sep = "\t", header = T)
-wave03 <- read.table("data/raw/tab/wave_0_2001_data.tab", sep = "\t", header = T)
+wave01 <- read.table("data/elsa/raw/tab/wave_0_1998_data.tab", sep = "\t", header = T)
+wave02 <- read.table("data/elsa/raw/tab/wave_0_1999_data.tab", sep = "\t", header = T)
+wave03 <- read.table("data/elsa/raw/tab/wave_0_2001_data.tab", sep = "\t", header = T)
 
 # combine data from wave 0 
 wave0 <- rbind.fill(wave01, wave02, wave03)
 rm(list = c("wave01", "wave02", "wave03"))
 
 # load data from all other waves (starting from wave 2)
-wave2  <- read.table("data/raw/tab/wave_2_core_data_v4.tab",      sep = "\t", header = T)
-wave2n <- read.table("data/raw/tab/wave_2_nurse_data_v2.tab",     sep = "\t", header = T) # nurse data
-wave3  <- read.table("data/raw/tab/wave_3_elsa_data_v4.tab",      sep = "\t", header = T, fill = T) 
-wave4  <- read.table("data/raw/tab/wave_4_elsa_data_v3.tab",      sep = "\t", header = T)
-wave5  <- read.table("data/raw/tab/wave_5_elsa_data_v4.tab",      sep = "\t", header = T)
-wave6  <- read.table("data/raw/tab/wave_6_elsa_data_v2.tab",      sep = "\t", header = T)
-wave7  <- read.table("data/raw/tab/wave_7_elsa_data.tab"   ,      sep = "\t", header = T)
+wave2  <- read.table("data/elsa/raw/tab/wave_2_core_data_v4.tab",  sep = "\t", header = T)
+wave2n <- read.table("data/elsa/raw/tab/wave_2_nurse_data_v2.tab", sep = "\t", header = T) # nurse data
+wave3  <- read.table("data/elsa/raw/tab/wave_3_elsa_data_v4.tab",  sep = "\t", header = T, fill = T) 
+wave4  <- read.table("data/elsa/raw/tab/wave_4_elsa_data_v3.tab",  sep = "\t", header = T)
+wave5  <- read.table("data/elsa/raw/tab/wave_5_elsa_data_v4.tab",  sep = "\t", header = T)
+wave6  <- read.table("data/elsa/raw/tab/wave_6_elsa_data_v2.tab",  sep = "\t", header = T)
+wave7  <- read.table("data/elsa/raw/tab/wave_7_elsa_data.tab"   ,  sep = "\t", header = T)
 
 # select relevant variables from waves (see codebook for explanations)
 wave0_s  <- wave0[,c("idauniq", "ager", "educend", "topqual2", "topqual3")]
@@ -254,5 +254,5 @@ psych::alpha(depr.items.6) # wave 6
 # 4) Save preprocessed data
 # ---------------------------
 
-save(data, file = "data/processed/elsa_proc_data.RData")
+save(data, file = "data/elsa/processed/elsa_proc_data.RData")
 

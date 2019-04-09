@@ -19,7 +19,7 @@ library(DescTools)
 library(cobalt)
 
 # load preprocessed data 
-load("data/processed/midus_proc_data.RData")
+load("data/midus/processed/midus_proc_data.RData")
 
 
 # --------------------------------------------------------
@@ -492,7 +492,7 @@ get_plot <- function(coeffs, title) {
                        name="",
                        breaks=c("1", "2"),
                        labels=c("One predictor", "All predictors"))
-  ggsave(paste("output/", title, ".pdf", sep = ""), width = 4, height = 4)
+  ggsave(paste("output/midus/", title, ".pdf", sep = ""), width = 4, height = 4)
 }
 
 # now create and save plots using functions
@@ -540,7 +540,7 @@ get_plot_s <- function(coeffs, title) {
           axis.title = element_text(colour = "black", size = 15, face = "bold"), 
           plot.title = element_text(hjust = 0.5, face = "bold"), 
           legend.position = "none")
-  ggsave(paste("output/", title, ".pdf", sep = ""), dpi = 600, width = 4, height = 4)
+  ggsave(paste("output/midus", title, ".pdf", sep = ""), dpi = 600, width = 4, height = 4)
 }
 
 # now create and save plot using functions

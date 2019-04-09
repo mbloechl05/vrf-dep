@@ -12,7 +12,7 @@ library(Hmisc)
 library(dplyr)
 
 # load preprocessed data 
-load("data/processed/elsa_proc_data.RData")
+load("data/elsa/processed/elsa_proc_data.RData")
 
 
 # ---------------------------

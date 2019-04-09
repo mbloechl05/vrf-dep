@@ -10,7 +10,7 @@ rm(list = ls())
 library(lavaan)
 
 # Load pre-processed data
-load("data/processed/elsa_proc_data.RData")
+load("data/elsa/processed/elsa_proc_data.RData")
 
 # All the following models are defined accoriding to Liu et al., Psych Methods, 2017
 

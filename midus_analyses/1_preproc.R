@@ -17,9 +17,9 @@ library(psych)
 # ----------------------------------------------------
 
 # load raw data all waves
-load("data/raw/02760-0001-Data.rda") # wave 1
-load("data/raw/04652-0001-Data.rda") # wave 2
-load("data/raw/36346-0001-Data.rda") # wave 3
+load("data/midus/raw/02760-0001-Data.rda") # wave 1
+load("data/midus/raw/04652-0001-Data.rda") # wave 2
+load("data/midus/raw/36346-0001-Data.rda") # wave 3
 
 
 # select only relevant varibales from waves (see codebook for explanations)
@@ -189,5 +189,5 @@ psych::alpha(depr.items.3) # wave 3
 # 4) Save preprocessed data
 # ----------------------------
 
-save(data, wave1_s, wave2_s, wave3_s, file = "data/processed/midus_proc_data.RData")
+save(data, wave1_s, wave2_s, wave3_s, file = "data/midus/processed/midus_proc_data.RData")
 

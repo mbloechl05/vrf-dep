@@ -13,7 +13,7 @@ library(VennDiagram)
 library(ggplot2)
 
 # load preprocessed data 
-load("data/processed/midus_proc_data.RData")
+load("data/midus/processed/midus_proc_data.RData")
 
 
 # ---------------------------

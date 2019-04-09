@@ -12,7 +12,7 @@ library(semTools)
 library(ggplot2)
 
 # Load pre-processed data
-load("data/processed/elsa_proc_data.RData")
+load("data/elsa/processed/elsa_proc_data.RData")
 
 
 # --------------------------------------------------------
@@ -904,7 +904,7 @@ get_plot <- function(coeffs, title) {
                        name="",
                        breaks=c("1", "2"),
                        labels=c("One predictor", "All predictors"))
-  ggsave(paste("output/", title, ".pdf", sep = ""), width = 4, height = 4)
+  ggsave(paste("output/elsa/", title, ".pdf", sep = ""), width = 4, height = 4)
 }
 
 
@@ -953,7 +953,7 @@ get_plot_s <- function(coeffs, title) {
           axis.title = element_text(colour = "black", size = 15, face = "bold"), 
           plot.title = element_text(hjust = 0.5, face = "bold"), 
           legend.position = "none")
-  ggsave(paste("output/", title, ".pdf", sep = ""), dpi = 600, width = 4, height = 4)
+  ggsave(paste("output/elsa/", title, ".pdf", sep = ""), dpi = 600, width = 4, height = 4)
 }
 
 
