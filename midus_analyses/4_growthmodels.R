@@ -1,7 +1,7 @@
-## ===============================================================
-## MIDUS: Fitting latent growth models (LGMs)
-## (contact maria.bloechl@gmail.com in case of questions)
-## ==============================================================
+# ===============================================================
+# MIDUS: Fitting latent growth models (LGMs)
+# (contact maria.bloechl@gmail.com in case of questions)
+# ==============================================================
 
 # clean work space
 rm(list = ls())
