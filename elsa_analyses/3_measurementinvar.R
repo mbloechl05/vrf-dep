@@ -465,7 +465,7 @@ summary(fit.strict, fit.measures = T)
 # -------------------------
 
 # fit measures for each model
-fitMeasures(fit.baseline, c("rmsea.scaled", "cfi.scaled", "srmr.scaled"))
+fitMeasures(fit.baseline, c("rmsea.robust", "cfi.scaled", "srmr.scaled"))
 fitMeasures(fit.weak,     c("rmsea.scaled", "cfi.scaled", "srmr.scaled"))
 fitMeasures(fit.strict,   c("rmsea.scaled", "cfi.scaled", "srmr.scaled"))
 
