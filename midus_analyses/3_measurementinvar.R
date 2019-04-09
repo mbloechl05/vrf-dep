@@ -7,16 +7,7 @@
 rm(list = ls())
 
 # load packages 
-library(lme4)
-library(lmerTest)
 library(lavaan)
-library(semTools)
-library(psych)
-library(ggplot2)
-library(dplyr)
-library(plyr)
-library(DescTools)
-library(cobalt)
 
 # load preprocessed data 
 load("data/midus/processed/midus_proc_data.RData")
