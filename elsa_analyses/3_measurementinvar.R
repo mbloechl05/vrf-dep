@@ -465,9 +465,9 @@ summary(fit.strict, fit.measures = T)
 # -------------------------
 
 # fit measures for each model
-fitMeasures(fit.baseline, c("rmsea", "cfi", "srmr"))
-fitMeasures(fit.weak,     c("rmsea", "cfi", "srmr"))
-fitMeasures(fit.strict,   c("rmsea", "cfi", "srmr"))
+fitMeasures(fit.baseline, c("rmsea.scaled", "cfi.scaled", "srmr.scaled"))
+fitMeasures(fit.weak,     c("rmsea.scaled", "cfi.scaled", "srmr.scaled"))
+fitMeasures(fit.strict,   c("rmsea.scaled", "cfi.scaled", "srmr.scaled"))
 
 # model comparison
 anova(fit.baseline, fit.weak, fit.strict)
