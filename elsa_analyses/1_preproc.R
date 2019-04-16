@@ -249,6 +249,13 @@ psych::alpha(depr.items.4) # wave 4
 psych::alpha(depr.items.5) # wave 5
 psych::alpha(depr.items.6) # wave 6
 
+# 3.3) Calculate means (i.e. proportion of yes answers) for descriptive stats
+data$w2_deprmean <- rowMeans(depr.items.2)
+data$w3_deprmean <- rowMeans(depr.items.3)
+data$w4_deprmean <- rowMeans(depr.items.4)
+data$w5_deprmean <- rowMeans(depr.items.5)
+data$w6_deprmean <- rowMeans(depr.items.6)
+
 
 # ---------------------------
 # 4) Save preprocessed data

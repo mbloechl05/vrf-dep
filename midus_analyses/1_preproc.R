@@ -184,6 +184,11 @@ psych::alpha(depr.items.1) # wave 1
 psych::alpha(depr.items.2) # wave 2
 psych::alpha(depr.items.3) # wave 3
 
+# 3.3) Calculate means for descriptive stats
+data$w1_deprmean <- rowMeans(depr.items.1)
+data$w2_deprmean <- rowMeans(depr.items.2)
+data$w3_deprmean <- rowMeans(depr.items.3)
+
 
 # ----------------------------
 # 4) Save preprocessed data

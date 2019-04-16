@@ -35,7 +35,8 @@ lapply(tables, prop.table)
 # -------------------------------------------------
 
 # select variables for corr matrix
-vars <- data[,c("A1PAGE_M2", "A1PRSEX", "A1SS7",  "A1PB1", "A1SA9S", "A1SBMI", "A1SA9X", "A1PA43")]  
+vars <- data[,c("A1PAGE_M2", "A1PRSEX", "A1SS7",  "A1PB1", "A1SA9S", "A1SBMI", "A1SA9X", "A1PA43", 
+                "w1_deprmean", "w2_deprmean", "w3_deprmean")]  
 
 # create corr matrix (rounded to 2 dec places)
 rcorr(as.matrix(vars))
