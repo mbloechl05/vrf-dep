@@ -233,6 +233,7 @@ data$w3_pscedd_r <- 1 - data$w3_pscedd
 data$w4_pscedd_r <- 1 - data$w4_pscedd
 data$w5_pscedd_r <- 1 - data$w5_pscedd
 data$w6_pscedd_r <- 1 - data$w6_pscedd
+data$w7_pscedd_r <- 1 - data$w7_pscedd
 
 # select items CES-D items for each wave 
 depr.items.2 <- data[,c("w2_psceda", "w2_pscedb", "w2_pscedd_r", "w2_pscede", "w2_pscedg")] # wave 2
@@ -240,6 +241,7 @@ depr.items.3 <- data[,c("w3_psceda", "w3_pscedb", "w3_pscedd_r", "w3_pscede", "w
 depr.items.4 <- data[,c("w4_psceda", "w4_pscedb", "w4_pscedd_r", "w4_pscede", "w4_pscedg")] # wave 4
 depr.items.5 <- data[,c("w5_psceda", "w5_pscedb", "w5_pscedd_r", "w5_pscede", "w5_pscedg")] # wave 5
 depr.items.6 <- data[,c("w6_psceda", "w6_pscedb", "w6_pscedd_r", "w6_pscede", "w6_pscedg")] # wave 6
+depr.items.7 <- data[,c("w7_psceda", "w7_pscedb", "w7_pscedd_r", "w7_pscede", "w7_pscedg")] # wave 7
 
 # calculate Cronbach's alpha 
 # note: reduces to Kuder-Richardson formula for dichotomous items (implemented in alpha())
@@ -248,6 +250,7 @@ psych::alpha(depr.items.3) # wave 3
 psych::alpha(depr.items.4) # wave 4
 psych::alpha(depr.items.5) # wave 5
 psych::alpha(depr.items.6) # wave 6
+psych::alpha(depr.items.7) # wave 7
 
 # 3.3) Calculate means (i.e. proportion of yes answers) for descriptive stats
 data$w2_deprmean <- rowMeans(depr.items.2)
@@ -255,6 +258,7 @@ data$w3_deprmean <- rowMeans(depr.items.3)
 data$w4_deprmean <- rowMeans(depr.items.4)
 data$w5_deprmean <- rowMeans(depr.items.5)
 data$w6_deprmean <- rowMeans(depr.items.6)
+data$w7_deprmean <- rowMeans(depr.items.7)
 
 
 # ---------------------------
