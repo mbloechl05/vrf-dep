@@ -71,10 +71,10 @@ B1SA24F ~~ C1SA20F
 '
 
 # fit model
-fit_weak <- cfa(model.weak, data = data, missing='fiml')
+fit_weak <- cfa(model.weak, data = data, missing = 'fiml')
 
 # fit results
-summary(fit_weak,  fit.measures=T) 
+summary(fit_weak,  fit.measures = T) 
 
 # ------------------------------------
 # 3) strong measurement invariance 

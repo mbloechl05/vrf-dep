@@ -31,12 +31,12 @@ W6_DEP =~ 1*w6_psceda + l1*w6_pscedb + l2*w6_pscedd + l3*w6_pscede + l4*w6_psced
 W7_DEP =~ 1*w7_psceda + l1*w7_pscedb + l2*w7_pscedd + l3*w7_pscede + l4*w7_pscedg
 
 # define tresholds
-w2_psceda | a*t1
-w3_psceda | a*t1
-w4_psceda | a*t1
-w5_psceda | a*t1
-w6_psceda | a*t1
-w7_psceda | a*t1
+w2_psceda | 0*t1
+w3_psceda | 0*t1
+w4_psceda | 0*t1
+w5_psceda | 0*t1
+w6_psceda | 0*t1
+w7_psceda | 0*t1
 
 w2_pscedb | b*t1
 w3_pscedb | b*t1
@@ -145,11 +145,13 @@ w6_pscedg ~~ w7_pscedg
 i =~ 1*W2_DEP + 1*W3_DEP + 1*W4_DEP + 1*W5_DEP + 1*W6_DEP + 1*W7_DEP
 s =~ 0*W2_DEP + 1*W3_DEP + 2*W4_DEP + 3*W5_DEP + 4*W6_DEP + 5*W7_DEP
 
+# intercept and slope variances and covariance
 i ~~ i
 s ~~ s
 i ~~ s
 
-i ~ 0*1
+# intercept and slope means
+i ~ 1
 s ~ 1
 '
 
@@ -189,12 +191,12 @@ W6_DEP =~ 1*w6_psceda + l1*w6_pscedb + l2*w6_pscedd + l3*w6_pscede + l4*w6_psced
 W7_DEP =~ 1*w7_psceda + l1*w7_pscedb + l2*w7_pscedd + l3*w7_pscede + l4*w7_pscedg
 
 # define tresholds
-w2_psceda | a*t1
-w3_psceda | a*t1
-w4_psceda | a*t1
-w5_psceda | a*t1
-w6_psceda | a*t1
-w7_psceda | a*t1
+w2_psceda | 0*t1
+w3_psceda | 0*t1
+w4_psceda | 0*t1
+w5_psceda | 0*t1
+w6_psceda | 0*t1
+w7_psceda | 0*t1
 
 w2_pscedb | b*t1
 w3_pscedb | b*t1
@@ -303,11 +305,13 @@ w6_pscedg ~~ w7_pscedg
 i =~ 1*W2_DEP + 1*W3_DEP + 1*W4_DEP + 1*W5_DEP + 1*W6_DEP + 1*W7_DEP
 s =~ 0*W2_DEP + 1*W3_DEP + 2*W4_DEP + 3*W5_DEP + 4*W6_DEP + 5*W7_DEP
 
+# intercept and slope variances and covariance
 i ~~ i
 s ~~ s
 i ~~ s
 
-i ~ 0*1
+# intercept and slope means
+i ~ 1
 s ~ 1
 
 # regressions
@@ -355,12 +359,12 @@ W6_DEP =~ 1*w6_psceda + l1*w6_pscedb + l2*w6_pscedd + l3*w6_pscede + l4*w6_psced
 W7_DEP =~ 1*w7_psceda + l1*w7_pscedb + l2*w7_pscedd + l3*w7_pscede + l4*w7_pscedg
 
 # define tresholds
-w2_psceda | a*t1
-w3_psceda | a*t1
-w4_psceda | a*t1
-w5_psceda | a*t1
-w6_psceda | a*t1
-w7_psceda | a*t1
+w2_psceda | 0*t1
+w3_psceda | 0*t1
+w4_psceda | 0*t1
+w5_psceda | 0*t1
+w6_psceda | 0*t1
+w7_psceda | 0*t1
 
 w2_pscedb | b*t1
 w3_pscedb | b*t1
@@ -469,11 +473,13 @@ w6_pscedg ~~ w7_pscedg
 i =~ 1*W2_DEP + 1*W3_DEP + 1*W4_DEP + 1*W5_DEP + 1*W6_DEP + 1*W7_DEP
 s =~ 0*W2_DEP + 1*W3_DEP + 2*W4_DEP + 3*W5_DEP + 4*W6_DEP + 5*W7_DEP
 
+# intercept and slope variances and covariance
 i ~~ i
 s ~~ s
 i ~~ s
 
-i ~ 0*1
+# intercept and slope means
+i ~ 1
 s ~ 1
 
 # regressions
@@ -715,12 +721,12 @@ W6_DEP =~ 1*w6_psceda + l1*w6_pscedb + l2*w6_pscedd + l3*w6_pscede + l4*w6_psced
 W7_DEP =~ 1*w7_psceda + l1*w7_pscedb + l2*w7_pscedd + l3*w7_pscede + l4*w7_pscedg
 
 # define tresholds
-w2_psceda | a*t1
-w3_psceda | a*t1
-w4_psceda | a*t1
-w5_psceda | a*t1
-w6_psceda | a*t1
-w7_psceda | a*t1
+w2_psceda | 0*t1
+w3_psceda | 0*t1
+w4_psceda | 0*t1
+w5_psceda | 0*t1
+w6_psceda | 0*t1
+w7_psceda | 0*t1
 
 w2_pscedb | b*t1
 w3_pscedb | b*t1
@@ -829,11 +835,13 @@ w6_pscedg ~~ w7_pscedg
 i =~ 1*W2_DEP + 1*W3_DEP + 1*W4_DEP + 1*W5_DEP + 1*W6_DEP + 1*W7_DEP
 s =~ 0*W2_DEP + 1*W3_DEP + 2*W4_DEP + 3*W5_DEP + 4*W6_DEP + 5*W7_DEP
 
+# intercept and slope variances and covariance
 i ~~ i
 s ~~ s
 i ~~ s
 
-i ~ 0*1
+# intercept and slope means
+i ~ 1
 s ~ 1
 
 # regressions
