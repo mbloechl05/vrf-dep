@@ -104,7 +104,7 @@ s ~ 1
 fit.uc <- sem(m.uc, data = data, missing = 'fiml')
 
 # fit results
-summary(fit.uc,  fit.measures = T, standardized = T)
+summary(fit.uc,  fit.measures = T, standardized = T, ci = T)
 
 
 # --------------------------------------------------------
@@ -200,7 +200,7 @@ s ~ A1PAGE_M2.c + A1PRSEX.n + A1SS7.n + A1PB1.n
 fit.cov <- sem(m.cov, data = data, missing = 'fiml')
 
 # fit results
-summary(fit.cov,  fit.measures = T, standardized = T)
+summary(fit.cov,  fit.measures = T, standardized = T, ci = T)
 
 
 # ----------------------------------------------------------
@@ -305,7 +305,7 @@ data$pred <- data$A1SA9S.n
 fit.hyp   <- sem(m.pred, data = data, missing = 'fiml')
 
 # fit results
-summary(fit.hyp,  fit.measures = T, standardized = T)
+summary(fit.hyp,  fit.measures = T, standardized = T, ci = T)
 
 
 # 3.2) Smoking  
@@ -316,7 +316,7 @@ data$pred <- data$A1PA43.n
 fit.smo   <- sem(m.pred, data = data, missing = 'fiml')
 
 # fit results
-summary(fit.smo,  fit.measures = T, standardized = T)
+summary(fit.smo,  fit.measures = T, standardized = T, ci = T)
 
 
 # 3.3) BMI 
@@ -327,7 +327,7 @@ data$pred <- data$A1SBMI
 fit.bmi   <- sem(m.pred, data = data, missing = 'fiml')
 
 # fit results
-summary(fit.bmi,  fit.measures = T, standardized = T)
+summary(fit.bmi,  fit.measures = T, standardized = T, ci = T)
 
 
 # 3.4) Diabetes
@@ -338,7 +338,7 @@ data$pred <- data$A1SA9X.n
 fit.dia <- sem(m.pred, data = data, missing = 'fiml')
 
 # fit results
-summary(fit.dia,  fit.measures = T, standardized = T)
+summary(fit.dia,  fit.measures = T, standardized = T, ci = T)
 
 
 # 3.9) Multiple risk factors (accumulated)
@@ -349,7 +349,7 @@ data$pred <- data$n_rf
 fit.mul   <- sem(m.pred, data = data, missing = 'fiml')
 
 # fit results
-summary(fit.mul,  fit.measures = T, standardized = T)
+summary(fit.mul,  fit.measures = T, standardized = T, ci = T)
 
 
 # ----------------------------------------------------------
@@ -445,7 +445,7 @@ s ~ A1PAGE_M2.c + A1PRSEX.n + A1SS7.n + A1PB1.n + A1PA43.n + A1SA9S.n + A1SBMI +
 fit.all <- sem(m.all, data = data, missing = 'fiml')
 
 # fit results
-summary(fit.all,  fit.measures = T, standardized = T)
+summary(fit.all,  fit.measures = T, standardized = T, ci = T)
 
 
 # --------------------

@@ -1,5 +1,5 @@
 # ===============================================================
-# MIDUS: Data analysis: Descriptive stats
+# MIDUS: Descriptive stats
 # (contact maria.bloechl@gmail.com in case of questions)
 # ==============================================================
 
@@ -7,10 +7,9 @@
 rm(list = ls()) 
 
 # load packages 
+library(psych)
 library(dplyr)
 library(Hmisc)
-library(VennDiagram)
-library(ggplot2)
 
 # load preprocessed data 
 load("data/midus/processed/midus_proc_data.RData")
