@@ -336,7 +336,7 @@ fit.cov <- sem(m.cov, data = data, ordered = c("w2_psceda","w2_pscedb","w2_psced
            parameterization = "theta" )
 
 # fit results
-summary(fit.cov,  fit.measures = T, standardized = T)
+summary(fit.cov,  fit.measures = T, standardized = T, ci = T)
 
 
 # ----------------------------------------------------------
@@ -509,7 +509,7 @@ fit.hyp <- sem(m.pred, data = data,
                parameterization = "theta")
 
 # fit results
-summary(fit.hyp,  fit.measures = T, standardized = T)
+summary(fit.hyp,  fit.measures = T, standardized = T, ci = T)
 
 
 # 3.2) Smoking  
@@ -533,7 +533,7 @@ fit.smo <- sem(m.pred, data = data, ordered = c("w2_psceda","w2_pscedb","w2_psce
                parameterization = "theta")
 
 # fit results
-summary(fit.smo,  fit.measures = T, standardized = T)
+summary(fit.smo,  fit.measures = T, standardized = T, ci = T)
 
 
 # 3.3) BMI 
@@ -557,7 +557,7 @@ fit.bmi <- sem(m.pred, data = data, ordered = c("w2_psceda","w2_pscedb","w2_psce
                parameterization = "theta")
 
 # fit results
-summary(fit.bmi,  fit.measures = T, standardized = T) # results
+summary(fit.bmi,  fit.measures = T, standardized = T, ci = T) 
 
 
 # 3.4) Diabetes
@@ -581,7 +581,7 @@ fit.dia <- sem(m.pred, data = data, ordered = c("w2_psceda","w2_pscedb","w2_psce
                parameterization = "theta")
 
 # fit results
-summary(fit.dia,  fit.measures = T, standardized = T)
+summary(fit.dia,  fit.measures = T, standardized = T, ci = T)
 
 
 # 3.5) Systolic blood pressure (Supplementary)
@@ -606,7 +606,7 @@ fit.sbp <- sem(m.pred, data = data,
                parameterization = "theta")
 
 # fit results
-summary(fit.sbp,  fit.measures = T, standardized = T)
+summary(fit.sbp,  fit.measures = T, standardized = T, ci = T)
 
 
 # 3.6) Total chlesterol (Supplementary)
@@ -630,7 +630,7 @@ fit.cho <- sem(m.pred, data = data, ordered = c("w2_psceda","w2_pscedb","w2_psce
                parameterization = "theta")
 
 # fit results
-summary(fit.cho,  fit.measures = T, standardized = T)
+summary(fit.cho,  fit.measures = T, standardized = T, ci = T)
 
 
 # 3.7) HDL cholesterol (Supplementary)
@@ -654,7 +654,7 @@ fit.hdl <- sem(m.pred,data = data, ordered = c("w2_psceda","w2_pscedb","w2_psced
                parameterization = "theta")
 
 # fit results
-summary(fit.hdl,  fit.measures = T, standardized = T)
+summary(fit.hdl,  fit.measures = T, standardized = T, ci = T)
 
 
 # 3.8) LDL cholesterol (Supplementary)
@@ -678,7 +678,7 @@ fit.ldl <- sem(m.pred,data = data, ordered = c("w2_psceda","w2_pscedb","w2_psced
                parameterization = "theta")
 
 # fit results
-summary(fit.ldl,  fit.measures = T, standardized = T)
+summary(fit.ldl,  fit.measures = T, standardized = T, ci = T)
 
 
 # 3.9) Multiple risk factors (accumulated)
@@ -702,7 +702,7 @@ fit.mul <- sem(m.pred,data = data, ordered = c("w2_psceda","w2_pscedb","w2_psced
                 parameterization = "theta")
 
 # fit results
-summary(fit.mul,  fit.measures=T, standardized = T)
+summary(fit.mul,  fit.measures = T, standardized = T, ci = T)
 
 
 # ----------------------------------------------------------
@@ -866,7 +866,7 @@ fit.all <- sem(m.all, data = data, ordered = c("w2_psceda","w2_pscedb","w2_psced
                parameterization = "theta")
 
 # fit results
-summary(fit.all,  fit.measures = T, standardized = T)
+summary(fit.all,  fit.measures = T, standardized = T, ci = T)
 
 
 # --------------------
