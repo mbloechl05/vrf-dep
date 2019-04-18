@@ -22,8 +22,8 @@ load("data/midus/raw/04652-0001-Data.rda") # wave 2
 load("data/midus/raw/36346-0001-Data.rda") # wave 3
 
 # select only relevant varibales from waves (see codebook for explanations)
-wave1_s <- da02760.0001[,c("M2ID", "A1PAGE_M2", "A1PRSEX", "A1SS7",  "A1PB1", "A1SA9X", "A1PA43", "A1SBMI", "A1SA9S", 
-                           "A1SA13A", "A1SA13B", "A1SA13C", "A1SA13D", "A1SA13E", "A1SA13F", "A1PA33", "A1SA10A","A1SA10K")]
+wave1_s <- da02760.0001[,c("M2ID", "A1PAGE_M2", "A1PRSEX", "A1SS7",  "A1PB1", "A1SA9X", "A1PA43", "A1SBMI", "A1SA9S", "A1SA13A", 
+                           "A1SA13B", "A1SA13C", "A1SA13D", "A1SA13E", "A1SA13F", "A1PA33", "A1SA10A","A1SA10K")]
 
 wave2_s <- da04652.0001[,c("M2ID", "B1PAGE_M2", "B1SA24A", "B1SA24B", "B1SA24C", "B1SA24D", "B1SA24E", "B1SA24F")]
 
@@ -81,15 +81,7 @@ data$A1PB1    <- ifelse(data$A1PB1 <= 5, 0, 1) # now indicates higher education 
 
 # 2.4) Dichotomous variables
 # recode all dichotomous variables to dummies (0 = no, 1 = yes)
-binary.vars <- data[,c("A1PA11BC", "A1SA9S", "A1SA9X", "A1PA40", "A1SA10A", "A1SA10C", "A1SA10K", 
-                       "A1PA33", "A1PA36", "A1PA43", "A1SA9Y", "A1SA9Z", 
-                       
-                       "B1PA6A", "B1PA8", "B1PA26", "B1PA6D", "B1SA11X", "B1SA11S", "B1SA12K", 
-                       "B1PA12", "B1SA12A", "B1PA39", "B1SA12C", "B1SA11Y", "B1SA11Z", "B1PA38A", 
-                       "B1PA7BC",
-                       
-                       "C1SA11X", "C1PA38A", "C1SA11Y", "C1PA6A", "C1SA11Z", "C1PA8", "C1PA26", "C1PA7BC", 
-                       "C1PA39")]
+binary.vars <- data[,c( "A1SA9S", "A1SA9X", "A1PA43")]
 
 for (i in names(binary.vars)) {
   data[[i]] <- recode_factor(data[[i]],`(1) YES` = 1, `(2) NO` = 0)}
