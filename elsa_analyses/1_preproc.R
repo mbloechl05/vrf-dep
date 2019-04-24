@@ -134,7 +134,8 @@ data$w2_dhager.c <- scale(data$w2_dhager, center = T, scale = F) # center age va
 # recode all dichotomous variables to dummies (0 = no, 1 = yes)
 for (i in names(data[,c(grep("psced", colnames(data)), 
                         grep("w2_DhSex", colnames(data)), # 0 = female (same as midus)
-                        grep("w2_HESka", colnames(data)) # current smoking
+                        grep("w2_HESka", colnames(data)), # current smoking
+                        grep("w2_Hemda", colnames(data)) 
                         )])) {
   data[[i]][data[[i]] == 2] <- 0}
 
