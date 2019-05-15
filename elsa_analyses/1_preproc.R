@@ -46,7 +46,7 @@ wave2_s  <- wave2[,c("idauniq", "DhSex",   "dhager", "fqethnr", "FqEnd", "hedia0
 
 wave2n_s <- wave2n[,c("idauniq", "w2wtnur", "w2wtbld", "confage", "bpconst", "bprespc", "bsoutc", 
                       "fasteli", "chol", "hdl", "ldl", "fglu", "bmi", "bmival", "whval", "sys1", 
-                      "sys2", "sys3")]
+                      "sys2", "sys3", "dias1", "dias2", "dias3")]
 
 wave3_s  <- wave3[,c("idauniq", "indager", "psceda", "pscedb", "pscedc", "pscedd", "pscede", "pscedf", 
                      "pscedg", "pscedh")]
@@ -193,15 +193,14 @@ data$w2_bmi.b <- ifelse(data$w2_bmi >=30,1,0)
 rf         <- data[,c("hyp","diab","w2_HESka", "w2_bmi.b")]
 data$n_rf  <- rowSums(rf)
 
-# 2.9) Systolic blood pressure
-# average all three systolic blood pressure values from wave 2 
-data$w2_meansys <- rowMeans(data[,c("w2_sys1", "w2_sys2", "w2_sys3")], na.rm = T)
+# 2.9) Systolic and diastolic blood pressure
+# average all three blood pressure values from wave 2 
+data$w2_meansys  <- rowMeans(data[,c("w2_sys1",  "w2_sys2",  "w2_sys3" )], na.rm = T)
+data$w2_meandias <- rowMeans(data[,c("w2_dias1", "w2_dias2", "w2_dias3")], na.rm = T)
 
-# 2.10) Cholesterol variables
-# for all cholesterol variables, only select participants with valid fasting blood samples 
-data$w2_chol_f <- ifelse(data$w2_fasteli == 2, NA, data$w2_chol) # total cholesterol
-data$w2_hdl_f  <- ifelse(data$w2_fasteli == 2, NA, data$w2_hdl ) # hdl cholesterol
-data$w2_ldl_f  <- ifelse(data$w2_fasteli == 2, NA, data$w2_ldl ) # ldl cholesterol
+# 2.10) Blood glucose variables
+# Only select participants with valid fasting blood samples 
+data$w2_fglu_f <- ifelse(data$w2_fasteli == 2, NA, data$w2_fglu) # total cholesterol
 
 
 # -----------------

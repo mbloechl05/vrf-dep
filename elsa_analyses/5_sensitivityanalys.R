@@ -4,7 +4,7 @@
 # ===============================================================
 
 # define generic model
-m.pred.interact <- '
+m.pred <- '
 
 # measurement models wit constrained factor loadings
 W2_DEP =~ 1*w2_psceda + l1*w2_pscedb + l2*w2_pscedd + l3*w2_pscede + l4*w2_pscedg
@@ -139,77 +139,47 @@ i ~ 1
 s ~ 1
 
 # regressions
-i ~ w2_dhager.c + w2_DhSex + w2_fqethnr + w0_educ + pred + interact
-s ~ w2_dhager.c + w2_DhSex + w2_fqethnr + w0_educ + pred + interact
+i ~ w2_dhager.c + w2_DhSex + w2_fqethnr + w0_educ + pred
+s ~ w2_dhager.c + w2_DhSex + w2_fqethnr + w0_educ + pred
 '
 
-# 3.1) Hypertension
-# set hypertension variable for placeholder
-data$pred     <- data$hyp 
-data$interact <- data$w2_dhager.c*data$pred
+# 3.1) Modified hypertension assessment
+# This analysis includes the measurement of blood pressure in the definition of hypertension
+
+# prepare data 
+data$hyp2 <- ifelse(data$w2_meansys >= 140 & data$w2_meandias >= 90, 1, 0)
+data$hyp3 <- ifelse(data$hyp == 1 | data$hyp2 == 1, 1, 0)
+
+# set modified hypertension variable for placeholder
+data$pred <- data$hyp3 
 
 # fit model 
-fit.hyp.interact <- sem(m.pred.interact, data = data, 
-                        ordered = c("w2_psceda","w2_pscedb","w2_pscedd", "w2_pscede","w2_pscedg", 
-                                    "w3_psceda","w3_pscedb","w3_pscedd", "w3_pscede","w3_pscedg",
-                                    "w4_psceda","w4_pscedb","w4_pscedd", "w4_pscede","w4_pscedg", 
-                                    "w5_psceda","w5_pscedb","w5_pscedd", "w5_pscede","w5_pscedg", 
-                                    "w6_psceda","w6_pscedb","w6_pscedd", "w6_pscede","w6_pscedg", 
-                                    "w7_psceda","w7_pscedb","w7_pscedd", "w7_pscede","w7_pscedg"), 
-               missing = "pairwise", estimator = "WLSMV", 
-               parameterization = "theta")
+fit.hyp.m <- sem(m.pred, data = data, 
+                 ordered = c("w2_psceda","w2_pscedb","w2_pscedd", "w2_pscede","w2_pscedg", 
+                             "w3_psceda","w3_pscedb","w3_pscedd", "w3_pscede","w3_pscedg",
+                             "w4_psceda","w4_pscedb","w4_pscedd", "w4_pscede","w4_pscedg", 
+                             "w5_psceda","w5_pscedb","w5_pscedd", "w5_pscede","w5_pscedg", 
+                             "w6_psceda","w6_pscedb","w6_pscedd", "w6_pscede","w6_pscedg", 
+                             "w7_psceda","w7_pscedb","w7_pscedd", "w7_pscede","w7_pscedg"), 
+                 missing = "pairwise", estimator = "WLSMV", 
+                 parameterization = "theta")
 
 # fit results
-summary(fit.hyp.interact,  fit.measures = T, standardized = T, ci = T)
+summary(fit.hyp.m,  fit.measures = T, standardized = T, ci = T)
 
 
-# 3.2) Smoking  
-# set smoking for placeholder
-data$pred     <- data$w2_HESka 
-data$interact <- data$w2_dhager.c*data$pred
+# 3.4) Modified diabetes assessment
+# This analysis includes the measurement of blood glucose in the definition of hypertension
 
-# fit model
-fit.smo.interact <- sem(m.pred.interact, data = data, 
-               ordered = c("w2_psceda","w2_pscedb","w2_pscedd", "w2_pscede","w2_pscedg", 
-                           "w3_psceda","w3_pscedb","w3_pscedd", "w3_pscede","w3_pscedg",
-                           "w4_psceda","w4_pscedb","w4_pscedd", "w4_pscede","w4_pscedg", 
-                           "w5_psceda","w5_pscedb","w5_pscedd", "w5_pscede","w5_pscedg", 
-                           "w6_psceda","w6_pscedb","w6_pscedd", "w6_pscede","w6_pscedg", 
-                           "w7_psceda","w7_pscedb","w7_pscedd", "w7_pscede","w7_pscedg"), 
-               missing = "pairwise", estimator = "WLSMV", 
-               parameterization = "theta")
+# prepare data
+data$diab2 <- ifelse(data$w2_fglu_f >= 7, 1, 0)
+data$diab3 <- ifelse(data$diab == 1 | data$diab2 == 1, 1, 0)
 
-# fit results
-summary(fit.smo.interact,  fit.measures = T, standardized = T, ci = T)
-
-
-# 3.3) BMI 
-# set BMI for placeholder
-data$pred     <- data$w2_bmival 
-data$interact <- data$w2_dhager.c*data$pred
-
-# fit model
-fit.bmi.interact <- sem(m.pred.interact, data = data, 
-               ordered = c("w2_psceda","w2_pscedb","w2_pscedd", "w2_pscede","w2_pscedg", 
-                           "w3_psceda","w3_pscedb","w3_pscedd", "w3_pscede","w3_pscedg",
-                           "w4_psceda","w4_pscedb","w4_pscedd", "w4_pscede","w4_pscedg", 
-                           "w5_psceda","w5_pscedb","w5_pscedd", "w5_pscede","w5_pscedg", 
-                           "w6_psceda","w6_pscedb","w6_pscedd", "w6_pscede","w6_pscedg", 
-                           "w7_psceda","w7_pscedb","w7_pscedd", "w7_pscede","w7_pscedg"), 
-               missing = "pairwise", estimator = "WLSMV", 
-               parameterization = "theta")
-
-# fit results
-summary(fit.bmi.interact,  fit.measures = T, standardized = T, ci = T) 
-
-
-# 3.4) Diabetes
 # set diabetes for placeholder
-data$pred <- data$diab 
-data$interact <- data$w2_dhager.c*data$pred
+data$pred <- data$diab3 
 
 # fit model
-fit.dia.interact <- sem(m.pred.interact, data = data, 
+fit.dia.m <- sem(m.pred, data = data, 
                ordered = c("w2_psceda","w2_pscedb","w2_pscedd", "w2_pscede","w2_pscedg", 
                            "w3_psceda","w3_pscedb","w3_pscedd", "w3_pscede","w3_pscedg",
                            "w4_psceda","w4_pscedb","w4_pscedd", "w4_pscede","w4_pscedg", 
@@ -220,5 +190,14 @@ fit.dia.interact <- sem(m.pred.interact, data = data,
                parameterization = "theta")
 
 # fit results
-summary(fit.dia.interact,  fit.measures = T, standardized = T, ci = T)
+summary(fit.dia.m,  fit.measures = T, standardized = T, ci = T)
+
+
+
+
+############ 
+
+# Other hypertension assessment: including measures of systolic BP
+# set hypertension variable for placeholder
+
 

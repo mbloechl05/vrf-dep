@@ -23,7 +23,7 @@ load("data/midus/raw/36346-0001-Data.rda") # wave 3
 
 # select only relevant varibales from waves (see codebook for explanations)
 wave1_s <- da02760.0001[,c("M2ID", "A1PAGE_M2", "A1PRSEX", "A1SS7",  "A1PB1", "A1SA9X", "A1PA43", "A1SBMI", "A1SA9S", "A1SA13A", 
-                           "A1SA13B", "A1SA13C", "A1SA13D", "A1SA13E", "A1SA13F", "A1PA33", "A1SA10A","A1SA10K")]
+                           "A1SA13B", "A1SA13C", "A1SA13D", "A1SA13E", "A1SA13F", "A1PA41", "A1PA40", "A1SA10A","A1SA10K")]
 
 wave2_s <- da04652.0001[,c("M2ID", "B1PAGE_M2", "B1SA24A", "B1SA24B", "B1SA24C", "B1SA24D", "B1SA24E", "B1SA24F")]
 
