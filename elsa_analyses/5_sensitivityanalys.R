@@ -3,6 +3,19 @@
 # (contact maria.bloechl@gmail.com in case of questions)
 # ===============================================================
 
+# clean work space
+rm(list = ls())
+
+# load packages 
+library(lavaan)
+
+# Load pre-processed data
+load("data/elsa/processed/elsa_proc_data.RData")
+
+# ---------------------------
+# 1) Sensitivity analyses
+# ---------------------------
+
 # define generic model
 m.pred <- '
 
@@ -147,7 +160,7 @@ s ~ w2_dhager.c + w2_DhSex + w2_fqethnr + w0_educ + pred
 # This analysis includes the measurement of blood pressure in the definition of hypertension
 
 # prepare data 
-data$hyp2 <- ifelse(data$w2_meansys >= 140 & data$w2_meandias >= 90, 1, 0)
+data$hyp2 <- ifelse(data$w2_meansys >= 130 & data$w2_meandias >= 80, 1, 0)
 data$hyp3 <- ifelse(data$hyp == 1 | data$hyp2 == 1, 1, 0)
 
 # set modified hypertension variable for placeholder
@@ -191,13 +204,5 @@ fit.dia.m <- sem(m.pred, data = data,
 
 # fit results
 summary(fit.dia.m,  fit.measures = T, standardized = T, ci = T)
-
-
-
-
-############ 
-
-# Other hypertension assessment: including measures of systolic BP
-# set hypertension variable for placeholder
 
 
