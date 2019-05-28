@@ -22,20 +22,50 @@ load("data/midus/raw/04652-0001-Data.rda") # wave 2
 load("data/midus/raw/36346-0001-Data.rda") # wave 3
 
 # select only relevant varibales from waves (see codebook for explanations)
-wave1_s <- da02760.0001[,c("M2ID", "A1PAGE_M2", "A1PRSEX", "A1SS7",  "A1PB1", "A1SA9X", "A1PA43", "A1SBMI", "A1SA9S", "A1SA13A", 
-                           "A1SA13B", "A1SA13C", "A1SA13D", "A1SA13E", "A1SA13F", "A1PA41", "A1PA40", "A1SA10A","A1SA10K")]
+wave1_s <- da02760.0001[,c("M2ID", 
+                           "A1PAGE_M2",
+                           "A1PRSEX", 
+                           "A1SS7",  
+                           "A1PB1", 
+                           "A1SA9X", 
+                           "A1PA43", 
+                           "A1SBMI", 
+                           "A1SA9S", 
+                           "A1SA13A", 
+                           "A1SA13B", 
+                           "A1SA13C", 
+                           "A1SA13D", 
+                           "A1SA13E", 
+                           "A1SA13F", 
+                           "A1PA41", 
+                           "A1PA40")]
 
-wave2_s <- da04652.0001[,c("M2ID", "B1PAGE_M2", "B1SA24A", "B1SA24B", "B1SA24C", "B1SA24D", "B1SA24E", "B1SA24F")]
+wave2_s <- da04652.0001[,c("M2ID",
+                           "B1PAGE_M2", 
+                           "B1SA24A", 
+                           "B1SA24B", 
+                           "B1SA24C", 
+                           "B1SA24D", 
+                           "B1SA24E", 
+                           "B1SA24F")]
 
-wave3_s <- da36346.0001[,c("M2ID", "C1PRAGE", "C1SA20A", "C1SA20B", "C1SA20C", "C1SA20D", "C1SA20E", "C1SA20F")]
+wave3_s <- da36346.0001[,c("M2ID", 
+                           "C1PRAGE", 
+                           "C1SA20A", 
+                           "C1SA20B", 
+                           "C1SA20C", 
+                           "C1SA20D", 
+                           "C1SA20E", 
+                           "C1SA20F")]
 
 # Create variables indicating whether people participated in wave: YES
 wave1_s$wave1 <- 1
 wave2_s$wave2 <- 1
 wave3_s$wave3 <- 1
 
-# We have to code missing values from wave 2 for smoking to "NO", because question was actually inapplicable
-# to some participants who responded that they never smoked (A1PA41) or never smoked regularly (A1PA40).
+# We have to code missing values from wave 2 for smoking to "NO", because question 
+# was actually inapplicable to some participants who responded that they never 
+# smoked (A1PA41) or never smoked regularly (A1PA40).
 wave1_s$A1PA43[wave1_s$A1PA41 ==  96     ]   <- "(2) NO"
 wave1_s$A1PA43[wave1_s$A1PA40 == "(2) NO"]   <- "(2) NO"
 
@@ -67,8 +97,8 @@ data$B1PF7A <- ifelse(data$B1PF7A == "(1) WHITE", 1,
                              )
                       )
 
-# a lot of people (about 900) do not have data on this variable at wave 1, but at wave 2
-# so this replaces missing values from wave 1 with data from wave 2
+# a lot of people (about 900) do not have data on this variable at wave 1, but 
+# at wave 2 so this replaces missing values from wave 1 with data from wave 2
 for(i in 1:nrow(data)){
        if (is.na(data$A1SS7[i]) == T){
          data$A1SS7[i] <- data$B1PF7A[i]}} 
@@ -76,7 +106,7 @@ for(i in 1:nrow(data)){
 # 2.3) Education 
 # recode to dummy (0 = lower education, 1 = higher education)
 data$A1PB1    <- as.integer(data$A1PB1) 
-data$A1PB1    <- ifelse(data$A1PB1 <= 5, 0, 1) # now indicates higher education level
+data$A1PB1    <- ifelse(data$A1PB1 <= 5, 0, 1)
 
 
 # 2.4) Dichotomous variables
@@ -105,7 +135,11 @@ data$n_rf     <- rowSums(rf)
 
 # 2.7) K-6 scale
 # define values of items of the scale and how they should be recoded
-oldvalues.depr <- c("(1) ALL THE TIME", "(2) MOST OF THE TIME", "(3) SOME OF THE TIME", "(4) A LITTLE OF THE TIME", "(5) NONE OF THE TIME")
+oldvalues.depr <- c("(1) ALL THE TIME", 
+                    "(2) MOST OF THE TIME", 
+                    "(3) SOME OF THE TIME", 
+                    "(4) A LITTLE OF THE TIME", 
+                    "(5) NONE OF THE TIME")
 newvalues.depr <- (c(5,4,3,2,1))  
 
 # for all K-6 items, recode values so higher values indicate poorer mood
