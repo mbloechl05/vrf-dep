@@ -44,61 +44,23 @@ wave2_s  <- wave2[,c("idauniq" , "DhSex"   , "dhager"  , "fqethnr" , "hedia01" ,
                      "Hemda"   , "HESka"   , "PScedA"  , "PScedB"  , "PScedC"  , 
                      "PScedD"  , "PScedE"  , "PScedF"  , "PScedG"  , "PScedH")]
 
-wave2n_s <- wave2n[,c("idauniq", 
-                      "confage",
-                      "bpconst", 
-                      "bprespc", 
-                      "bsoutc", 
-                      "fasteli", 
-                      "chol", 
-                      "hdl", 
-                      "ldl", 
-                      "fglu", 
-                      "bmi", 
-                      "bmival", 
-                      "whval", 
-                      "sys1", 
-                      "sys2", 
-                      "sys3", 
-                      "dias1", 
-                      "dias2", 
-                      "dias3")]
+wave2n_s <- wave2n[,c("idauniq", "confage", "fasteli", "fglu" , "bmi", "sys1", 
+                      "sys2"   , "sys3"   , "dias1"  , "dias2", "dias3")]
 
-wave3_s  <- wave3[,c("idauniq", 
-                     "indager", 
-                     "psceda", 
-                     "pscedb", 
-                     "pscedc", 
-                     "pscedd", 
-                     "pscede", 
-                     "pscedf", 
-                     "pscedg", 
-                     "pscedh")]
+wave3_s  <- wave3[,c("idauniq", "indager", "psceda", "pscedb", "pscedc", 
+                     "pscedd" , "pscede" , "pscedf", "pscedg", "pscedh")]
 
-wave4_s  <- wave4[,c("idauniq", 
-                     "indager", 
-                     "psceda", 
-                     "pscedb", 
-                     "pscedc", 
-                     "pscedd", 
-                     "pscede", 
-                     "pscedf", 
-                     "pscedg", 
-                     "pscedh")]
+wave4_s  <- wave4[,c("idauniq", "indager", "psceda", "pscedb", "pscedc", 
+                     "pscedd" , "pscede" , "pscedf", "pscedg", "pscedh")]
 
-wave5_s  <- wave5[,c("idauniq", 
-                     "indager", 
-                     "psceda", 
-                     "pscedb", 
-                     "pscedc", 
-                     "pscedd", 
-                     "pscede", "pscedf", "pscedg", "pscedh")]
+wave5_s  <- wave5[,c("idauniq", "indager", "psceda", "pscedb", "pscedc", 
+                     "pscedd" , "pscede" , "pscedf", "pscedg", "pscedh")]
 
 wave6_s  <- wave6[,c("idauniq", "indager", "PScedA", "PScedB", "PScedC", 
-                     "PScedD", "PScedE", "PScedF", "PScedG", "PScedH")]
+                     "PScedD" , "PScedE" , "PScedF", "PScedG", "PScedH")]
 
 wave7_s  <- wave7[,c("idauniq", "indager", "PScedA", "PScedB", "PScedC", 
-                     "PScedD", "PScedE", "PScedF", "PScedG", "PScedH")]
+                     "PScedD" , "PScedE" , "PScedF", "PScedG", "PScedH")]
 
 # harmonise naming of depression variables across waves 
 setnames(wave2_s, old = c("PScedA", "PScedB", "PScedC", "PScedD", "PScedE", 
@@ -116,7 +78,7 @@ setnames(wave7_s, old = c("PScedA", "PScedB", "PScedC", "PScedD", "PScedE",
                   new = c("psceda", "pscedb", "pscedc", "pscedd", "pscede", 
                           "pscedf", "pscedg", "pscedh"))
 
-# add pre-fix to variables to indicate the from which wave they are from (except idauniq)
+# add pre-fix to variables to indicate the which wave they are from (except idauniq)
 wave0_s  <- wave0_s  %>% rename_at(vars(-idauniq), ~ paste0("w0_",.))
 wave2_s  <- wave2_s  %>% rename_at(vars(-idauniq), ~ paste0("w2_",.))
 wave2n_s <- wave2n_s %>% rename_at(vars(-idauniq), ~ paste0("w2_",.))
@@ -201,15 +163,16 @@ data$w1_hypt[data$w2_behdia02 == 1   | data$w2_behdia03 == 1 |
                data$w2_behdia06 == 1 | data$w2_behdia07 == 1 |
                data$w2_behdia08 == 1 | data$w2_behdia09 == 1] <- 1 
 
-# create hypertension variable from CVD-variables at wave 2 (newly diagn. hypertension)
+# create hypertension variable from CVD-variables at wave 2 
+# (newly diagn. hypertension)
 data$w2_hypt <- ifelse(data$w2_hedia01 == 1, 1, 0)
 data$w2_hypt[data$w2_hedia02 == 1   | data$w2_hedia03 == 1 | 
                data$w2_hedia04 == 1 | data$w2_hedia05 == 1 | 
                data$w2_hedia06 == 1 | data$w2_hedia07 == 1 |
                data$w2_hedia08 == 1 | data$w2_hedia09 == 1] <- 1 
 
-# create variable that indicates whether participants ever reported having hypertension in wave 1 or 2
-# (0 = no, 1 = yes)
+# create variable that indicating whether participants ever reported having 
+# hypertension in wave 1 or 2 (0 = no, 1 = yes)
 data$hyp <- ifelse(data$w1_hypt == 1, 1, 0)
 data$hyp[data$w2_hypt == 1] <- 1
 
@@ -226,8 +189,8 @@ data$w2_diab[data$w2_hedia02 == 7 | data$w2_hedia03 == 7 | data$w2_hedia04 == 7 
                data$w2_hedia05 == 7 | data$w2_hedia06 == 7 | data$w2_hedia07 == 7 |
                data$w2_hedia08 == 7 | data$w2_hedia09 == 7] <- 1 
 
-# create variable that indicates whether participants ever reported having diabetes in wave 1 or 2
-# (0 = no, 1 = yes)
+# create variable indiating whether participants ever reported having 
+# diabetes in wave 1 or 2 (0 = no, 1 = yes)
 data$diab <- ifelse(data$w1_diab == 1, 1, 0)
 data$diab[data$w2_diab == 1] <- 1
 
@@ -241,12 +204,14 @@ data$n_rf  <- rowSums(rf)
 
 # 2.9) Systolic and diastolic blood pressure
 # average all three blood pressure values from wave 2 
-data$w2_meansys  <- rowMeans(data[,c("w2_sys1",  "w2_sys2",  "w2_sys3" )], na.rm = T)
-data$w2_meandias <- rowMeans(data[,c("w2_dias1", "w2_dias2", "w2_dias3")], na.rm = T)
+data$w2_meansys  <- rowMeans(data[,c("w2_sys1",  "w2_sys2",  "w2_sys3" )], 
+                             na.rm = T)
+data$w2_meandias <- rowMeans(data[,c("w2_dias1", "w2_dias2", "w2_dias3")], 
+                             na.rm = T)
 
 # 2.10) Blood glucose variables
 # Only select participants with valid fasting blood samples 
-data$w2_fglu_f <- ifelse(data$w2_fasteli == 2, NA, data$w2_fglu) # total cholesterol
+data$w2_fglu_f <- ifelse(data$w2_fasteli == 2, NA, data$w2_fglu) 
 
 
 # -----------------
@@ -258,16 +223,18 @@ data$w2_fglu_f <- ifelse(data$w2_fasteli == 2, NA, data$w2_fglu) # total cholest
 depr.1.m <- 
   'depr.1 =~ w2_psceda + w2_pscedb + w2_pscedc + w2_pscedd + w2_pscede + 
              w2_pscedf + w2_pscedg + w2_pscedh'
-depr.1.f <- cfa(model = depr.1.m, data = data, ordered = c("w2_psceda","w2_pscedb","w2_pscedc", 
-                                                           "w2_pscedd","w2_pscede","w2_pscedf", 
+depr.1.f <- cfa(model = depr.1.m, data = data, ordered = c("w2_psceda", "w2_pscedb",
+                                                           "w2_pscedc", "w2_pscedd",
+                                                           "w2_pscede", "w2_pscedf", 
                                                            "w2_pscedg", "w2_pscedh"))
 summary(depr.1.f, fit.measures = TRUE, standardized = TRUE)
 modindices(depr.1.f, sort = TRUE, minimum.value = 100) # modification indices
 
 # CFA reduced 5-item scale
 depr.1.m <- 'depr.1 =~ w2_psceda + w2_pscedb + w2_pscedd + w2_pscede + w2_pscedg'
-depr.1.f <- cfa(model = depr.1.m, data = data, ordered = c("w2_psceda","w2_pscedb", "w2_pscedd", 
-                                                           "w2_pscede", "w2_pscedg"))
+depr.1.f <- cfa(model = depr.1.m, data = data, ordered = c("w2_psceda", "w2_pscedb", 
+                                                           "w2_pscedd", "w2_pscede", 
+                                                           "w2_pscedg"))
 summary(depr.1.f, fit.measures = TRUE, standardized = TRUE)
 modindices(depr.1.f, sort = TRUE, minimum.value = 100) # modification indices
 
