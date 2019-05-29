@@ -35,27 +35,90 @@ wave6  <- read.table("data/elsa/raw/tab/wave_6_elsa_data_v2.tab",  sep = "\t", h
 wave7  <- read.table("data/elsa/raw/tab/wave_7_elsa_data.tab"   ,  sep = "\t", header = T)
 
 # select relevant variables from waves (see codebook for explanations)
-wave0_s  <- wave0[,c("idauniq", "ager", "educend", "topqual2", "topqual3")]
+wave0_s  <- wave0[,c("idauniq", 
+                     "ager", 
+                     "topqual2")]
 
-wave2_s  <- wave2[,c("idauniq", "DhSex",   "dhager", "fqethnr", "FqEnd", "hedia01", "hedia02", 
-                     "hedia03", "hedia04", "hedia05", "hedia06", "hedia07", "hedia08", "hedia09", 
-                     "hedias1", "HeDiaS7", "behdia01", "behdia02", "behdia03", "behdia04", "behdia05", 
-                     "behdia06", "behdia07", "Hemda", "bheagb", "HeYRb", "HeAgd", "HeIns", "HeMdb", 
-                     "HeAge", "HeSmk", "HESka", "PScedA", "PScedB", "PScedC", "PScedD", "PScedE", 
-                     "PScedF", "PScedG", "PScedH")]
+wave2_s  <- wave2[,c("idauniq", 
+                     "DhSex",   
+                     "dhager", 
+                     "fqethnr", 
+                     "hedia01", 
+                     "hedia02", 
+                     "hedia03", 
+                     "hedia04", 
+                     "hedia05", 
+                     "hedia06", 
+                     "hedia07", 
+                     "hedia08", 
+                     "hedia09", 
+                     "behdia01",
+                     "behdia02", 
+                     "behdia03", 
+                     "behdia04", 
+                     "behdia05", 
+                     "behdia06",  
+                     "behdia07", 
+                     "Hemda", 
+                     "HESka", 
+                     "PScedA", 
+                     "PScedB", 
+                     "PScedC", 
+                     "PScedD", 
+                     "PScedE", 
+                     "PScedF", 
+                     "PScedG", 
+                     "PScedH")]
 
-wave2n_s <- wave2n[,c("idauniq", "w2wtnur", "w2wtbld", "confage", "bpconst", "bprespc", "bsoutc", 
-                      "fasteli", "chol", "hdl", "ldl", "fglu", "bmi", "bmival", "whval", "sys1", 
-                      "sys2", "sys3", "dias1", "dias2", "dias3")]
+wave2n_s <- wave2n[,c("idauniq", 
+                      "confage",
+                      "bpconst", 
+                      "bprespc", 
+                      "bsoutc", 
+                      "fasteli", 
+                      "chol", 
+                      "hdl", 
+                      "ldl", 
+                      "fglu", 
+                      "bmi", 
+                      "bmival", 
+                      "whval", 
+                      "sys1", 
+                      "sys2", 
+                      "sys3", 
+                      "dias1", 
+                      "dias2", 
+                      "dias3")]
 
-wave3_s  <- wave3[,c("idauniq", "indager", "psceda", "pscedb", "pscedc", 
-                     "pscedd", "pscede", "pscedf", "pscedg", "pscedh")]
+wave3_s  <- wave3[,c("idauniq", 
+                     "indager", 
+                     "psceda", 
+                     "pscedb", 
+                     "pscedc", 
+                     "pscedd", 
+                     "pscede", 
+                     "pscedf", 
+                     "pscedg", 
+                     "pscedh")]
 
-wave4_s  <- wave4[,c("idauniq", "indager", "psceda", "pscedb", "pscedc", 
-                     "pscedd", "pscede", "pscedf", "pscedg", "pscedh")]
+wave4_s  <- wave4[,c("idauniq", 
+                     "indager", 
+                     "psceda", 
+                     "pscedb", 
+                     "pscedc", 
+                     "pscedd", 
+                     "pscede", 
+                     "pscedf", 
+                     "pscedg", 
+                     "pscedh")]
 
-wave5_s  <- wave5[,c("idauniq", "indager", "psceda", "pscedb", "pscedc", 
-                     "pscedd", "pscede", "pscedf", "pscedg", "pscedh")]
+wave5_s  <- wave5[,c("idauniq", 
+                     "indager", 
+                     "psceda", 
+                     "pscedb", 
+                     "pscedc", 
+                     "pscedd", 
+                     "pscede", "pscedf", "pscedg", "pscedh")]
 
 wave6_s  <- wave6[,c("idauniq", "indager", "PScedA", "PScedB", "PScedC", 
                      "PScedD", "PScedE", "PScedF", "PScedG", "PScedH")]
