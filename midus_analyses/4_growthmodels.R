@@ -207,9 +207,9 @@ summary(fit.cov,  fit.measures = T, standardized = T, ci = T)
 # 3) Conditional LGMs with single vascular risk factors 
 # ----------------------------------------------------------
 
-# The following model is an extension of the previous model with one additional predictor ("pred"). 
-# It is coded as a generic model. That is "pred" is used as a place holder for vascular risk factors
-# that will be introduced successively.
+# The following model is an extension of the previous model with one additional 
+# predictor ("pred"). It is coded as a generic model. That is "pred" is used 
+# as a place holder for vascular risk factors, which are introduced individually.
 
 # define generic model
 m.pred <- '
@@ -308,29 +308,7 @@ fit.hyp   <- sem(m.pred, data = data, missing = 'fiml')
 summary(fit.hyp,  fit.measures = T, standardized = T, ci = T)
 
 
-# 3.2) Smoking  
-# set smoking for placeholder
-data$pred <- data$A1PA43.n 
-
-# fit model
-fit.smo   <- sem(m.pred, data = data, missing = 'fiml')
-
-# fit results
-summary(fit.smo,  fit.measures = T, standardized = T, ci = T)
-
-
-# 3.3) BMI 
-# set BMI for placeholder
-data$pred <- data$A1SBMI 
-
-# fit model
-fit.bmi   <- sem(m.pred, data = data, missing = 'fiml')
-
-# fit results
-summary(fit.bmi,  fit.measures = T, standardized = T, ci = T)
-
-
-# 3.4) Diabetes
+# 3.2) Diabetes
 # set diabetes for placeholder
 data$pred <- data$A1SA9X.n 
 
@@ -341,7 +319,29 @@ fit.dia <- sem(m.pred, data = data, missing = 'fiml')
 summary(fit.dia,  fit.measures = T, standardized = T, ci = T)
 
 
-# 3.9) Multiple risk factors (accumulated)
+# 3.3) Smoking  
+# set smoking for placeholder
+data$pred <- data$A1PA43.n 
+
+# fit model
+fit.smo   <- sem(m.pred, data = data, missing = 'fiml')
+
+# fit results
+summary(fit.smo,  fit.measures = T, standardized = T, ci = T)
+
+
+# 3.4) BMI 
+# set BMI for placeholder
+data$pred <- data$A1SBMI 
+
+# fit model
+fit.bmi   <- sem(m.pred, data = data, missing = 'fiml')
+
+# fit results
+summary(fit.bmi,  fit.measures = T, standardized = T, ci = T)
+
+
+# 3.5) Multiple risk factors (accumulated)
 # set number of risk factors for placeholder
 data$pred <- data$n_rf 
 
@@ -477,8 +477,10 @@ get_parameters <- function(fit.simple, i.simple, s.simple, i.all, s.all){
 get_plot <- function(coeffs, title) {
   ggplot(coeffs, aes(x = parameter, y = beta, ymin = ci.l, ymax = ci.u)) +
     geom_hline(yintercept = 0, linetype = "dashed", size = 0.4) +    
-    geom_errorbar(aes(color = model), width = 0.1, size = 1, position = position_dodge(0.3)) +
-    geom_point(aes(color = model), size = 3.5, position = position_dodge(0.3), alpha = 1)+
+    geom_errorbar(aes(color = model), width = 0.1, size = 1, 
+                  position = position_dodge(0.3)) +
+    geom_point(aes(color = model), size = 3.5, position = position_dodge(0.3), 
+               alpha = 1)+
     ggtitle(title) +
     labs(x = "", y = "Standardised beta (95% CI)") +
     scale_y_continuous(limits = c(-0.3, 0.6)) +
@@ -496,20 +498,25 @@ get_plot <- function(coeffs, title) {
 
 # now create and save plots using functions
 # hypertension
-coeff.hyp <- get_parameters(fit.simple = fit.hyp, i.simple = 79, s.simple = 84, i.all = 80, s.all = 88)
+coeff.hyp <- get_parameters(fit.simple = fit.hyp, i.simple = 79, s.simple = 84,
+                            i.all = 80, s.all = 88)
 get_plot(coeffs = coeff.hyp, title = "Hypertension")
 
+# diabetes
+coeff.dia <- get_parameters(fit.simple = fit.dia, i.simple = 79, s.simple = 84, 
+                            i.all = 82, s.all = 90)
+get_plot(coeffs = coeff.dia, title = "Diabetes") # A1SA9X.n
+
 # smoking
-coeff.smo <- get_parameters(fit.simple = fit.smo, i.simple = 79, s.simple = 84, i.all = 79, s.all = 87)
+coeff.smo <- get_parameters(fit.simple = fit.smo, i.simple = 79, s.simple = 84, 
+                            i.all = 79, s.all = 87)
 get_plot(coeffs = coeff.smo, title = "Current smoking") # A1PA43.n
 
 # bmi
-coeff.bmi <- get_parameters(fit.simple = fit.bmi, i.simple = 79, s.simple = 84, i.all = 81, s.all = 89)
+coeff.bmi <- get_parameters(fit.simple = fit.bmi, i.simple = 79, s.simple = 84, 
+                            i.all = 81, s.all = 89)
 get_plot(coeffs = coeff.bmi, title = "Body mass index")
 
-# diabetes
-coeff.dia <- get_parameters(fit.simple = fit.dia, i.simple = 79, s.simple = 84, i.all = 82, s.all = 90)
-get_plot(coeffs = coeff.dia, title = "Diabetes") # A1SA9X.n
 
 
 # 5.2) Figure 2 E: Multiple risk factors 
@@ -539,7 +546,8 @@ get_plot_s <- function(coeffs, title) {
           axis.title = element_text(colour = "black", size = 15, face = "bold"), 
           plot.title = element_text(hjust = 0.5, face = "bold"), 
           legend.position = "none")
-  ggsave(paste("output/midus", title, ".pdf", sep = ""), dpi = 600, width = 4, height = 4)
+  ggsave(paste("output/midus", title, ".pdf", sep = ""), dpi = 600, width = 4,
+         height = 4)
 }
 
 # now create and save plot using functions

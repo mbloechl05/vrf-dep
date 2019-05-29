@@ -126,7 +126,8 @@ B1SA24F ~~ C1SA20F
 fit_strong <- cfa(model_strong, data = data, missing = 'fiml')
 
 # fit results
-summary(fit_strong, fit.measures = T) # = same as model above but with additional constraints of intercepts of indicators
+summary(fit_strong, fit.measures = T) # = same as model above but with 
+# additional constraints of intercepts of indicators
 
 
 # ------------------------------------

@@ -48,30 +48,36 @@ wave2n_s <- wave2n[,c("idauniq", "w2wtnur", "w2wtbld", "confage", "bpconst", "bp
                       "fasteli", "chol", "hdl", "ldl", "fglu", "bmi", "bmival", "whval", "sys1", 
                       "sys2", "sys3", "dias1", "dias2", "dias3")]
 
-wave3_s  <- wave3[,c("idauniq", "indager", "psceda", "pscedb", "pscedc", "pscedd", "pscede", "pscedf", 
-                     "pscedg", "pscedh")]
+wave3_s  <- wave3[,c("idauniq", "indager", "psceda", "pscedb", "pscedc", 
+                     "pscedd", "pscede", "pscedf", "pscedg", "pscedh")]
 
-wave4_s  <- wave4[,c("idauniq", "indager", "psceda", "pscedb", "pscedc", "pscedd", "pscede", "pscedf", 
-                     "pscedg", "pscedh")]
+wave4_s  <- wave4[,c("idauniq", "indager", "psceda", "pscedb", "pscedc", 
+                     "pscedd", "pscede", "pscedf", "pscedg", "pscedh")]
 
-wave5_s  <- wave5[,c("idauniq", "indager", "psceda", "pscedb", "pscedc", "pscedd", "pscede", "pscedf",
-                     "pscedg", "pscedh")]
+wave5_s  <- wave5[,c("idauniq", "indager", "psceda", "pscedb", "pscedc", 
+                     "pscedd", "pscede", "pscedf", "pscedg", "pscedh")]
 
-wave6_s  <- wave6[,c("idauniq", "indager", "PScedA", "PScedB", "PScedC", "PScedD", "PScedE", "PScedF", 
-                     "PScedG", "PScedH")]
+wave6_s  <- wave6[,c("idauniq", "indager", "PScedA", "PScedB", "PScedC", 
+                     "PScedD", "PScedE", "PScedF", "PScedG", "PScedH")]
 
-wave7_s  <- wave7[,c("idauniq", "indager", "PScedA", "PScedB", "PScedC", "PScedD", "PScedE", "PScedF", 
-                     "PScedG", "PScedH")]
+wave7_s  <- wave7[,c("idauniq", "indager", "PScedA", "PScedB", "PScedC", 
+                     "PScedD", "PScedE", "PScedF", "PScedG", "PScedH")]
 
 # harmonise naming of depression variables across waves 
-setnames(wave2_s, old = c("PScedA", "PScedB", "PScedC", "PScedD", "PScedE", "PScedF", "PScedG", "PScedH"), 
-                  new = c("psceda", "pscedb", "pscedc", "pscedd", "pscede", "pscedf", "pscedg", "pscedh"))
+setnames(wave2_s, old = c("PScedA", "PScedB", "PScedC", "PScedD", "PScedE", 
+                          "PScedF", "PScedG", "PScedH"), 
+                  new = c("psceda", "pscedb", "pscedc", "pscedd", "pscede", 
+                          "pscedf", "pscedg", "pscedh"))
 
-setnames(wave6_s, old = c("PScedA", "PScedB", "PScedC", "PScedD", "PScedE", "PScedF", "PScedG", "PScedH"), 
-                  new = c("psceda", "pscedb", "pscedc", "pscedd", "pscede", "pscedf", "pscedg", "pscedh"))
+setnames(wave6_s, old = c("PScedA", "PScedB", "PScedC", "PScedD", "PScedE", 
+                          "PScedF", "PScedG", "PScedH"), 
+                  new = c("psceda", "pscedb", "pscedc", "pscedd", "pscede", 
+                          "pscedf", "pscedg", "pscedh"))
 
-setnames(wave7_s, old = c("PScedA", "PScedB", "PScedC", "PScedD", "PScedE", "PScedF", "PScedG", "PScedH"), 
-                  new = c("psceda", "pscedb", "pscedc", "pscedd", "pscede", "pscedf", "pscedg", "pscedh"))
+setnames(wave7_s, old = c("PScedA", "PScedB", "PScedC", "PScedD", "PScedE", 
+                          "PScedF", "PScedG", "PScedH"), 
+                  new = c("psceda", "pscedb", "pscedc", "pscedd", "pscede", 
+                          "pscedf", "pscedg", "pscedh"))
 
 # add pre-fix to variables to indicate the from which wave they are from (except idauniq)
 wave0_s  <- wave0_s  %>% rename_at(vars(-idauniq), ~ paste0("w0_",.))
@@ -124,16 +130,17 @@ data <- data %>% mutate_all(funs(na_if(., -2)))
 data <- data %>% mutate_all(funs(na_if(., -1)))
 
 # 2.2) Age
-# recode variable because 109 adults aged > 89 have age coded as 99 --> set these as missings
+# recode variable because 109 adults aged > 89 have age coded as 99 
+# 99 --> set these as missings
 data$w2_dhager[data$w2_dhager == 99] <- NA
 
 # center age variable for analyses
-data$w2_dhager.c <- scale(data$w2_dhager, center = T, scale = F) # center age variable
+data$w2_dhager.c <- scale(data$w2_dhager, center = T, scale = F) # center age 
 
 # 2.3) Dichotomous variables
 # recode all dichotomous variables to dummies (0 = no, 1 = yes)
 for (i in names(data[,c(grep("psced", colnames(data)), 
-                        grep("w2_DhSex", colnames(data)), # 0 = female (same as midus)
+                        grep("w2_DhSex", colnames(data)), # 0 = female 
                         grep("w2_HESka", colnames(data)), # current smoking
                         grep("w2_Hemda", colnames(data)) 
                         )])) {
@@ -152,14 +159,16 @@ data$w0_educ <- ifelse(data$w0_topqual2 == 1, 1, 0)
 # 2.6) Hypertension
 # create hypertension variable from CVD-variables at wave 1
 data$w1_hypt <- ifelse(data$w2_behdia01 == 1, 1, 0)
-data$w1_hypt[data$w2_behdia02 == 1 | data$w2_behdia03 == 1 | data$w2_behdia04 == 1 |
-               data$w2_behdia05 == 1 | data$w2_behdia06 == 1 | data$w2_behdia07 == 1 |
+data$w1_hypt[data$w2_behdia02 == 1   | data$w2_behdia03 == 1 | 
+               data$w2_behdia04 == 1 | data$w2_behdia05 == 1 | 
+               data$w2_behdia06 == 1 | data$w2_behdia07 == 1 |
                data$w2_behdia08 == 1 | data$w2_behdia09 == 1] <- 1 
 
 # create hypertension variable from CVD-variables at wave 2 (newly diagn. hypertension)
 data$w2_hypt <- ifelse(data$w2_hedia01 == 1, 1, 0)
-data$w2_hypt[data$w2_hedia02 == 1 | data$w2_hedia03 == 1 | data$w2_hedia04 == 1 |
-               data$w2_hedia05 == 1 | data$w2_hedia06 == 1 | data$w2_hedia07 == 1 |
+data$w2_hypt[data$w2_hedia02 == 1   | data$w2_hedia03 == 1 | 
+               data$w2_hedia04 == 1 | data$w2_hedia05 == 1 | 
+               data$w2_hedia06 == 1 | data$w2_hedia07 == 1 |
                data$w2_hedia08 == 1 | data$w2_hedia09 == 1] <- 1 
 
 # create variable that indicates whether participants ever reported having hypertension in wave 1 or 2

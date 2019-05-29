@@ -170,9 +170,9 @@ modindices(depr.1.r, sort = TRUE, minimum.value = 100) # modification indices
 
 # 3.2) Internal consistency
 # select items depressed affect for each wave (note tis eclude item -C (nervous))
-depr.items.1 <- data[,c("A1SA13A", "A1SA13B", "A1SA13D", "A1SA13E", "A1SA13F")] # wave 1
-depr.items.2 <- data[,c("B1SA24A", "B1SA24B", "B1SA24D", "B1SA24E", "B1SA24F")] # wave 2
-depr.items.3 <- data[,c("C1SA20A", "C1SA20B", "C1SA20D", "C1SA20E", "C1SA20F")] # wavw 3
+depr.items.1 <- data[,c("A1SA13A", "A1SA13B", "A1SA13D", "A1SA13E", "A1SA13F")] 
+depr.items.2 <- data[,c("B1SA24A", "B1SA24B", "B1SA24D", "B1SA24E", "B1SA24F")] 
+depr.items.3 <- data[,c("C1SA20A", "C1SA20B", "C1SA20D", "C1SA20E", "C1SA20F")] 
 
 # calculate Cronbach's alpha
 psych::alpha(depr.items.1) # wave 1
@@ -189,5 +189,6 @@ data$w3_deprmean <- rowMeans(depr.items.3)
 # 4) Save preprocessed data
 # ----------------------------
 
-save(data, wave1_s, wave2_s, wave3_s, file = "data/midus/processed/midus_proc_data.RData")
+save(data, wave1_s, wave2_s, wave3_s, 
+     file = "data/midus/processed/midus_proc_data.RData")
 
