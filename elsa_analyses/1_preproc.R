@@ -35,40 +35,14 @@ wave6  <- read.table("data/elsa/raw/tab/wave_6_elsa_data_v2.tab",  sep = "\t", h
 wave7  <- read.table("data/elsa/raw/tab/wave_7_elsa_data.tab"   ,  sep = "\t", header = T)
 
 # select relevant variables from waves (see codebook for explanations)
-wave0_s  <- wave0[,c("idauniq", 
-                     "ager", 
-                     "topqual2")]
+wave0_s  <- wave0[,c("idauniq", "ager", "topqual2")]
 
-wave2_s  <- wave2[,c("idauniq", 
-                     "DhSex",   
-                     "dhager", 
-                     "fqethnr", 
-                     "hedia01", 
-                     "hedia02", 
-                     "hedia03", 
-                     "hedia04", 
-                     "hedia05", 
-                     "hedia06", 
-                     "hedia07", 
-                     "hedia08", 
-                     "hedia09", 
-                     "behdia01",
-                     "behdia02", 
-                     "behdia03", 
-                     "behdia04", 
-                     "behdia05", 
-                     "behdia06",  
-                     "behdia07", 
-                     "Hemda", 
-                     "HESka", 
-                     "PScedA", 
-                     "PScedB", 
-                     "PScedC", 
-                     "PScedD", 
-                     "PScedE", 
-                     "PScedF", 
-                     "PScedG", 
-                     "PScedH")]
+wave2_s  <- wave2[,c("idauniq" , "DhSex"   , "dhager"  , "fqethnr" , "hedia01" , 
+                     "hedia02" , "hedia03" , "hedia04" , "hedia05" , "hedia06" , 
+                     "hedia07" , "hedia08" , "hedia09" , "behdia01", "behdia02", 
+                     "behdia03", "behdia04", "behdia05", "behdia06", "behdia07", 
+                     "Hemda"   , "HESka"   , "PScedA"  , "PScedB"  , "PScedC"  , 
+                     "PScedD"  , "PScedE"  , "PScedF"  , "PScedG"  , "PScedH")]
 
 wave2n_s <- wave2n[,c("idauniq", 
                       "confage",
