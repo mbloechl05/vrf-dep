@@ -44,7 +44,7 @@ wave2_s  <- wave2[,c("idauniq" , "DhSex"   , "dhager"  , "fqethnr" , "hedia01" ,
                      "Hemda"   , "HESka"   , "PScedA"  , "PScedB"  , "PScedC"  , 
                      "PScedD"  , "PScedE"  , "PScedF"  , "PScedG"  , "PScedH")]
 
-wave2n_s <- wave2n[,c("idauniq", "confage", "fasteli", "fglu" , "bmi", "sys1", 
+wave2n_s <- wave2n[,c("idauniq", "confage", "fasteli", "fglu" , "bmival", "sys1", 
                       "sys2"   , "sys3"   , "dias1"  , "dias2", "dias3")]
 
 wave3_s  <- wave3[,c("idauniq", "indager", "psceda", "pscedb", "pscedc", 

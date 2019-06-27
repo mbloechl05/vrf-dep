@@ -21,7 +21,7 @@ load("data/midus/processed/midus_proc_data.RData")
 
 # descriptive stats for continuous variables 
 # (binary vars only included to get valid Ns)
-describe(data[,c("A1PAGE_M2", "A1SBMI",
+psych::describe(data[,c("A1PAGE_M2", "A1SBMI",
                  "A1SS7", "A1PRSEX", "A1PB1", "A1SA9S", "A1SA9X", "A1PA43")])
 
 # descriptive stats for dichotomous variables

@@ -42,6 +42,7 @@ wave1_s <- da02760.0001[,c("M2ID",
 
 wave2_s <- da04652.0001[,c("M2ID",
                            "B1PAGE_M2", 
+                           "B1PF7A",
                            "B1SA24A", 
                            "B1SA24B", 
                            "B1SA24C", 
@@ -91,9 +92,9 @@ data$A1PRSEX  <- recode_factor(data$A1PRSEX, `(1) MALE` = 1, `(2) FEMALE` = 0)
 data$A1SS7    <- ifelse(data$A1SS7 == "(1) WHITE",  0, 1) 
 
 # recode variable from wave 2 to dummy (0 = "white", 1 = "non-white")
-data$B1PF7A <- ifelse(data$B1PF7A == "(1) WHITE", 1,
+data$B1PF7A <- ifelse(data$B1PF7A == "(1) WHITE", 0,
                       ifelse(data$B1PF7A == "(7) DON'T KNOW", NA, 
-                             ifelse(data$B1PF7A == "(8) REFUSED", NA, 0)
+                             ifelse(data$B1PF7A == "(8) REFUSED", NA, 1)
                              )
                       )
 

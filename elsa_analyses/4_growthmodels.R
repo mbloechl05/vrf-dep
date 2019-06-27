@@ -760,22 +760,21 @@ get_parameters <- function(fit.simple, i.simple, s.simple, i.all, s.all){
 get_plot <- function(coeffs, title) {
   ggplot(coeffs, aes(x = parameter, y = beta, ymin = ci.l, ymax = ci.u)) +
     geom_hline(yintercept = 0, linetype = "dashed", size = 0.4) +
-    geom_errorbar(aes(color = model), width = 0.1, size = 1, 
+    geom_errorbar(aes(color = model), width = 0.2, size = 1.1, 
                   position = position_dodge(0.3)) +
-    geom_point(aes(color = model), size = 3.5, position = position_dodge(0.3))+
+    geom_point(aes(color = model), size = 3.8, position = position_dodge(0.3))+
     ggtitle(title) +
-    labs(x = "", y = "Standardised beta (95% CI)") +
+    labs(x = "", y = "Standard. beta (95% CI)") +
     scale_y_continuous(limits = c(-0.3, 0.6)) +
-    theme_classic(base_size = 15) +
-    theme(axis.text  = element_text(colour = "black", size = 15), 
-          axis.title = element_text(colour = "black", size = 15, face = "bold"), 
-          plot.title = element_text(hjust = 0.5, face = "bold"), 
+    theme_classic(base_size = 19) +
+    theme(axis.text  = element_text(colour = "black", size = 19), 
+          axis.title = element_text(colour = "black", size = 19), 
+          plot.title = element_text(hjust = 0.5, face = "bold", size = 19), 
           legend.position = "none") +
     scale_color_manual(values=c('#18345C','#AC95BF'), 
                        name="",
                        breaks=c("1", "2"),
                        labels=c("One predictor", "All predictors"))
-  ggsave(paste("output/elsa/", title, ".pdf", sep = ""), width = 4, height = 4)
 }
 
 
@@ -783,22 +782,22 @@ get_plot <- function(coeffs, title) {
 # hypertension
 coeff.hyp <- get_parameters(fit.simple = fit.hyp, i.simple = 193, s.simple = 198, 
                             i.all = 193, s.all = 201)
-get_plot(coeffs = coeff.hyp, title = "Hypertension")
+p1 <- get_plot(coeffs = coeff.hyp, title = "Hypertension")
 
 # diabetes
 coeff.dia <- get_parameters(fit.simple = fit.dia, i.simple = 193, s.simple = 198, 
                             i.all = 196, s.all = 204)
-get_plot(coeffs = coeff.dia, title = "Diabetes") 
+p2<- get_plot(coeffs = coeff.dia, title = "Diabetes") 
 
 # smoking
 coeff.smo <- get_parameters(fit.simple = fit.smo, i.simple = 193, s.simple = 198, 
                             i.all = 194, s.all = 202)
-get_plot(coeffs = coeff.smo, title = "Current smoking") 
+p3 <- get_plot(coeffs = coeff.smo, title = "Current smoking") 
 
 # bmi
 coeff.bmi <- get_parameters(fit.simple = fit.bmi, i.simple = 193, s.simple = 198, 
                             i.all = 195, s.all = 203)
-get_plot(coeffs = coeff.bmi, title = "Body mass index")
+p4 <- get_plot(coeffs = coeff.bmi, title = "Body mass index")
 
 
 # 5.2) Figure 2J: Multiple risk factors 
@@ -818,22 +817,30 @@ get_parameters_s  <- function(fit.simple, i.simple, s.simple, i.all, s.all){
 get_plot_s <- function(coeffs, title) {
   ggplot(coeffs, aes(x = parameter, y = beta, ymin = ci.l, ymax = ci.u)) +
     geom_hline(yintercept = 0, linetype = "dashed", size = 0.4) +
-    geom_errorbar(width = 0.1, size = 1, colour = '#18345C') +
-    geom_point(size = 3.5, colour = '#18345C')+
+    geom_errorbar(width = 0.1, size = 1.1, colour = '#18345C') +
+    geom_point(size = 3.8, colour = '#18345C')+
     ggtitle(title) +
-    labs(x = "", y = "Standardised beta (95% CI)") +
+    labs(x = "", y = "Standard. beta (95% CI)") +
     scale_y_continuous(limits = c(-0.4, 0.6)) +
-    theme_classic(base_size = 15) +
-    theme(axis.text  = element_text(colour = "black", size = 15), 
-          axis.title = element_text(colour = "black", size = 15, face = "bold"), 
-          plot.title = element_text(hjust = 0.5, face = "bold"), 
+    theme_classic(base_size = 19) +
+    theme(axis.text  = element_text(colour = "black", size = 19), 
+          axis.title = element_text(colour = "black", size = 19), 
+          plot.title = element_text(hjust = 0.5, face = "bold", size = 19), 
           legend.position = "none")
-  ggsave(paste("output/elsa/", title, ".pdf", sep = ""), dpi = 600, width = 4, 
-         height = 4)
 }
 
 
 # now create and save plot using functions
 coeff.mul <- get_parameters_s(fit.simple = fit.mul, i.simple = 193, s.simple = 198)
-get_plot_s(coeffs = coeff.mul, title = "")
+p5 <- get_plot_s(coeffs = coeff.mul, title = "Multiple risk factors")
+
+
+# 5.3) Combine and save plots
+ggarrange(p1, p2, p3, p4, p5,
+          labels = c("F", "G", "H", "I", "J"),
+          font.label = list(size = 26),
+          hjust = -0.2, vjust = 1,
+          ncol = 5, nrow = 1)
+
+ggsave("output/elsa/combined_elsa.png", dpi = 600, width = 20, height = 4)
 
