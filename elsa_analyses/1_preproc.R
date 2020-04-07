@@ -42,13 +42,29 @@ wave2_s  <- wave2[,c("idauniq" , "DhSex"   , "dhager"  , "fqethnr" , "hedia01" ,
                      "hedia07" , "hedia08" , "hedia09" , "behdia01", "behdia02", 
                      "behdia03", "behdia04", "behdia05", "behdia06", "behdia07", 
                      "Hemda"   , "HESka"   , "PScedA"  , "PScedB"  , "PScedC"  , 
-                     "PScedD"  , "PScedE"  , "PScedF"  , "PScedG"  , "PScedH")]
+                     "PScedD"  , "PScedE"  , "PScedF"  , "PScedG"  , "PScedH",
+                     "sampsta", "HeSmk", "bhesmk", "bheska", "HeSkf", "hedib01", 
+                     "hedib02", "hedib03", "hedib04", "hedibw1", "HeDibW2", 
+                     "HeDibW3", "HeDibW4", "HeDibW5", "HeDibW6", "HeDibW7", 
+                     "HeDibW8", "HeDibW9", 
+                     "heada01", "heada02", "heada03", "heada04", 
+                     "heada05", "heada06", "heada07", "heada08", "heada09", 
+                     "heada10")]
+
+# HeSmk = ever smoked cigarrettes at wave 2
+# bhesmk = ever smoked cigarrettes at wave 1
+# bheska = nowadays smoking cigarrettes at wave 1
+# HeSkf = stopped smoking (2 = stopped smoking between wave 1 and wave 2)
 
 wave2n_s <- wave2n[,c("idauniq", "confage", "fasteli", "fglu" , "bmival", "sys1", 
-                      "sys2"   , "sys3"   , "dias1"  , "dias2", "dias3")]
+                      "sys2"   , "sys3"   , "dias1"  , "dias2", "dias3", 
+                      "chol", "sysval")]
 
 wave3_s  <- wave3[,c("idauniq", "indager", "psceda", "pscedb", "pscedc", 
-                     "pscedd" , "pscede" , "pscedf", "pscedg", "pscedh")]
+                     "pscedd" , "pscede" , "pscedf", "pscedg", "pscedh", 
+                     "scvega", "scvegb", "scvegc", "scvegd",
+                     "scfruia", "scfruib", "scfruic", "scfruid", "scfruie", 
+                     "scfruif", "scfruig", "scfruih", "scfruii")]
 
 wave4_s  <- wave4[,c("idauniq", "indager", "psceda", "pscedb", "pscedc", 
                      "pscedd" , "pscede" , "pscedf", "pscedg", "pscedh")]
@@ -89,13 +105,14 @@ wave6_s  <- wave6_s  %>% rename_at(vars(-idauniq), ~ paste0("w6_",.))
 wave7_s  <- wave7_s  %>% rename_at(vars(-idauniq), ~ paste0("w7_",.))
 
 # create variables indicating whether people participated in that wave (1 = yes)
-wave0_s$wave0 <- 1
-wave2_s$wave2 <- 1
-wave3_s$wave3 <- 1
-wave4_s$wave4 <- 1
-wave5_s$wave5 <- 1
-wave6_s$wave6 <- 1
-wave7_s$wave7 <- 1
+wave0_s$wave0   <- 1
+wave2_s$wave2   <- 1
+wave2n_s$wave2n <- 1
+wave3_s$wave3   <- 1
+wave4_s$wave4   <- 1
+wave5_s$wave5   <- 1
+wave6_s$wave6   <- 1
+wave7_s$wave7   <- 1
 
 # merge data from waves 2-7 into one dataframe (wide format)
 # but only keep people with data from wave 2 (i.e. exclude top-ups)
@@ -110,11 +127,200 @@ data = merge(data,    wave7_s,  all.x = T, by = "idauniq", sort = T)
 data = merge(data, wave0_s, all = F, all.x = T, by = "idauniq", sort = T)
 
 
-# ------------------------
-# 2) Recode variables
-# ------------------------
+# ------------------------------
+# 2) Exclusion of participants
+# ------------------------------
 
-# 2.1) NAs
+# 2.1) Only include core members 
+# --------------------------------
+
+data <- subset(data, w2_sampsta == 1)
+
+
+# 2.2) Exclude participants with manifest CVD: STROKE
+# -----------------------------------------------------
+
+# create stroke variable from CVD-variables at wave 1
+data$w1_str <- ifelse(data$w2_behdia01 == 8, 1, 0)
+data$w1_str[data$w2_behdia02 == 8] <- 1
+data$w1_str[data$w2_behdia03 == 8] <- 1
+data$w1_str[data$w2_behdia04 == 8] <- 1
+data$w1_str[data$w2_behdia05 == 8] <- 1
+data$w1_str[data$w2_behdia06 == 8] <- 1
+data$w1_str[data$w2_behdia07 == 8] <- 1
+
+# create stroke variable from CVD-variables at wave 2 (newly diagn.)
+data$w2_str <- ifelse(data$w2_hedia01 == 8, 1, 0)
+data$w2_str[data$w2_hedia02 == 8] <- 1
+data$w2_str[data$w2_hedia03 == 8] <- 1
+data$w2_str[data$w2_hedia04 == 8] <- 1
+data$w2_str[data$w2_hedia05 == 8] <- 1
+data$w2_str[data$w2_hedia06 == 8] <- 1
+data$w2_str[data$w2_hedia07 == 8] <- 1
+data$w2_str[data$w2_hedia08 == 8] <- 1
+data$w2_str[data$w2_hedia09 == 8] <- 1
+
+# create variable indiating whether participants ever reported having 
+# stroke in wave 1 or 2 (0 = no, 1 = yes)
+data$str <- ifelse(data$w1_str == 1, 1, 0)
+data$str[data$w2_str == 1] <- 1
+
+# check how many?
+table(data$str) # N = 460
+
+# exclude those
+data <- subset(data, str == 0)
+
+
+# 2.3) Exclude participants with manifest CVD: HEART ATTACK
+# -----------------------------------------------------------
+
+# create heart attack variable from CVD-variables at wave 1
+data$w1_hea <- ifelse(data$w2_behdia01 == 3, 1, 0)
+data$w1_hea[data$w2_behdia02 == 3] <- 1
+data$w1_hea[data$w2_behdia03 == 3] <- 1
+data$w1_hea[data$w2_behdia04 == 3] <- 1
+data$w1_hea[data$w2_behdia05 == 3] <- 1
+data$w1_hea[data$w2_behdia06 == 3] <- 1
+data$w1_hea[data$w2_behdia07 == 3] <- 1
+
+# create heart attack variable from CVD-variables at wave 2 (newly diagn.)
+data$w2_hea <- ifelse(data$w2_hedia01 == 3, 1, 0)
+data$w2_hea[data$w2_hedia02 == 3] <- 1
+data$w2_hea[data$w2_hedia03 == 3] <- 1
+data$w2_hea[data$w2_hedia04 == 3] <- 1
+data$w2_hea[data$w2_hedia05 == 3] <- 1
+data$w2_hea[data$w2_hedia06 == 3] <- 1
+data$w2_hea[data$w2_hedia07 == 3] <- 1
+data$w2_hea[data$w2_hedia08 == 3] <- 1
+data$w2_hea[data$w2_hedia09 == 3] <- 1
+
+# create variable indiating whether participants ever reported having 
+# heart attack in wave 1 or 2 (0 = no, 1 = yes)
+data$hea <- ifelse(data$w1_hea == 1, 1, 0)
+data$hea[data$w2_hea == 1] <- 1
+
+# check how many?
+table(data$hea) # N = 469
+
+# exclude those
+data <- subset(data, hea == 0)
+
+
+# 2.4) Exclude participants with manifest CVD: CONGESTIVE HEART FAILURE
+# ----------------------------------------------------------------------
+
+# create heart attack variable from CVD-variables at wave 1
+data$w1_chf <- ifelse(data$w2_behdia01 == 4, 1, 0)
+data$w1_chf[data$w2_behdia02 == 4] <- 1
+data$w1_chf[data$w2_behdia03 == 4] <- 1
+data$w1_chf[data$w2_behdia04 == 4] <- 1
+data$w1_chf[data$w2_behdia05 == 4] <- 1
+data$w1_chf[data$w2_behdia06 == 4] <- 1
+data$w1_chf[data$w2_behdia07 == 4] <- 1
+
+# create heart attack variable from CVD-variables at wave 2 (newly diagn.)
+data$w2_chf <- ifelse(data$w2_hedia01 == 4, 1, 0)
+data$w2_chf[data$w2_hedia02 == 4] <- 1
+data$w2_chf[data$w2_hedia03 == 4] <- 1
+data$w2_chf[data$w2_hedia04 == 4] <- 1
+data$w2_chf[data$w2_hedia05 == 4] <- 1
+data$w2_chf[data$w2_hedia06 == 4] <- 1
+data$w2_chf[data$w2_hedia07 == 4] <- 1
+data$w2_chf[data$w2_hedia08 == 4] <- 1
+data$w2_chf[data$w2_hedia09 == 4] <- 1
+
+# create variable indiating whether participants ever reported having 
+# heart attack in wave 1 or 2 (0 = no, 1 = yes)
+data$chf <- ifelse(data$w1_chf == 1, 1, 0)
+data$chf[data$w2_chf == 1] <- 1
+
+# check how many?
+table(data$chf) # N = 27
+
+# exclude those
+data <- subset(data, chf == 0)
+
+
+# 2.5) Exclude participants with Parkinson's disease
+# ---------------------------------------------------
+
+# create PD variable from wave 1
+data$w1_pd <- ifelse(data$w2_HeDibW6 == 1, 1, 0)
+
+# create heart attack variable from CVD-variables at wave 2 (newly diagn.)
+data$w2_pd <- ifelse(data$w2_hedib01 == 6, 1, 0)
+data$w2_pd[data$w2_hedib02 == 6] <- 1
+data$w2_pd[data$w2_hedib03 == 6] <- 1
+data$w2_pd[data$w2_hedib04 == 6] <- 1
+
+# create variable indiating whether participants ever reported having 
+# heart attack in wave 1 or 2 (0 = no, 1 = yes)
+data$pd <- ifelse(data$w1_pd == 1, 1, 0)
+data$pd[data$w2_pd == 1] <- 1
+
+# check how many?
+table(data$pd) # N = 12
+
+# exclude those
+data <- subset(data, pd == 0)
+
+
+# 2.6) Exclude participants with Alzheimer's disease
+# -----------------------------------------------------
+
+# create PD variable from wave 1
+data$w1_ad <- ifelse(data$w2_HeDibW8 == 1, 1, 0)
+
+# create heart attack variable from CVD-variables at wave 2 (newly diagn.)
+data$w2_ad <- ifelse(data$w2_hedib01 == 8, 1, 0)
+data$w2_ad[data$w2_hedib02 == 8] <- 1
+data$w2_ad[data$w2_hedib03 == 8] <- 1
+data$w2_ad[data$w2_hedib04 == 8] <- 1
+
+# create variable indiating whether participants ever reported having 
+# heart attack in wave 1 or 2 (0 = no, 1 = yes)
+data$ad <- ifelse(data$w1_ad == 1, 1, 0)
+data$ad[data$w2_ad == 1] <- 1
+
+# check how many?
+table(data$ad) # N = 8
+
+# exclude those
+data <- subset(data, ad == 0)
+
+
+# 2.7) Exclude participants with Dementia
+# -----------------------------------------
+
+# create PD variable from wave 1
+data$w1_dem <- ifelse(data$w2_HeDibW9 == 1, 1, 0)
+
+# create heart attack variable from CVD-variables at wave 2 (newly diagn.)
+data$w2_dem <- ifelse(data$w2_hedib01 == 9, 1, 0)
+data$w2_dem[data$w2_hedib02 == 9] <- 1
+data$w2_dem[data$w2_hedib03 == 9] <- 1
+data$w2_dem[data$w2_hedib04 == 9] <- 1
+
+# create variable indiating whether participants ever reported having 
+# heart attack in wave 1 or 2 (0 = no, 1 = yes)
+data$dem <- ifelse(data$w1_dem == 1, 1, 0)
+data$dem[data$w2_dem == 1] <- 1
+
+# check how many?
+table(data$dem) # N = 30
+
+# exclude those
+data <- subset(data, dem == 0)
+
+
+# -------------------
+# 3) Data wrangling
+# -------------------
+
+# 3.1) Recode general missing values to NAs
+# -------------------------------------------
+
 # recode different negative values for missing data to NAs
 data <- data %>% mutate_all(funs(na_if(., -11)))
 data <- data %>% mutate_all(funs(na_if(., -10)))
@@ -128,118 +334,273 @@ data <- data %>% mutate_all(funs(na_if(., -3)))
 data <- data %>% mutate_all(funs(na_if(., -2)))
 data <- data %>% mutate_all(funs(na_if(., -1)))
 
-# 2.2) Age
+
+# 3.2) Age
+# ----------
+
 # recode variable because 109 adults aged > 89 have age coded as 99 
 # 99 --> set these as missings
 data$w2_dhager[data$w2_dhager == 99] <- NA
 
 # center age variable for analyses
-data$w2_dhager.c <- scale(data$w2_dhager, center = T, scale = F) # center age 
+data$w2_age_c <- scale(data$w2_dhager, center = T, scale = F) # center age 
 
-# 2.3) Dichotomous variables
-# recode all dichotomous variables to dummies (0 = no, 1 = yes)
-for (i in names(data[,c(grep("psced", colnames(data)), 
-                        grep("w2_DhSex", colnames(data)), # 0 = female 
-                        grep("w2_HESka", colnames(data)), # current smoking
-                        grep("w2_Hemda", colnames(data)) 
-                        )])) {
-  data[[i]][data[[i]] == 2] <- 0}
 
-# 2.4) Ethnicity
+# 3.3) Sex
+# ------------
+
+# recode sex into dummy (0 = female, 1 = male) 
+data$w2_sex <- ifelse(data$w2_DhSex == 2, 0, 1)
+
+
+# 3.4) Ethnicity
+# ----------------
+
 # recode to dummy (0 = "white", 1 = "non-white")
-data$w2_fqethnr <- ifelse(data$w2_fqethnr == 1, 0, 1)
+data$w2_eth <- ifelse(data$w2_fqethnr == 1, 0, 1)
 
-# 2.5) Education
+
+# 3.5) Education
+# ---------------
+
 # recode to dummy (0 = lower education, 1 = higher education)
 data$w0_topqual2[data$w0_topqual2 == 6] <- NA # recode foreign / other qual to NA
 data$w0_topqual2[data$w0_topqual2 == 8] <- NA # recode full-time students to NA
-data$w0_educ <- ifelse(data$w0_topqual2 == 1, 1, 0) 
+data$w0_edu <- ifelse(data$w0_topqual2 == 1, 1, 0) 
 
-# 2.6) Hypertension
+# 3.6) Activities of daily living
+# ---------------------------------
+
+# Select only relevant variables from each wave
+adl <- data[,c("idauniq", "w2_heada01", "w2_heada02", "w2_heada03", "w2_heada04", 
+               "w2_heada05", "w2_heada06", "w2_heada07", "w2_heada08", "w2_heada09", 
+               "w2_heada10")]
+
+# Get adl data from wave 2 (10 items)
+adl_items <- select(adl, contains("heada"))
+
+# Code 96 to 0 and all others to 1
+# i.e. if people report any endorsement of a disability, the item is coded as 1
+adl_items <- adl_items %>% mutate_all(funs(dplyr::recode(., '96' = 0, 
+                                      '1'  = 1, 
+                                      '2'  = 1, 
+                                      '3'  = 1, 
+                                      '4'  = 1, 
+                                      '5'  = 1,
+                                      '6'  = 1, 
+                                      '7'  = 1, 
+                                      '8'  = 1, 
+                                      '9'  = 1, 
+                                      '10' = 1, 
+                                      '11' = 1, 
+                                      '12' = 1,
+                                      '13' = 1)))
+
+# Calculate sum scores items
+adl$adl <- rowSums(adl_items, na.rm = T)
+
+# Have to code people with al NAs to NA per hand here
+adl[is.na(adl_items$heada01) & 
+      is.na(adl_items$heada02) & 
+      is.na(adl_items$heada03) & 
+      is.na(adl_items$heada04) & 
+      is.na(adl_items$heada05) & 
+      is.na(adl_items$heada06) & 
+      is.na(adl_items$heada07) & 
+      is.na(adl_items$heada08) & 
+      is.na(adl_items$heada09) & 
+      is.na(adl_items$heada10), "adl"] <- NA
+
+# Check how many people report ADLs
+table(adl$adl, useNA = "always")
+
+# Merge data 
+data <- merge(data, adl, all.x = T, by = "idauniq", sort = T)
+
+# Categorise and dummy-code adl variable 
+data$adl.dummy1 <- ifelse(data$adl > 1, 1, 0)
+
+# --------------------------
+# 4) Vascular risk factors
+# --------------------------
+
+# 4.1) Smoking 
+# --------------
+
+# recode all dichotomous variables to dummies (0 = no, 1 = yes)
+for (i in names(data[,c(grep("w2_HESka", colnames(data)), # current smoking (wave 2)
+                        grep("w2_bheska",colnames(data)), # current smoking (wave 1)
+                        grep("w2_bhesmk",colnames(data)) # ever smoked (wave 1)
+)])) {
+  data[[i]][data[[i]] == 2] <- 0}
+
+
+# 4.2) Hypertension / Blood pressure
+# --------------------------------------------
+
+# average all three blood pressure values from wave 2 
+data$w2_meansys <- rowMeans(data[,c("w2_sys1",  "w2_sys2",  "w2_sys3" )], na.rm = T)
+data$w2_meandia <- rowMeans(data[,c("w2_dias1", "w2_dias2", "w2_dias3")], na.rm = T)
+
 # create hypertension variable from CVD-variables at wave 1
 data$w1_hypt <- ifelse(data$w2_behdia01 == 1, 1, 0)
-data$w1_hypt[data$w2_behdia02 == 1   | data$w2_behdia03 == 1 | 
-               data$w2_behdia04 == 1 | data$w2_behdia05 == 1 | 
-               data$w2_behdia06 == 1 | data$w2_behdia07 == 1 |
-               data$w2_behdia08 == 1 | data$w2_behdia09 == 1] <- 1 
+data$w1_hypt[data$w2_behdia02 == 1] <- 1
+data$w1_hypt[data$w2_behdia03 == 1] <- 1
+data$w1_hypt[data$w2_behdia04 == 1] <- 1
+data$w1_hypt[data$w2_behdia05 == 1] <- 1
+data$w1_hypt[data$w2_behdia06 == 1] <- 1
+data$w1_hypt[data$w2_behdia07 == 1] <- 1
 
 # create hypertension variable from CVD-variables at wave 2 
 # (newly diagn. hypertension)
 data$w2_hypt <- ifelse(data$w2_hedia01 == 1, 1, 0)
-data$w2_hypt[data$w2_hedia02 == 1   | data$w2_hedia03 == 1 | 
-               data$w2_hedia04 == 1 | data$w2_hedia05 == 1 | 
-               data$w2_hedia06 == 1 | data$w2_hedia07 == 1 |
-               data$w2_hedia08 == 1 | data$w2_hedia09 == 1] <- 1 
+data$w2_hypt[data$w2_hedia02 == 1] <- 1
+data$w2_hypt[data$w2_hedia03 == 1] <- 1
+data$w2_hypt[data$w2_hedia04 == 1] <- 1
+data$w2_hypt[data$w2_hedia05 == 1] <- 1
+data$w2_hypt[data$w2_hedia06 == 1] <- 1
+data$w2_hypt[data$w2_hedia07 == 1] <- 1
+data$w2_hypt[data$w2_hedia08 == 1] <- 1
+data$w2_hypt[data$w2_hedia09 == 1] <- 1
 
 # create variable that indicating whether participants ever reported having 
 # hypertension in wave 1 or 2 (0 = no, 1 = yes)
 data$hyp <- ifelse(data$w1_hypt == 1, 1, 0)
 data$hyp[data$w2_hypt == 1] <- 1
 
-# 2.7) Diabetes
+# finally, code variable that includes the measurement of blood pressure in the definition of hypertension
+data$hyp2 <- ifelse(data$w2_meansys >= 130 & data$w2_meandia >= 80, 1, 0)
+data$hyp[data$hyp2 == 1] <- 1
+
+
+# 4.3) Diabetes/ Blood glucose
+# --------------------------------
+
+# Only select participants with valid fasting blood samples 
+data$w2_fglu_f <- ifelse(data$w2_fasteli == 2, NA, data$w2_fglu) 
+
 # create diabetes variable from CVD-variables at wave 1
 data$w1_diab <- ifelse(data$w2_behdia01 == 7, 1, 0)
-data$w1_diab[data$w2_behdia02 == 7 | data$w2_behdia03 == 7 | data$w2_behdia04 == 7 |
-               data$w2_behdia05 == 7 | data$w2_behdia06 == 7 | data$w2_behdia07 == 7 |
-               data$w2_behdia08 == 7 | data$w2_behdia09 == 7] <- 1 
+data$w1_diab[data$w2_behdia02 == 7] <- 1
+data$w1_diab[data$w2_behdia03 == 7] <- 1
+data$w1_diab[data$w2_behdia04 == 7] <- 1
+data$w1_diab[data$w2_behdia05 == 7] <- 1
+data$w1_diab[data$w2_behdia06 == 7] <- 1
+data$w1_diab[data$w2_behdia07 == 7] <- 1
 
 # create diabetes var from CVD-variables at wave 2 (newly diagn. diabetes)
 data$w2_diab <- ifelse(data$w2_hedia01 == 7, 1, 0)
-data$w2_diab[data$w2_hedia02 == 7 | data$w2_hedia03 == 7 | data$w2_hedia04 == 7 |
-               data$w2_hedia05 == 7 | data$w2_hedia06 == 7 | data$w2_hedia07 == 7 |
-               data$w2_hedia08 == 7 | data$w2_hedia09 == 7] <- 1 
+data$w2_diab[data$w2_hedia02 == 7] <- 1
+data$w2_diab[data$w2_hedia03 == 7] <- 1
+data$w2_diab[data$w2_hedia04 == 7] <- 1
+data$w2_diab[data$w2_hedia05 == 7] <- 1
+data$w2_diab[data$w2_hedia06 == 7] <- 1
+data$w2_diab[data$w2_hedia07 == 7] <- 1
+data$w2_diab[data$w2_hedia08 == 7] <- 1
+data$w2_diab[data$w2_hedia09 == 7] <- 1
 
 # create variable indiating whether participants ever reported having 
 # diabetes in wave 1 or 2 (0 = no, 1 = yes)
 data$diab <- ifelse(data$w1_diab == 1, 1, 0)
 data$diab[data$w2_diab == 1] <- 1
 
-# 2.8) Number of risk factors
+# finally create variable that includes the measurement of blood glucose in the definition of diabetes
+data$diab2 <- ifelse(data$w2_fglu_f >= 7, 1, 0)
+data$diab[data$diab2 == 1] <- 1
+
+
+# 4.4) Body mass index
+# -----------------------
+
 # create a variable that indicates obesity (BMI >= 30)
-data$w2_bmi.b <- ifelse(data$w2_bmi >=30,1,0)
+data$w2_bmi.b <- ifelse(data$w2_bmi >= 30, 1, 0)
+
+
+# 4.5) Hypercholesteremia / cholesterol
+# ---------------------------------------
+
+# create diabetes variable from CVD-variables at wave 1
+data$w1_chol <- ifelse(data$w2_behdia01 == 9, 1, 0)
+data$w1_chol[data$w2_behdia02 == 9]  <- 1
+data$w1_chol[data$w2_behdia03 == 9] <- 1
+data$w1_chol[data$w2_behdia04 == 9] <- 1
+data$w1_chol[data$w2_behdia05 == 9] <- 1
+data$w1_chol[data$w2_behdia06 == 9] <- 1
+data$w1_chol[data$w2_behdia07 == 9] <- 1
+
+# create diabetes var from CVD-variables at wave 2 (newly diagn. diabetes)
+data$w2_chol <- ifelse(data$w2_hedia01 == 9, 1, 0)
+data$w2_chol[data$w2_hedia02 == 9] <- 1
+data$w2_chol[data$w2_hedia03 == 9] <- 1
+data$w2_chol[data$w2_hedia04 == 9] <- 1
+data$w2_chol[data$w2_hedia05 == 9] <- 1
+data$w2_chol[data$w2_hedia06 == 9] <- 1
+data$w2_chol[data$w2_hedia07 == 9] <- 1
+data$w2_chol[data$w2_hedia08 == 9] <- 1
+data$w2_chol[data$w2_hedia09 == 9] <- 1
+
+# create variable indiating whether participants ever reported having 
+# diabetes in wave 1 or 2 (0 = no, 1 = yes)
+data$chol <- ifelse(data$w1_chol == 1, 1, 0)
+data$chol[data$w2_chol == 1] <- 1
+
+# finally create variable that includes the measurement of cholesterol
+data$chol2 <- ifelse(data$w2_chol >= 5, 1, 0)
+data$chol[data$chol2 == 1] <- 1
+
+
+# 4.6) Number of risk factors
+# -------------------------------
 
 # create variable that indicates the number of reported risk factors
-rf         <- data[,c("hyp","diab","w2_HESka", "w2_bmi.b")]
+rf         <- data[,c("hyp","diab","w2_HESka", "w2_bmi.b", "chol")]
 data$n_rf  <- rowSums(rf)
 
-# 2.9) Systolic and diastolic blood pressure
-# average all three blood pressure values from wave 2 
-data$w2_meansys  <- rowMeans(data[,c("w2_sys1",  "w2_sys2",  "w2_sys3" )], 
-                             na.rm = T)
-data$w2_meandias <- rowMeans(data[,c("w2_dias1", "w2_dias2", "w2_dias3")], 
-                             na.rm = T)
 
-# 2.10) Blood glucose variables
-# Only select participants with valid fasting blood samples 
-data$w2_fglu_f <- ifelse(data$w2_fasteli == 2, NA, data$w2_fglu) 
+# -------------------------
+# 5) Depressive symptoms
+# -------------------------
 
+# 5.0) Recode items to dummies (0 = no, 1 = yes)
+for (i in names(data[,c(grep("psced", colnames(data)))])) {
+  data[[i]][data[[i]] == 2] <- 0}
 
-# -----------------
-# 3) CESD-Scale
-# -----------------
-
-# 3.1) Unidimensionality 
+# 5.1) Unidimensionality 
 # CFA Full 8-item scale
 depr.1.m <- 
   'depr.1 =~ w2_psceda + w2_pscedb + w2_pscedc + w2_pscedd + w2_pscede + 
              w2_pscedf + w2_pscedg + w2_pscedh'
-depr.1.f <- cfa(model = depr.1.m, data = data, ordered = c("w2_psceda", "w2_pscedb",
-                                                           "w2_pscedc", "w2_pscedd",
-                                                           "w2_pscede", "w2_pscedf", 
-                                                           "w2_pscedg", "w2_pscedh"))
+depr.1.f <- cfa(model = depr.1.m, data = data, 
+                ordered = c("w2_psceda", "w2_pscedb", "w2_pscedc", "w2_pscedd",
+                            "w2_pscede", "w2_pscedf", "w2_pscedg", "w2_pscedh"), 
+                missing = "pairwise", estimator = "WLSMV", 
+                parameterization = "theta")
 summary(depr.1.f, fit.measures = TRUE, standardized = TRUE)
-modindices(depr.1.f, sort = TRUE, minimum.value = 100) # modification indices
+modindices(depr.1.f, sort = TRUE, minimum.value = 50) # modification indices
 
-# CFA reduced 5-item scale
-depr.1.m <- 'depr.1 =~ w2_psceda + w2_pscedb + w2_pscedd + w2_pscede + w2_pscedg'
-depr.1.f <- cfa(model = depr.1.m, data = data, ordered = c("w2_psceda", "w2_pscedb", 
+
+# CFA affective symptoms (5 symptoms)
+depr.2.m <- 
+  'depr.2 =~ w2_psceda + w2_pscedd + w2_pscede + w2_pscedf + w2_pscedg'
+depr.2.f <- cfa(model = depr.2.m, data = data, 
+                ordered = c("w2_psceda", "w2_pscedd", "w2_pscede", "w2_pscedf", "w2_pscedg"), 
+                missing = "pairwise", estimator = "WLSMV", 
+                parameterization = "theta")
+summary(depr.2.f, fit.measures = TRUE, standardized = TRUE)
+modindices(depr.2.f, sort = TRUE, minimum.value = 100) # modification indices
+
+# CFA somatic symptoms (3 symptoms)
+depr.3.m <- 'depr.1 =~ w2_pscedb + w2_pscedd + w2_pscede + w2_pscedg'
+depr.3.f <- cfa(model = depr.3.m, data = data, ordered = c("w2_psceda", "w2_pscedb", 
                                                            "w2_pscedd", "w2_pscede", 
-                                                           "w2_pscedg"))
-summary(depr.1.f, fit.measures = TRUE, standardized = TRUE)
-modindices(depr.1.f, sort = TRUE, minimum.value = 100) # modification indices
+                                                           "w2_pscedg"), 
+                missing = "pairwise", estimator = "WLSMV", 
+                parameterization = "theta")
+summary(depr.3.f, fit.measures = TRUE, standardized = TRUE)
+modindices(depr.3.f, sort = TRUE, minimum.value = 100) # modification indices
 
 
-# 3.2) Internal consistency
+# 5.2) Internal consistency
 # item d has to be reversed for calculations of alpha
 data$w2_pscedd_r <- 1 - data$w2_pscedd
 data$w3_pscedd_r <- 1 - data$w3_pscedd
@@ -265,7 +626,7 @@ psych::alpha(depr.items.5) # wave 5
 psych::alpha(depr.items.6) # wave 6
 psych::alpha(depr.items.7) # wave 7
 
-# 3.3) Calculate means (i.e. proportion of yes answers) for descriptive stats
+# 5.3) Calculate means (i.e. proportion of yes answers) for descriptive stats
 data$w2_deprmean <- rowMeans(depr.items.2)
 data$w3_deprmean <- rowMeans(depr.items.3)
 data$w4_deprmean <- rowMeans(depr.items.4)
@@ -275,7 +636,7 @@ data$w7_deprmean <- rowMeans(depr.items.7)
 
 
 # ---------------------------
-# 4) Save preprocessed data
+# 6) Save preprocessed data
 # ---------------------------
 
 save(data, file = "data/elsa/processed/elsa_proc_data.RData")
