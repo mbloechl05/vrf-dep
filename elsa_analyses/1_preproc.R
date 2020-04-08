@@ -565,42 +565,6 @@ data$n_rf  <- rowSums(rf)
 for (i in names(data[,c(grep("psced", colnames(data)))])) {
   data[[i]][data[[i]] == 2] <- 0}
 
-# 5.1) Unidimensionality 
-# CFA Full 8-item scale
-depr.1.m <- 
-  'depr.1 =~ w2_psceda + w2_pscedb + w2_pscedc + w2_pscedd + w2_pscede + 
-             w2_pscedf + w2_pscedg + w2_pscedh'
-depr.1.f <- cfa(model = depr.1.m, data = data, 
-                ordered = c("w2_psceda", "w2_pscedb", "w2_pscedc", "w2_pscedd",
-                            "w2_pscede", "w2_pscedf", "w2_pscedg", "w2_pscedh"), 
-                missing = "pairwise", estimator = "WLSMV", 
-                parameterization = "theta")
-summary(depr.1.f, fit.measures = TRUE, standardized = TRUE)
-modindices(depr.1.f, sort = TRUE, minimum.value = 50) # modification indices
-
-
-# CFA affective symptoms (5 symptoms)
-depr.2.m <- 
-  'depr.2 =~ w2_psceda + w2_pscedd + w2_pscede + w2_pscedf + w2_pscedg'
-depr.2.f <- cfa(model = depr.2.m, data = data, 
-                ordered = c("w2_psceda", "w2_pscedd", "w2_pscede", "w2_pscedf", "w2_pscedg"), 
-                missing = "pairwise", estimator = "WLSMV", 
-                parameterization = "theta")
-summary(depr.2.f, fit.measures = TRUE, standardized = TRUE)
-modindices(depr.2.f, sort = TRUE, minimum.value = 100) # modification indices
-
-# CFA somatic symptoms (3 symptoms)
-depr.3.m <- 'depr.1 =~ w2_pscedb + w2_pscedd + w2_pscede + w2_pscedg'
-depr.3.f <- cfa(model = depr.3.m, data = data, ordered = c("w2_psceda", "w2_pscedb", 
-                                                           "w2_pscedd", "w2_pscede", 
-                                                           "w2_pscedg"), 
-                missing = "pairwise", estimator = "WLSMV", 
-                parameterization = "theta")
-summary(depr.3.f, fit.measures = TRUE, standardized = TRUE)
-modindices(depr.3.f, sort = TRUE, minimum.value = 100) # modification indices
-
-
-# 5.2) Internal consistency
 # item d has to be reversed for calculations of alpha
 data$w2_pscedd_r <- 1 - data$w2_pscedd
 data$w3_pscedd_r <- 1 - data$w3_pscedd
@@ -609,30 +573,109 @@ data$w5_pscedd_r <- 1 - data$w5_pscedd
 data$w6_pscedd_r <- 1 - data$w6_pscedd
 data$w7_pscedd_r <- 1 - data$w7_pscedd
 
-# select items CES-D items for each wave 
-depr.items.2 <- data[,c("w2_psceda", "w2_pscedb", "w2_pscedd_r", "w2_pscede", "w2_pscedg")] # wave 2
-depr.items.3 <- data[,c("w3_psceda", "w3_pscedb", "w3_pscedd_r", "w3_pscede", "w3_pscedg")] # wave 3
-depr.items.4 <- data[,c("w4_psceda", "w4_pscedb", "w4_pscedd_r", "w4_pscede", "w4_pscedg")] # wave 4
-depr.items.5 <- data[,c("w5_psceda", "w5_pscedb", "w5_pscedd_r", "w5_pscede", "w5_pscedg")] # wave 5
-depr.items.6 <- data[,c("w6_psceda", "w6_pscedb", "w6_pscedd_r", "w6_pscede", "w6_pscedg")] # wave 6
-depr.items.7 <- data[,c("w7_psceda", "w7_pscedb", "w7_pscedd_r", "w7_pscede", "w7_pscedg")] # wave 7
+# item f has to be reversed for calculations of alpha
+data$w2_pscedf_r <- 1 - data$w2_pscedf
+data$w3_pscedf_r <- 1 - data$w3_pscedf
+data$w4_pscedf_r <- 1 - data$w4_pscedf
+data$w5_pscedf_r <- 1 - data$w5_pscedf
+data$w6_pscedf_r <- 1 - data$w6_pscedf
+data$w7_pscedf_r <- 1 - data$w7_pscedf
+
+# 5.1) Unidimensionality 
+# -------------------------
+
+# CFA Full 8-item scale
+depr.full.m <- 
+  'depr.full =~ w2_psceda + w2_pscedb + w2_pscedc + w2_pscedd + w2_pscede + 
+             w2_pscedf + w2_pscedg + w2_pscedh'
+depr.full.f <- cfa(model = depr.full.m, data = data, 
+                   ordered = c("w2_psceda", "w2_pscedb", "w2_pscedc", "w2_pscedd",
+                               "w2_pscede", "w2_pscedf", "w2_pscedg", "w2_pscedh"), 
+                   missing = "pairwise", estimator = "WLSMV", 
+                   parameterization = "theta")
+summary(depr.full.f, fit.measures = TRUE, standardized = TRUE)
+modindices(depr.full.f, sort = TRUE, minimum.value = 100) # modification indices
+
+
+# CFA affective symptoms (5 symptoms)
+depr.aff.m <- 'depr.aff =~ w2_psceda + w2_pscedd + w2_pscede + w2_pscedf + w2_pscedg'
+depr.aff.f <- cfa(model = depr.aff.m, data = data, 
+                  ordered = c("w2_psceda", "w2_pscedd", "w2_pscede", "w2_pscedf", "w2_pscedg"), 
+                  missing = "pairwise", estimator = "WLSMV", 
+                  parameterization = "theta")
+summary(depr.aff.f, fit.measures = TRUE, standardized = TRUE)
+modindices(depr.aff.f, sort = TRUE, minimum.value = 100) # modification indices
+
+# CFA somatic symptoms (3 symptoms)
+depr.som.m <- 'depr.som =~ w2_pscedb + w2_pscedc + w2_pscedh'
+depr.som.f <- cfa(model = depr.som.m, data = data, 
+                  ordered = c("w2_pscedb", "w2_pscedc", "w2_pscedh"), 
+                  missing = "pairwise", estimator = "WLSMV", 
+                  parameterization = "theta")
+summary(depr.som.f, fit.measures = TRUE, standardized = TRUE)
+modindices(depr.som.f, sort = TRUE, minimum.value = 50) # modification indices
+
+
+# 5.2) Internal consistency
+# ---------------------------
+
+# 5.2.1) Affective symptoms
+
+# select affective items CES-D items for each wave 
+aff.items.2 <- data[,c("w2_psceda", "w2_pscedd_r", "w2_pscede", "w2_pscedf_r", "w2_pscedg")] # wave 2
+aff.items.3 <- data[,c("w3_psceda", "w3_pscedd_r", "w3_pscede", "w3_pscedf_r", "w3_pscedg")] # wave 3
+aff.items.4 <- data[,c("w4_psceda", "w4_pscedd_r", "w4_pscede", "w4_pscedf_r", "w4_pscedg")] # wave 4
+aff.items.5 <- data[,c("w5_psceda", "w5_pscedd_r", "w5_pscede", "w5_pscedf_r", "w5_pscedg")] # wave 5
+aff.items.6 <- data[,c("w6_psceda", "w6_pscedd_r", "w6_pscede", "w6_pscedf_r", "w6_pscedg")] # wave 6
+aff.items.7 <- data[,c("w7_psceda", "w7_pscedd_r", "w7_pscede", "w7_pscedf_r", "w7_pscedg")] # wave 7
 
 # calculate Cronbach's alpha 
 # note: reduces to Kuder-Richardson formula for dichotomous items (implemented in alpha())
-psych::alpha(depr.items.2) # wave 2
-psych::alpha(depr.items.3) # wave 3
-psych::alpha(depr.items.4) # wave 4
-psych::alpha(depr.items.5) # wave 5
-psych::alpha(depr.items.6) # wave 6
-psych::alpha(depr.items.7) # wave 7
+psych::alpha(aff.items.2) # wave 2
+psych::alpha(aff.items.3) # wave 3
+psych::alpha(aff.items.4) # wave 4
+psych::alpha(aff.items.5) # wave 5
+psych::alpha(aff.items.6) # wave 6
+psych::alpha(aff.items.7) # wave 7
 
-# 5.3) Calculate means (i.e. proportion of yes answers) for descriptive stats
-data$w2_deprmean <- rowMeans(depr.items.2)
-data$w3_deprmean <- rowMeans(depr.items.3)
-data$w4_deprmean <- rowMeans(depr.items.4)
-data$w5_deprmean <- rowMeans(depr.items.5)
-data$w6_deprmean <- rowMeans(depr.items.6)
-data$w7_deprmean <- rowMeans(depr.items.7)
+# 5.2.2) Somatic symptoms
+
+# select affective items CES-D items for each wave 
+som.items.2 <- data[,c("w2_pscedb", "w2_pscedc", "w2_pscedh")] # wave 2
+som.items.3 <- data[,c("w3_pscedb", "w3_pscedc", "w3_pscedh")] # wave 3
+som.items.4 <- data[,c("w4_pscedb", "w4_pscedc", "w4_pscedh")] # wave 4
+som.items.5 <- data[,c("w5_pscedb", "w5_pscedc", "w5_pscedh")] # wave 5
+som.items.6 <- data[,c("w6_pscedb", "w6_pscedc", "w6_pscedh")] # wave 6
+som.items.7 <- data[,c("w7_pscedb", "w7_pscedc", "w7_pscedh")] # wave 7
+
+# calculate Cronbach's alpha 
+# note: reduces to Kuder-Richardson formula for dichotomous items (implemented in alpha())
+psych::alpha(som.items.2) # wave 2
+psych::alpha(som.items.3) # wave 3
+psych::alpha(som.items.4) # wave 4
+psych::alpha(som.items.5) # wave 5
+psych::alpha(som.items.6) # wave 6
+psych::alpha(som.items.7) # wave 7
+
+# 5.3) Calculate means 
+# ----------------------
+# (i.e. proportion of yes answers) for descriptive stats
+
+# 5.3.1) Affective symptoms
+data$w2_affmean <- rowMeans(aff.items.2)
+data$w3_affmean <- rowMeans(aff.items.3)
+data$w4_affmean <- rowMeans(aff.items.4)
+data$w5_affmean <- rowMeans(aff.items.5)
+data$w6_affmean <- rowMeans(aff.items.6)
+data$w7_affmean <- rowMeans(aff.items.7)
+
+# 5.3.2) Somatic symptoms
+data$w2_sommean <- rowMeans(som.items.2)
+data$w3_sommean <- rowMeans(som.items.3)
+data$w4_sommean <- rowMeans(som.items.4)
+data$w5_sommean <- rowMeans(som.items.5)
+data$w6_sommean <- rowMeans(som.items.6)
+data$w7_sommean <- rowMeans(som.items.7)
 
 
 # ---------------------------
