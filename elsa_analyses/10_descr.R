@@ -1,6 +1,6 @@
 # ===============================================================
 # Cardiovascular Risk and Trajectories of Depressive Symptoms
-# Script 11: Descriptive Statistics
+# Script 10: Descriptive Statistics
 # ==============================================================
 
 # clear work space
@@ -26,16 +26,20 @@ load("data/elsa/processed/elsa_proc_data.RData")
 # valid Ns)
 psych::describe(data[,c("w2_age"    , "w2_sex"    , "w2_eth"    , "w0_edu"  , "w2_hypt"  , 
                         "w2_obese"  , "w2_diab"   , "w2_smok"   , "w2_hchol", "w2_cvrisk", 
-                        "w2_aff_sum", "w2_som_sum", "w2_dep_sum", "w2_adl"
-                        )]) 
+                        "w2_aff_sum", "w2_som_sum", "w2_dep_sum", "w2_adl")]) 
 
 # descriptive stats for dichotomous variables
-tables <- lapply(data[,c("w2_sex" , "w2_ethn" , "w0_edu"   , "w2_hypt"   , "w2_diab"   , 
-                         "w2_smok", "w2_obese", "w2_cvrisk", "w2_aff_sum", "w2_som_sum", 
-                         "w2_dep_sum")], 
-                 table)
+tables <- lapply(data[,c("w2_sex" , "w2_eth"  , "w0_edu"   , "w2_hypt"  , "w2_diab"   , 
+                         "w2_smok", "w2_obese", "w2_hchol" , "w2_cvrisk", "w2_aff_sum", 
+                         "w2_som_sum", "w2_dep_sum")], table)
 tables # absolute frequencies
 lapply(tables, prop.table) # relative frequencies
+
+# absolute and relative frequency of depressiove symptoms >2
+clin_dep <- cumsum(tables$w2_dep_sum[4:9])
+clin_dep
+
+100/nrow(data)*clin_dep[6]
 
 
 # ------------------------------------------------
@@ -43,60 +47,75 @@ lapply(tables, prop.table) # relative frequencies
 # ------------------------------------------------
 
 # select variables for corr matrix
-vars <- data[,c("w2_dhager","w2_sex", "w2_eth", "w0_edu", "hyp",
-                "w2_bmi.b", "diab", "chol", "w2_HESka", "adl", "n_rf",
-                "w2_affsum", "w3_affsum", "w4_affsum", "w5_affsum", "w6_affsum", "w7_affsum", 
-                "w2_somsum", "w3_somsum", "w4_somsum", "w5_somsum", "w6_somsum", "w7_somsum")]  
+vars <- data[,c("w2_age"    , "w2_sex"    , "w2_eth"    , "w0_edu"    , "w2_hypt", 
+                "w2_obese"  , "w2_diab"   , "w2_smok"   , "w2_hchol"  , "w2_cvrisk" , "w2_adl",
+                "w2_aff_sum", "w3_aff_sum", "w4_aff_sum", "w5_aff_sum", "w6_aff_sum", "w7_aff_sum", 
+                "w2_som_sum", "w3_som_sum", "w4_som_sum", "w5_som_sum", "w6_som_sum", "w7_som_sum")]  
 
 # create corr matrix (rounded to 2 dec places)
 rcorr(as.matrix(vars))
 
 
-# --------------------------------
-# 3) Check selective drop-out
-# --------------------------------
+# ---------------------------
+# 3) Check attrition rates
+# ---------------------------
 
-# How many people participated in each wave?
-waves <- data[,c("wave2", "wave2n","wave3", "wave4", "wave5", "wave6", "wave7")]
+# 3.1) How many people participated in each wave?
+# -------------------------------------------------
+
+# select all waves variables
+waves <- data[,c("wave_2_c", "wave_2_n","wave_3_c", "wave_4_c", "wave_5_c", 
+                 "wave_6_c", "wave_7_c")]
+
+# get info about n per wave
 sapply(waves, function(x) table(x))
 
-# How many waves did people participate on average?
-data$n_waves <- rowSums(data[,c("wave2", "wave3", "wave4", "wave5", "wave6", "wave7")])
+
+# 3.2) How many waves did people participate on average?
+# --------------------------------------------------------
+
+# create variable indicating number of waves people participated in 
+data$n_waves <- rowSums(data[,c("wave_2_c", "wave_3_c", "wave_4_c", "wave_5_c", 
+                                "wave_6_c", "wave_7_c")])
+
+# get mean and sd of number of waves
 psych::describe(data$n_waves)
+
+# get asolute and relative frquencies for each wave
 tab <- table(data$n_waves)
 tab # absolute frequencies
 prop.table(tab) # relative frequencies
 
 
-# 3.1) Longitudinal drop-out
-# ----------------------------
+# 3.3) Was drop-out selective?
+# -------------------------------
 
-# Descriptive stats of people with less than 5 waves
+# descriptive stats of people with less than 5 waves
 loss <- subset(data, n_waves < 5) 
 
-psych::describe(loss[c("w2_sex", "w2_dhager", "w0_edu", "w2_eth", "w2_HESka", "adl",
-                       "w2_affsum", "w2_somsum", "w2_depsum", "n_rf", "w2_bmi.b", "hyp", 
-                       "diab", "chol")])
+psych::describe(loss[c("w2_age"    , "w2_sex"    , "w2_eth"    , "w0_edu"  , "w2_hypt"  , 
+                       "w2_obese"  , "w2_diab"   , "w2_smok"   , "w2_hchol", "w2_cvrisk", 
+                       "w2_aff_sum", "w2_som_sum", "w2_dep_sum", "w2_adl")])
 
 # Descriptive stats of poeple with 5 or more waves
 comp <- subset(data, n_waves >= 5) 
 
-psych:: describe(comp[c("w2_sex", "w2_dhager", "w0_edu", "w2_eth", "w2_HESka", "adl",
-                        "w2_affsum", "w2_somsum", "w2_depsum", "n_rf", "w2_bmi.b", "hyp", 
-                        "diab", "chol")])
+psych:: describe(comp[c("w2_age"    , "w2_sex"    , "w2_eth"    , "w0_edu"  , "w2_hypt"  , 
+                        "w2_obese"  , "w2_diab"   , "w2_smok"   , "w2_hchol", "w2_cvrisk", 
+                        "w2_aff_sum", "w2_som_sum", "w2_dep_sum", "w2_adl")])
 
 # Calculate Cohens ds for comparisons
-cohen.d(loss$w2_dhager, comp$w2_dhager, pooled = T, paired = F, na.rm = T)
-cohen.d(loss$w2_sex,    comp$w2_sex,    pooled = T, paired = F, na.rm = T)
-cohen.d(loss$w0_edu,    comp$w0_edu,    pooled = T, paired = F, na.rm = T)
-cohen.d(loss$w2_eth,    comp$w2_eth,    pooled = T, paired = F, na.rm = T)
-cohen.d(loss$adl,       comp$adl,       pooled = T, paired = F, na.rm = T)
-cohen.d(loss$w2_depsum, comp$w2_depsum, pooled = T, paired = F, na.rm = T)
-cohen.d(loss$n_rf,      comp$n_rf,      pooled = T, paired = F, na.rm = T)
-cohen.d(loss$w2_HESka,  comp$w2_HESka,  pooled = T, paired = F, na.rm = T)
-cohen.d(loss$hyp,       comp$hyp,       pooled = T, paired = F, na.rm = T)
-cohen.d(loss$w2_bmival, comp$w2_bmival, pooled = T, paired = F, na.rm = T)
-cohen.d(loss$diab,      comp$diab,      pooled = T, paired = F, na.rm = T)
-cohen.d(loss$chol,      comp$chol,      pooled = T, paired = F, na.rm = T)
+cohen.d(loss$w2_age,     comp$w2_age,     pooled = T, paired = F, na.rm = T)
+cohen.d(loss$w2_sex,     comp$w2_sex,     pooled = T, paired = F, na.rm = T)
+cohen.d(loss$w0_edu,     comp$w0_edu,     pooled = T, paired = F, na.rm = T)
+cohen.d(loss$w2_eth,     comp$w2_eth,     pooled = T, paired = F, na.rm = T)
+cohen.d(loss$w2_smok,    comp$w2_smok,    pooled = T, paired = F, na.rm = T)
+cohen.d(loss$w2_hypt,    comp$w2_hypt,    pooled = T, paired = F, na.rm = T)
+cohen.d(loss$w2_obese,   comp$w2_obese,   pooled = T, paired = F, na.rm = T)
+cohen.d(loss$w2_diab,    comp$diab,       pooled = T, paired = F, na.rm = T)
+cohen.d(loss$w2_hchol,   comp$hchol,      pooled = T, paired = F, na.rm = T)
+cohen.d(loss$w2_cvrisk,  comp$w2_cvrisk,  pooled = T, paired = F, na.rm = T)
+cohen.d(loss$w2_dep_sum, comp$w2_dep_sum, pooled = T, paired = F, na.rm = T)
+cohen.d(loss$w2_adl,     comp$w2_adl,     pooled = T, paired = F, na.rm = T)
 
 

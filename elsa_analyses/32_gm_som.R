@@ -1,7 +1,7 @@
-# =================================================================
-# ELSA: Fitting latent growth models (LGMs) for affective symptoms
-# (contact maria.bloechl@gmail.com in case of questions)
-# =================================================================
+# ================================================================
+# Cardiovascular Risk and Trajectories of Depressive Symptoms
+# Script 32: Latent Growth Models for Affective Symptoms
+# ================================================================
 
 # clean work space
 rm(list = ls())
@@ -23,7 +23,7 @@ load("data/elsa/processed/elsa_proc_data.RData")
 # Please note that this part of the script is generic in a sense that
 # the plot function and model definition will be applied to all 
 # analysed outcomes. Hence, this part of the script (part 0) *has to be* 
-# run before conducting analyses on the outcomes (parts 1-3).
+# run before conducting analyses.
 
 # Create basic plot function
 # -----------------------------
@@ -43,13 +43,13 @@ plot_long <- function(n, id, w2_var, w3_var, w4_var, w5_var, w6_var, w7_var) {
 }
 
 # Mean depressive symptoms plot
-plot_long(n, "idauniq", "w2_sommean", "w3_sommean", "w4_sommean", 
-          "w5_sommean", "w6_sommean", "w7_sommean")
+plot_long(n, "idauniq", "w2_som_sum", "w3_som_sum", "w4_som_sum", 
+          "w5_som_sum", "w6_som_sum", "w7_som_sum")
 
 # Create panel plot
 data_plot <- data[sample(nrow(data), 500), 
-                  c("idauniq", "w2_sommean", "w3_sommean", "w4_sommean", "w5_sommean", 
-                    "w6_sommean", "w7_sommean")]
+                  c("idauniq", "w2_som_sum", "w3_som_sum", "w4_som_sum", "w5_som_sum", 
+                    "w6_som_sum", "w7_som_sum")]
 data_plot <- melt(data_plot, id.vars=c("idauniq")) # wide to long format
 
 jpeg("plot_somatic_time.jpeg", width = 500, height = 5000)
@@ -64,14 +64,15 @@ xyplot(value ~ variable | idauniq, data = data_plot,
 dev.off()
 
 
-# --------------------------------------------------------
-# 1) Unconditional LGM without covariates or predictors
-# --------------------------------------------------------
+# --------------------------------------
+# 1) Unconditional LGM (no predictors)
+# --------------------------------------
 
-# 1.1) define model with a linear fit
-# ------------------------------------
+# Model 1a: Unconditional LGM, linear fit
+# -----------------------------------------------
 
-m.uc <- '
+# define model
+model_1a_som <- '
 
 # measurement models wit constrained factor loadings
 w2_som =~ 1*w2_pscedb + l1*w2_pscedc + l2*w2_pscedh
@@ -167,7 +168,7 @@ s ~ 1
 '
 
 # fit model
-fit.uc.som <- sem(m.uc, data = data, 
+fit_1a_som <- sem(model_1a_som, data = data, 
                   ordered = c("w2_pscedb","w2_pscedc","w2_pscedh",
                               "w3_pscedb","w3_pscedc","w3_pscedh",
                               "w4_pscedb","w4_pscedc","w4_pscedh",
@@ -178,13 +179,14 @@ fit.uc.som <- sem(m.uc, data = data,
                   parameterization = "theta" )
 
 # summarise fit results
-summary(fit.uc.som,  fit.measures = T, standardized = T)
+summary(fit_1a_som,  fit.measures = T, standardized = T)
 
 
-# 1.2) define model with a non-linear fit
-# ----------------------------------------
+# Model 1b: Unconditional LGM, non-linear fit
+# ----------------------------------------------
 
-m.uc.2 <- '
+# define model
+model_1b_som <- '
 
 # measurement models wit constrained factor loadings
 w2_som =~ 1*w2_pscedb + l1*w2_pscedc + l2*w2_pscedh
@@ -280,128 +282,7 @@ s ~ 1
 '
 
 # fit model
-fit.uc.som2 <- sem(m.uc.2, data = data, 
-                  ordered = c("w2_pscedb","w2_pscedc","w2_pscedh",
-                              "w3_pscedb","w3_pscedc","w3_pscedh",
-                              "w4_pscedb","w4_pscedc","w4_pscedh",
-                              "w5_pscedb","w5_pscedc","w5_pscedh",
-                              "w6_pscedb","w6_pscedc","w6_pscedh",
-                              "w7_pscedb","w7_pscedc","w7_pscedh"),
-                  missing = "pairwise", estimator = "WLSMV", 
-                  parameterization = "theta" )
-
-# summarise fit results
-summary(fit.uc.som2,  fit.measures = T, standardized = T)
-
-# compare against linear fit
-anova(fit.uc.som, fit.uc.som2)
-
-# ----------------------------------------------------------------
-# 2) Conditional LGM with demographic covariates (no predictors)
-# ----------------------------------------------------------------
-
-# define model
-m.cov <- '
-
-# measurement models wit constrained factor loadings
-w2_som =~ 1*w2_pscedb + l1*w2_pscedc + l2*w2_pscedh
-w3_som =~ 1*w3_pscedb + l1*w3_pscedc + l2*w3_pscedh
-w4_som =~ 1*w4_pscedb + l1*w4_pscedc + l2*w4_pscedh
-w5_som =~ 1*w5_pscedb + l1*w5_pscedc + l2*w5_pscedh
-w6_som =~ 1*w6_pscedb + l1*w6_pscedc + l2*w6_pscedh
-w7_som =~ 1*w7_pscedb + l1*w7_pscedc + l2*w7_pscedh
-
-# define tresholds
-w2_pscedb | a*t1
-w3_pscedb | a*t1
-w4_pscedb | a*t1
-w5_pscedb | a*t1
-w6_pscedb | a*t1
-w7_pscedb | a*t1
-
-w2_pscedc | b*t1
-w3_pscedc | b*t1
-w4_pscedc | b*t1
-w5_pscedc | b*t1
-w6_pscedc | b*t1
-w7_pscedc | b*t1
-
-w2_pscedh | c*t1
-w3_pscedh | c*t1
-w4_pscedh | c*t1
-w5_pscedh | c*t1
-w6_pscedh | c*t1
-w7_pscedh | c*t1
-
-# define latent factor means
-w2_som ~ 0*1
-w3_som ~ 0*1
-w4_som ~ 0*1
-w5_som ~ 0*1
-w6_som ~ 0*1
-w7_som ~ 0*1
-
-# define unique variance terms
-w2_pscedb ~~ 1*w2_pscedb
-w3_pscedb ~~ 1*w3_pscedb
-w4_pscedb ~~ 1*w4_pscedb
-w5_pscedb ~~ 1*w5_pscedb
-w6_pscedb ~~ 1*w6_pscedb
-w7_pscedb ~~ 1*w7_pscedb
-
-w2_pscedc ~~ 1*w2_pscedc
-w3_pscedc ~~ 1*w3_pscedc
-w4_pscedc ~~ 1*w4_pscedc
-w5_pscedc ~~ 1*w5_pscedc
-w6_pscedc ~~ 1*w6_pscedc
-w7_pscedc ~~ 1*w7_pscedc
-
-w2_pscedh ~~ 1*w2_pscedh
-w3_pscedh ~~ 1*w3_pscedh
-w4_pscedh ~~ 1*w4_pscedh
-w5_pscedh ~~ 1*w5_pscedh
-w6_pscedh ~~ 1*w6_pscedh
-w7_pscedh ~~ 1*w7_pscedh
-
-# residual correlations
-w2_pscedb ~~ w3_pscedb + w4_pscedb + w5_pscedb + w6_pscedb + w7_pscedb
-w3_pscedb ~~ w4_pscedb + w5_pscedb + w6_pscedb + w7_pscedb
-w4_pscedb ~~ w5_pscedb + w6_pscedb + w7_pscedb
-w5_pscedb ~~ w6_pscedb + w7_pscedb
-w6_pscedb ~~ w7_pscedb
-
-w2_pscedc ~~ w3_pscedc + w4_pscedc + w5_pscedc + w6_pscedc + w7_pscedc
-w3_pscedc ~~ w4_pscedc + w5_pscedc + w6_pscedc + w7_pscedc
-w4_pscedc ~~ w5_pscedc + w6_pscedc + w7_pscedc
-w5_pscedc ~~ w6_pscedc + w7_pscedc
-w6_pscedc ~~ w7_pscedc
-
-w2_pscedh ~~ w3_pscedh + w4_pscedh + w5_pscedh + w6_pscedh + w7_pscedh
-w3_pscedh ~~ w4_pscedh + w5_pscedh + w6_pscedh + w7_pscedh
-w4_pscedh ~~ w5_pscedh + w6_pscedh + w7_pscedh
-w5_pscedh ~~ w6_pscedh + w7_pscedh
-w6_pscedh ~~ w7_pscedh
-
-# intercept and slope with fixed coefficients
-i =~ 1*w2_som + 1*w3_som + 1*w4_som + 1*w5_som + 1*w6_som + 1*w7_som
-s =~ 0*w2_som + 1*w3_som + 2*w4_som + 3*w5_som + 4*w6_som + 5*w7_som
-
-# intercept and slope variances and covariance
-i ~~ i
-s ~~ s
-i ~~ s
-
-# intercept and slope means
-i ~ 1
-s ~ 1
-
-# regressions
-i ~ w2_age_c + w2_sex + w2_eth + w0_edu
-s ~ w2_age_c + w2_sex + w2_eth + w0_edu
-'
-
-# fit model (non-linear fit, spline model)
-fit.cov.som <- sem(m.cov, data = data, 
+fit_1b_som <- sem(model_1b_som, data = data, 
                    ordered = c("w2_pscedb","w2_pscedc","w2_pscedh",
                                "w3_pscedb","w3_pscedc","w3_pscedh",
                                "w4_pscedb","w4_pscedc","w4_pscedh",
@@ -412,19 +293,25 @@ fit.cov.som <- sem(m.cov, data = data,
                    parameterization = "theta" )
 
 # summarise fit results
-summary(fit.cov.som,  fit.measures = T, standardized = T, ci = T)
+summary(fit_1b_som,  fit.measures = T, standardized = T)
+
+# compare non-linear against linear fit
+anova(fit_1a_som, fit_1bs_som)
 
 
-# -------------------------------------------------
-# 3) Conditional LGMs with vascular risk factors 
-# -------------------------------------------------
+# --------------------------------------
+# 2) Conditional LGM (with covariates)
+# --------------------------------------
 
-# The following model is an extension of the previous model with one additional 
-# predictor ("pred"). It is coded as a generic model. That is "pred" is used as 
-# a place holder for vascular risk factors, which are introduced individually.
+# Note that in the following models, 'pred' is used as a place holder for the 
+# cardiovascular risk variable. Later in this script, we will also use this model to 
+# model single risk factors.
 
-# define generic model
-m.pred <- '
+# Model 2a: Conditional LGM with demographic covariates + cv risk  
+# -----------------------------------------------------------------------
+
+# define  model
+model_2a_som <- '
 
 # measurement models wit constrained factor loadings
 w2_som =~ 1*w2_pscedb + l1*w2_pscedc + l2*w2_pscedh
@@ -519,21 +406,16 @@ i ~ 1
 s ~ 1
 
 # regressions
-i ~ w2_age_c + w2_sex + w2_eth + w0_edu + pred + int.a
-s ~ w2_age_c + w2_sex + w2_eth + w0_edu + pred + int.a
+i ~ w2_age_c + w2_sex + w2_eth + w0_edu + w2_pred + w2_pred_age
+s ~ w2_age_c + w2_sex + w2_eth + w0_edu + w2_pred + w2_pred_age
 '
 
-
-# 3.1) Multiple risk factors (accumulated)
-# -------------------------------------------
-
-# set number of risk factors for placeholder
-data$pred  <- data$n_rf
-data$int.a <- data$pred*data$w2_age_c 
-data$int.s <- data$pred*data$w2_sex
+# set cardiovascular risk variable for placeholders
+data$w2_pred     <- data$w2_cvrisk_c
+data$w2_pred_age <- data$w2_cvrisk_c*data$w2_age_c
 
 # fit model
-fit.mul.som <- sem(m.pred,data = data, 
+fit_2a_som <- sem(model_2a_som, data = data, 
                    ordered = c("w2_pscedb","w2_pscedc","w2_pscedh",
                                "w3_pscedb","w3_pscedc","w3_pscedh",
                                "w4_pscedb","w4_pscedc","w4_pscedh",
@@ -544,639 +426,409 @@ fit.mul.som <- sem(m.pred,data = data,
                    parameterization = "theta")
 
 # summarise fit results
-summary(fit.mul.som,  fit.measures = T, standardized = T, ci = T)
+summary(fit_2a_som,  fit.measures = T, standardized = T, ci = T)
 
 
-# 3.2) Hypertension
+# 2.2) Model 2b: Conditional LGM with demographic covariates + cv risk + adl 
+# ---------------------------------------------------------------------------
+
+# define model
+model_2b_som <- '
+
+# measurement models wit constrained factor loadings
+w2_som =~ 1*w2_pscedb + l1*w2_pscedc + l2*w2_pscedh
+w3_som =~ 1*w3_pscedb + l1*w3_pscedc + l2*w3_pscedh
+w4_som =~ 1*w4_pscedb + l1*w4_pscedc + l2*w4_pscedh
+w5_som =~ 1*w5_pscedb + l1*w5_pscedc + l2*w5_pscedh
+w6_som =~ 1*w6_pscedb + l1*w6_pscedc + l2*w6_pscedh
+w7_som =~ 1*w7_pscedb + l1*w7_pscedc + l2*w7_pscedh
+
+# define tresholds
+w2_pscedb | a*t1
+w3_pscedb | a*t1
+w4_pscedb | a*t1
+w5_pscedb | a*t1
+w6_pscedb | a*t1
+w7_pscedb | a*t1
+
+w2_pscedc | b*t1
+w3_pscedc | b*t1
+w4_pscedc | b*t1
+w5_pscedc | b*t1
+w6_pscedc | b*t1
+w7_pscedc | b*t1
+
+w2_pscedh | c*t1
+w3_pscedh | c*t1
+w4_pscedh | c*t1
+w5_pscedh | c*t1
+w6_pscedh | c*t1
+w7_pscedh | c*t1
+
+# define latent factor means
+w2_som ~ 0*1
+w3_som ~ 0*1
+w4_som ~ 0*1
+w5_som ~ 0*1
+w6_som ~ 0*1
+w7_som ~ 0*1
+
+# define unique variance terms
+w2_pscedb ~~ 1*w2_pscedb
+w3_pscedb ~~ 1*w3_pscedb
+w4_pscedb ~~ 1*w4_pscedb
+w5_pscedb ~~ 1*w5_pscedb
+w6_pscedb ~~ 1*w6_pscedb
+w7_pscedb ~~ 1*w7_pscedb
+
+w2_pscedc ~~ 1*w2_pscedc
+w3_pscedc ~~ 1*w3_pscedc
+w4_pscedc ~~ 1*w4_pscedc
+w5_pscedc ~~ 1*w5_pscedc
+w6_pscedc ~~ 1*w6_pscedc
+w7_pscedc ~~ 1*w7_pscedc
+
+w2_pscedh ~~ 1*w2_pscedh
+w3_pscedh ~~ 1*w3_pscedh
+w4_pscedh ~~ 1*w4_pscedh
+w5_pscedh ~~ 1*w5_pscedh
+w6_pscedh ~~ 1*w6_pscedh
+w7_pscedh ~~ 1*w7_pscedh
+
+# residual correlations
+w2_pscedb ~~ w3_pscedb + w4_pscedb + w5_pscedb + w6_pscedb + w7_pscedb
+w3_pscedb ~~ w4_pscedb + w5_pscedb + w6_pscedb + w7_pscedb
+w4_pscedb ~~ w5_pscedb + w6_pscedb + w7_pscedb
+w5_pscedb ~~ w6_pscedb + w7_pscedb
+w6_pscedb ~~ w7_pscedb
+
+w2_pscedc ~~ w3_pscedc + w4_pscedc + w5_pscedc + w6_pscedc + w7_pscedc
+w3_pscedc ~~ w4_pscedc + w5_pscedc + w6_pscedc + w7_pscedc
+w4_pscedc ~~ w5_pscedc + w6_pscedc + w7_pscedc
+w5_pscedc ~~ w6_pscedc + w7_pscedc
+w6_pscedc ~~ w7_pscedc
+
+w2_pscedh ~~ w3_pscedh + w4_pscedh + w5_pscedh + w6_pscedh + w7_pscedh
+w3_pscedh ~~ w4_pscedh + w5_pscedh + w6_pscedh + w7_pscedh
+w4_pscedh ~~ w5_pscedh + w6_pscedh + w7_pscedh
+w5_pscedh ~~ w6_pscedh + w7_pscedh
+w6_pscedh ~~ w7_pscedh
+
+# intercept and slope with fixed coefficients
+i =~ 1*w2_som + 1*w3_som + 1*w4_som + 1*w5_som + 1*w6_som + 1*w7_som
+s =~ 0*w2_som + 1*w3_som + 2*w4_som + 3*w5_som + 4*w6_som + 5*w7_som
+
+# intercept and slope variances and covariance
+i ~~ i
+s ~~ s
+i ~~ s
+
+# intercept and slope means
+i ~ 1
+s ~ 1
+
+# regressions
+i ~ w2_age_c + w2_sex + w2_eth + w0_edu + w2_adl + w2_pred + w2_pred_age
+s ~ w2_age_c + w2_sex + w2_eth + w0_edu + w2_adl + w2_pred + w2_pred_age
+'
+
+# set cardiovascular risk variable for placeholders
+data$w2_pred     <- data$w2_cvrisk_c
+data$w2_pred_age <- data$w2_cvrisk_c*data$w2_age_c
+
+# fit model
+fit_2b_som <- sem(model_2b_som, data = data, 
+                   ordered = c("w2_pscedb","w2_pscedc","w2_pscedh",
+                               "w3_pscedb","w3_pscedc","w3_pscedh",
+                               "w4_pscedb","w4_pscedc","w4_pscedh",
+                               "w5_pscedb","w5_pscedc","w5_pscedh",
+                               "w6_pscedb","w6_pscedc","w6_pscedh",
+                               "w7_pscedb","w7_pscedc","w7_pscedh"),
+                   missing = "pairwise", estimator = "WLSMV", 
+                   parameterization = "theta")
+
+# summarise fit results
+summary(fit_2b_som,  fit.measures = T, standardized = T, ci = T)
+
+
+# --------------------
+# 3) Create figures
+# --------------------
+
+# # 5.1) Figure 2 F-I: Single risk factors
+# 
+# # create get_parameters() function to extract parameters from the simple and the full model
+# get_parameters <- function(fit.simple, i.simple, s.simple, i.all, s.all){
+#   beta         <- standardizedSolution(fit.simple)$est.std[c(i.simple, s.simple)]
+#   ci.l         <- standardizedSolution(fit.simple)$ci.lower[c(i.simple, s.simple)]
+#   ci.u         <- standardizedSolution(fit.simple)$ci.upper[c(i.simple, s.simple)]
+#   coeff.simple <- data.frame(beta, ci.l, ci.u)
+#   beta         <- standardizedSolution(fit.all)$est.std[c(i.all, s.all)]
+#   ci.l         <- standardizedSolution(fit.all)$ci.lower[c(i.all, s.all)]
+#   ci.u         <- standardizedSolution(fit.all)$ci.upper[c(i.all, s.all)]
+#   coeff.all    <- data.frame(beta, ci.l, ci.u)
+#   
+#   coeff           <- rbind(coeff.simple, coeff.all)
+#   coeff$parameter <- c("Intercept", "Slope", "Intercept", "Slope")
+#   coeff$model     <- c("1", "1", "2", "2") #1 = Simple, 2 = All
+#   
+#   return(coeff)
+# }
+# 
+# # create get_plot() function to plot models with both model results
+# # note that plot is automatically saved using ggsave 
+# get_plot <- function(coeffs, title) {
+#   ggplot(coeffs, aes(x = parameter, y = beta, ymin = ci.l, ymax = ci.u)) +
+#     geom_hline(yintercept = 0, linetype = "dashed", size = 0.4) +
+#     geom_errorbar(aes(color = model), width = 0.2, size = 1.1, 
+#                   position = position_dodge(0.3)) +
+#     geom_point(aes(color = model), size = 3.8, position = position_dodge(0.3))+
+#     ggtitle(title) +
+#     labs(x = "", y = "Standard. beta (95% CI)") +
+#     scale_y_continuous(limits = c(-0.3, 0.6)) +
+#     theme_classic(base_size = 19) +
+#     theme(axis.text  = element_text(colour = "black", size = 19), 
+#           axis.title = element_text(colour = "black", size = 19), 
+#           plot.title = element_text(hjust = 0.5, face = "bold", size = 19), 
+#           legend.position = "none") +
+#     scale_color_manual(values=c('#18345C','#AC95BF'), 
+#                        name="",
+#                        breaks=c("1", "2"),
+#                        labels=c("One predictor", "All predictors"))
+# }
+# 
+# 
+# # now create and save plots using functions
+# # hypertension
+# coeff.hyp <- get_parameters(fit.simple = fit.hyp, i.simple = 193, s.simple = 198, 
+#                             i.all = 193, s.all = 201)
+# p1 <- get_plot(coeffs = coeff.hyp, title = "Hypertension")
+# 
+# # diabetes
+# coeff.dia <- get_parameters(fit.simple = fit.dia, i.simple = 193, s.simple = 198, 
+#                             i.all = 196, s.all = 204)
+# p2<- get_plot(coeffs = coeff.dia, title = "Diabetes") 
+# 
+# # smoking
+# coeff.smo <- get_parameters(fit.simple = fit.smo, i.simple = 193, s.simple = 198, 
+#                             i.all = 194, s.all = 202)
+# p3 <- get_plot(coeffs = coeff.smo, title = "Current smoking") 
+# 
+# # bmi
+# coeff.bmi <- get_parameters(fit.simple = fit.bmi, i.simple = 193, s.simple = 198, 
+#                             i.all = 195, s.all = 203)
+# p4 <- get_plot(coeffs = coeff.bmi, title = "Body mass index")
+# 
+# 
+# # 5.2) Figure 2J: Multiple risk factors 
+# 
+# # create get_parameters_s() function to extract parameters from the simple model
+# get_parameters_s  <- function(fit.simple, i.simple, s.simple, i.all, s.all){
+#   beta            <- standardizedSolution(fit.simple)$est.std[c(i.simple, s.simple)]
+#   ci.l            <- standardizedSolution(fit.simple)$ci.lower[c(i.simple, s.simple)]
+#   ci.u            <- standardizedSolution(fit.simple)$ci.upper[c(i.simple, s.simple)]
+#   coeff.simple    <- data.frame(beta, ci.l, ci.u)
+#   coeff.simple$parameter <- c("Intercept", "Slope")
+#   return(coeff.simple)
+# }
+# 
+# # create get_plot_s() function to plot models with one model result
+# # note that plot is automatically saved using ggsave 
+# get_plot_s <- function(coeffs, title) {
+#   ggplot(coeffs, aes(x = parameter, y = beta, ymin = ci.l, ymax = ci.u)) +
+#     geom_hline(yintercept = 0, linetype = "dashed", size = 0.4) +
+#     geom_errorbar(width = 0.1, size = 1.1, colour = '#18345C') +
+#     geom_point(size = 3.8, colour = '#18345C')+
+#     ggtitle(title) +
+#     labs(x = "", y = "Standard. beta (95% CI)") +
+#     scale_y_continuous(limits = c(-0.4, 0.6)) +
+#     theme_classic(base_size = 19) +
+#     theme(axis.text  = element_text(colour = "black", size = 19), 
+#           axis.title = element_text(colour = "black", size = 19), 
+#           plot.title = element_text(hjust = 0.5, face = "bold", size = 19), 
+#           legend.position = "none")
+# }
+# 
+# 
+# # now create and save plot using functions
+# coeff.mul <- get_parameters_s(fit.simple = fit.mul, i.simple = 193, s.simple = 198)
+# p5 <- get_plot_s(coeffs = coeff.mul, title = "Multiple risk factors")
+# 
+# 
+# # 5.3) Combine and save plots
+# ggarrange(p1, p2, p3, p4, p5,
+#           labels = c("F", "G", "H", "I", "J"),
+#           font.label = list(size = 26),
+#           hjust = -0.2, vjust = 1,
+#           ncol = 5, nrow = 1)
+# 
+# ggsave("output/elsa/combined_elsa.png", dpi = 600, width = 20, height = 4)
+
+
+
+
+
+
+
+# --------------------------------------------------------------------------
+# 4) Supplement: Conditional LGM (with single risk factors as covariates)
+# --------------------------------------------------------------------------
+
+# 4.1) Hypertension
 # --------------------
 
 # set hypertension variable for placeholder
-data$pred  <- data$hyp
-data$int.a <- data$pred*data$w2_age_c 
-data$int.s <- data$pred*data$w2_sex
+data$w2_pred     <- data$w2_hypt
+data$w2_pred_age <- data$w2_hypt*data$w2_age_c 
 
-# fit model 
-fit.hyp.som <- sem(m.pred, data = data, 
-                   ordered = c("w2_pscedb","w2_pscedc","w2_pscedh",
-                               "w3_pscedb","w3_pscedc","w3_pscedh",
-                               "w4_pscedb","w4_pscedc","w4_pscedh",
-                               "w5_pscedb","w5_pscedc","w5_pscedh",
-                               "w6_pscedb","w6_pscedc","w6_pscedh",
-                               "w7_pscedb","w7_pscedc","w7_pscedh"),
-                   missing = "pairwise", estimator = "WLSMV", 
-                   parameterization = "theta")
+# model 2a: with hypertension as predictor
+fit_hypt_2a_som <- sem(model_2a_som, data = data, 
+                       ordered = c("w2_psceda","w2_pscedd","w2_pscede","w2_pscedf","w2_pscedg", 
+                                   "w3_psceda","w3_pscedd","w3_pscede","w3_pscedf","w3_pscedg", 
+                                   "w4_psceda","w4_pscedd","w4_pscede","w4_pscedf","w4_pscedg", 
+                                   "w5_psceda","w5_pscedd","w5_pscede","w5_pscedf","w5_pscedg", 
+                                   "w6_psceda","w6_pscedd","w6_pscede","w6_pscedf","w6_pscedg", 
+                                   "w7_psceda","w7_pscedd","w7_pscede","w7_pscedf","w7_pscedg"), 
+                       missing = "pairwise", estimator = "WLSMV", 
+                       parameterization = "theta")
+summary(fit_hypt_2a_som, fit.measures = T, standardized = T, ci = T)
 
-# summarise fit results
-summary(fit.hyp.som,  fit.measures = T, standardized = T, ci = T)
+# model 2b: with hypertension as predictor
+fit_hypt_2b_som <- sem(model_2b_som, data = data, 
+                       ordered = c("w2_psceda","w2_pscedd","w2_pscede","w2_pscedf","w2_pscedg", 
+                                   "w3_psceda","w3_pscedd","w3_pscede","w3_pscedf","w3_pscedg", 
+                                   "w4_psceda","w4_pscedd","w4_pscede","w4_pscedf","w4_pscedg", 
+                                   "w5_psceda","w5_pscedd","w5_pscede","w5_pscedf","w5_pscedg", 
+                                   "w6_psceda","w6_pscedd","w6_pscede","w6_pscedf","w6_pscedg", 
+                                   "w7_psceda","w7_pscedd","w7_pscede","w7_pscedf","w7_pscedg"), 
+                       missing = "pairwise", estimator = "WLSMV", 
+                       parameterization = "theta")
+summary(fit_hypt_2b_som, fit.measures = T, standardized = T, ci = T)
 
 
-# 3.3) Diabetes
+# 4.2) Diabetes
 # ---------------
 
-# set diabetes for placeholder
-data$pred  <- data$diab
-data$int.a <- data$pred*data$w2_age_c 
-data$int.s <- data$pred*data$w2_sex
+# set diabetes variable for placeholder
+data$w2_pred     <- data$w2_diab
+data$w2_pred_age <- data$w2_diab*data$w2_age_c 
 
-# fit model
-fit.dia.som <- sem(m.pred, data = data, 
-                   ordered = c("w2_pscedb","w2_pscedc","w2_pscedh",
-                               "w3_pscedb","w3_pscedc","w3_pscedh",
-                               "w4_pscedb","w4_pscedc","w4_pscedh",
-                               "w5_pscedb","w5_pscedc","w5_pscedh",
-                               "w6_pscedb","w6_pscedc","w6_pscedh",
-                               "w7_pscedb","w7_pscedc","w7_pscedh"),
-                   missing = "pairwise", estimator = "WLSMV", 
-                   parameterization = "theta")
+# model 2a: with diabetes as predictor
+fit_diab_2a_som <- sem(model_2a_som, data = data, 
+                       ordered = c("w2_psceda","w2_pscedd","w2_pscede","w2_pscedf","w2_pscedg", 
+                                   "w3_psceda","w3_pscedd","w3_pscede","w3_pscedf","w3_pscedg", 
+                                   "w4_psceda","w4_pscedd","w4_pscede","w4_pscedf","w4_pscedg", 
+                                   "w5_psceda","w5_pscedd","w5_pscede","w5_pscedf","w5_pscedg", 
+                                   "w6_psceda","w6_pscedd","w6_pscede","w6_pscedf","w6_pscedg", 
+                                   "w7_psceda","w7_pscedd","w7_pscede","w7_pscedf","w7_pscedg"), 
+                       missing = "pairwise", estimator = "WLSMV", 
+                       parameterization = "theta")
+summary(fit_diab_2a_som, fit.measures = T, standardized = T, ci = T)
 
-# summarise fit results
-summary(fit.dia.som,  fit.measures = T, standardized = T, ci = T)
+# model 2b: with diabetes as predictor
+fit_diab_2b_som <- sem(model_2b_som, data = data, 
+                       ordered = c("w2_psceda","w2_pscedd","w2_pscede","w2_pscedf","w2_pscedg", 
+                                   "w3_psceda","w3_pscedd","w3_pscede","w3_pscedf","w3_pscedg", 
+                                   "w4_psceda","w4_pscedd","w4_pscede","w4_pscedf","w4_pscedg", 
+                                   "w5_psceda","w5_pscedd","w5_pscede","w5_pscedf","w5_pscedg", 
+                                   "w6_psceda","w6_pscedd","w6_pscede","w6_pscedf","w6_pscedg", 
+                                   "w7_psceda","w7_pscedd","w7_pscede","w7_pscedf","w7_pscedg"), 
+                       missing = "pairwise", estimator = "WLSMV", 
+                       parameterization = "theta")
+summary(fit_diab_2b_som, fit.measures = T, standardized = T, ci = T)
 
 
-# 3.4) Smoking  
+# 4.4) Smoking  
 # --------------
 
-# set smoking for placeholder
-data$pred  <- data$w2_HESka 
-data$int.a <- data$pred*data$w2_age_c 
-data$int.s <- data$pred*data$w2_sex
+# set smoking variable for placeholder
+data$w2_pred     <- data$w2_smok
+data$w2_pred_age <- data$w2_smok*data$w2_age_c 
 
-# fit model
-fit.smo.som <- sem(m.pred, data = data, 
-                   ordered = c("w2_pscedb","w2_pscedc","w2_pscedh",
-                               "w3_pscedb","w3_pscedc","w3_pscedh",
-                               "w4_pscedb","w4_pscedc","w4_pscedh",
-                               "w5_pscedb","w5_pscedc","w5_pscedh",
-                               "w6_pscedb","w6_pscedc","w6_pscedh",
-                               "w7_pscedb","w7_pscedc","w7_pscedh"),
-                   missing = "pairwise", estimator = "WLSMV", 
-                   parameterization = "theta")
+# model 2a: with smoking as predictor
+fit_smok_2a_som <- sem(model_2a_som, data = data, 
+                       ordered = c("w2_psceda","w2_pscedd","w2_pscede","w2_pscedf","w2_pscedg", 
+                                   "w3_psceda","w3_pscedd","w3_pscede","w3_pscedf","w3_pscedg", 
+                                   "w4_psceda","w4_pscedd","w4_pscede","w4_pscedf","w4_pscedg", 
+                                   "w5_psceda","w5_pscedd","w5_pscede","w5_pscedf","w5_pscedg", 
+                                   "w6_psceda","w6_pscedd","w6_pscede","w6_pscedf","w6_pscedg", 
+                                   "w7_psceda","w7_pscedd","w7_pscede","w7_pscedf","w7_pscedg"), 
+                       missing = "pairwise", estimator = "WLSMV", 
+                       parameterization = "theta")
+summary(fit_smok_2a_som, fit.measures = T, standardized = T, ci = T)
 
-# summarise fit results
-summary(fit.smo.som,  fit.measures = T, standardized = T, ci = T)
-
-
-# 3.5) BMI 
-# -----------
-
-# set BMI for placeholder
-data$pred  <- data$w2_bmival 
-data$int.a <- data$pred*data$w2_age_c 
-data$int.s <- data$pred*data$w2_sex
-
-# fit model
-fit.bmi.som <- sem(m.pred, data = data, 
-                   ordered = c("w2_pscedb","w2_pscedc","w2_pscedh",
-                               "w3_pscedb","w3_pscedc","w3_pscedh",
-                               "w4_pscedb","w4_pscedc","w4_pscedh",
-                               "w5_pscedb","w5_pscedc","w5_pscedh",
-                               "w6_pscedb","w6_pscedc","w6_pscedh",
-                               "w7_pscedb","w7_pscedc","w7_pscedh"),
-                   missing = "pairwise", estimator = "WLSMV", 
-                   parameterization = "theta")
-
-# summarise fit results
-summary(fit.bmi.som,  fit.measures = T, standardized = T, ci = T) 
+# model 2b: with smoking as predictor
+fit_smok_2b_som <- sem(model_2b_som, data = data, 
+                       ordered = c("w2_psceda","w2_pscedd","w2_pscede","w2_pscedf","w2_pscedg", 
+                                   "w3_psceda","w3_pscedd","w3_pscede","w3_pscedf","w3_pscedg", 
+                                   "w4_psceda","w4_pscedd","w4_pscede","w4_pscedf","w4_pscedg", 
+                                   "w5_psceda","w5_pscedd","w5_pscede","w5_pscedf","w5_pscedg", 
+                                   "w6_psceda","w6_pscedd","w6_pscede","w6_pscedf","w6_pscedg", 
+                                   "w7_psceda","w7_pscedd","w7_pscede","w7_pscedf","w7_pscedg"), 
+                       missing = "pairwise", estimator = "WLSMV", 
+                       parameterization = "theta")
+summary(fit_smok_2b_som, fit.measures = T, standardized = T, ci = T)
 
 
-# 3.6) Hypercholesterolemia 
+# 4.5) Obesity 
+# ---------------
+
+# set obesity variable for placeholder
+data$w2_pred     <- data$w2_obese
+data$w2_pred_age <- data$w2_obese*data$w2_age_c 
+
+# model 2a: with obesity as predictor
+fit_obese_2a_som <- sem(model_2a_som, data = data, 
+                        ordered = c("w2_psceda","w2_pscedd","w2_pscede","w2_pscedf","w2_pscedg", 
+                                    "w3_psceda","w3_pscedd","w3_pscede","w3_pscedf","w3_pscedg", 
+                                    "w4_psceda","w4_pscedd","w4_pscede","w4_pscedf","w4_pscedg", 
+                                    "w5_psceda","w5_pscedd","w5_pscede","w5_pscedf","w5_pscedg", 
+                                    "w6_psceda","w6_pscedd","w6_pscede","w6_pscedf","w6_pscedg", 
+                                    "w7_psceda","w7_pscedd","w7_pscede","w7_pscedf","w7_pscedg"), 
+                        missing = "pairwise", estimator = "WLSMV", 
+                        parameterization = "theta")
+summary(fit_obese_2a_som,  fit.measures = T, standardized = T, ci = T) 
+
+# model 2b: with obesity as predictor
+fit_obese_2b_som <- sem(model_2b_som, data = data, 
+                        ordered = c("w2_psceda","w2_pscedd","w2_pscede","w2_pscedf","w2_pscedg", 
+                                    "w3_psceda","w3_pscedd","w3_pscede","w3_pscedf","w3_pscedg", 
+                                    "w4_psceda","w4_pscedd","w4_pscede","w4_pscedf","w4_pscedg", 
+                                    "w5_psceda","w5_pscedd","w5_pscede","w5_pscedf","w5_pscedg", 
+                                    "w6_psceda","w6_pscedd","w6_pscede","w6_pscedf","w6_pscedg", 
+                                    "w7_psceda","w7_pscedd","w7_pscede","w7_pscedf","w7_pscedg"), 
+                        missing = "pairwise", estimator = "WLSMV", 
+                        parameterization = "theta")
+summary(fit_obese_2b_som, fit.measures = T, standardized = T, ci = T) 
+
+
+# 4.6) Hypercholesterolemia 
 # --------------------------
 
-# set cholesterol for placeholder
-data$pred  <- data$chol 
-data$int.a <- data$pred*data$w2_age_c 
-data$int.s <- data$pred*data$w2_sex
+# set cholesterol variable for placeholder
+data$w2_pred     <- data$w2_hchol
+data$w2_pred_age <- data$w2_hchol*data$w2_age_c 
 
-# fit model
-fit.chol.som <- sem(m.pred, data = data, 
-                    ordered = c("w2_pscedb","w2_pscedc","w2_pscedh",
-                                "w3_pscedb","w3_pscedc","w3_pscedh",
-                                "w4_pscedb","w4_pscedc","w4_pscedh",
-                                "w5_pscedb","w5_pscedc","w5_pscedh",
-                                "w6_pscedb","w6_pscedc","w6_pscedh",
-                                "w7_pscedb","w7_pscedc","w7_pscedh"), 
-                    missing = "pairwise", estimator = "WLSMV", 
-                    parameterization = "theta")
+# model 2a: with cholesterol as predictor
+fit_hchol_2a_som <- sem(model_2a_som, data = data, 
+                        ordered = c("w2_psceda","w2_pscedd","w2_pscede","w2_pscedf","w2_pscedg", 
+                                    "w3_psceda","w3_pscedd","w3_pscede","w3_pscedf","w3_pscedg", 
+                                    "w4_psceda","w4_pscedd","w4_pscede","w4_pscedf","w4_pscedg", 
+                                    "w5_psceda","w5_pscedd","w5_pscede","w5_pscedf","w5_pscedg", 
+                                    "w6_psceda","w6_pscedd","w6_pscede","w6_pscedf","w6_pscedg", 
+                                    "w7_psceda","w7_pscedd","w7_pscede","w7_pscedf","w7_pscedg"), 
+                        missing = "pairwise", estimator = "WLSMV", 
+                        parameterization = "theta")
+summary(fit_hchol_2a_som, fit.measures = T, standardized = T, ci = T) 
 
-# summarise fit results
-summary(fit.chol.som,  fit.measures = T, standardized = T, ci = T) 
-
-
-# ---------------------------------------------------------------------
-# 4) Conditional LGMs with vascular risk factors, controlling for ADL 
-# ---------------------------------------------------------------------
-
-# The following model is an extension of the previous model with one additional 
-# predictor ("pred"). It is coded as a generic model. That is "pred" is used as 
-# a place holder for vascular risk factors, which are introduced individually.
-
-# define generic model
-m.adl <- '
-
-# measurement models wit constrained factor loadings
-w2_som =~ 1*w2_pscedb + l1*w2_pscedc + l2*w2_pscedh
-w3_som =~ 1*w3_pscedb + l1*w3_pscedc + l2*w3_pscedh
-w4_som =~ 1*w4_pscedb + l1*w4_pscedc + l2*w4_pscedh
-w5_som =~ 1*w5_pscedb + l1*w5_pscedc + l2*w5_pscedh
-w6_som =~ 1*w6_pscedb + l1*w6_pscedc + l2*w6_pscedh
-w7_som =~ 1*w7_pscedb + l1*w7_pscedc + l2*w7_pscedh
-
-# define tresholds
-w2_pscedb | a*t1
-w3_pscedb | a*t1
-w4_pscedb | a*t1
-w5_pscedb | a*t1
-w6_pscedb | a*t1
-w7_pscedb | a*t1
-
-w2_pscedc | b*t1
-w3_pscedc | b*t1
-w4_pscedc | b*t1
-w5_pscedc | b*t1
-w6_pscedc | b*t1
-w7_pscedc | b*t1
-
-w2_pscedh | c*t1
-w3_pscedh | c*t1
-w4_pscedh | c*t1
-w5_pscedh | c*t1
-w6_pscedh | c*t1
-w7_pscedh | c*t1
-
-# define latent factor means
-w2_som ~ 0*1
-w3_som ~ 0*1
-w4_som ~ 0*1
-w5_som ~ 0*1
-w6_som ~ 0*1
-w7_som ~ 0*1
-
-# define unique variance terms
-w2_pscedb ~~ 1*w2_pscedb
-w3_pscedb ~~ 1*w3_pscedb
-w4_pscedb ~~ 1*w4_pscedb
-w5_pscedb ~~ 1*w5_pscedb
-w6_pscedb ~~ 1*w6_pscedb
-w7_pscedb ~~ 1*w7_pscedb
-
-w2_pscedc ~~ 1*w2_pscedc
-w3_pscedc ~~ 1*w3_pscedc
-w4_pscedc ~~ 1*w4_pscedc
-w5_pscedc ~~ 1*w5_pscedc
-w6_pscedc ~~ 1*w6_pscedc
-w7_pscedc ~~ 1*w7_pscedc
-
-w2_pscedh ~~ 1*w2_pscedh
-w3_pscedh ~~ 1*w3_pscedh
-w4_pscedh ~~ 1*w4_pscedh
-w5_pscedh ~~ 1*w5_pscedh
-w6_pscedh ~~ 1*w6_pscedh
-w7_pscedh ~~ 1*w7_pscedh
-
-# residual correlations
-w2_pscedb ~~ w3_pscedb + w4_pscedb + w5_pscedb + w6_pscedb + w7_pscedb
-w3_pscedb ~~ w4_pscedb + w5_pscedb + w6_pscedb + w7_pscedb
-w4_pscedb ~~ w5_pscedb + w6_pscedb + w7_pscedb
-w5_pscedb ~~ w6_pscedb + w7_pscedb
-w6_pscedb ~~ w7_pscedb
-
-w2_pscedc ~~ w3_pscedc + w4_pscedc + w5_pscedc + w6_pscedc + w7_pscedc
-w3_pscedc ~~ w4_pscedc + w5_pscedc + w6_pscedc + w7_pscedc
-w4_pscedc ~~ w5_pscedc + w6_pscedc + w7_pscedc
-w5_pscedc ~~ w6_pscedc + w7_pscedc
-w6_pscedc ~~ w7_pscedc
-
-w2_pscedh ~~ w3_pscedh + w4_pscedh + w5_pscedh + w6_pscedh + w7_pscedh
-w3_pscedh ~~ w4_pscedh + w5_pscedh + w6_pscedh + w7_pscedh
-w4_pscedh ~~ w5_pscedh + w6_pscedh + w7_pscedh
-w5_pscedh ~~ w6_pscedh + w7_pscedh
-w6_pscedh ~~ w7_pscedh
-
-# intercept and slope with fixed coefficients
-i =~ 1*w2_som + 1*w3_som + 1*w4_som + 1*w5_som + 1*w6_som + 1*w7_som
-s =~ 0*w2_som + 1*w3_som + 2*w4_som + 3*w5_som + 4*w6_som + 5*w7_som
-
-# intercept and slope variances and covariance
-i ~~ i
-s ~~ s
-i ~~ s
-
-# intercept and slope means
-i ~ 1
-s ~ 1
-
-# regressions
-i ~ w2_age_c + w2_sex + w2_eth + w0_edu + adl + pred + int.a
-s ~ w2_age_c + w2_sex + w2_eth + w0_edu + adl + pred + int.a
-'
-
-
-# 4.1) Multiple risk factors (accumulated)
-# -------------------------------------------
-
-# set number of risk factors for placeholder
-data$pred  <- data$n_rf
-data$int.a <- data$pred*data$w2_age_c 
-data$int.s <- data$pred*data$w2_sex
-
-# fit model
-fit.adl.som <- sem(m.adl, data = data, 
-                   ordered = c("w2_pscedb","w2_pscedc","w2_pscedh",
-                               "w3_pscedb","w3_pscedc","w3_pscedh",
-                               "w4_pscedb","w4_pscedc","w4_pscedh",
-                               "w5_pscedb","w5_pscedc","w5_pscedh",
-                               "w6_pscedb","w6_pscedc","w6_pscedh",
-                               "w7_pscedb","w7_pscedc","w7_pscedh"),
-                   missing = "pairwise", estimator = "WLSMV", 
-                   parameterization = "theta")
-
-# summarise fit results
-summary(fit.adl.som,  fit.measures = T, standardized = T, ci = T)
-
-# 
-# # 3.2) Hypertension
-# # --------------------
-# 
-# # set hypertension variable for placeholder
-# data$pred  <- data$hyp
-# data$int.a <- data$pred*data$w2_age_c 
-# data$int.s <- data$pred*data$w2_sex
-# 
-# # fit model 
-# fit.hyp <- sem(m.pred, data = data, 
-#                ordered = c("w2_pscedb","w2_pscedc","w2_pscedh",
-#                            "w3_pscedb","w3_pscedc","w3_pscedh",
-#                            "w4_pscedb","w4_pscedc","w4_pscedh",
-#                            "w5_pscedb","w5_pscedc","w5_pscedh",
-#                            "w6_pscedb","w6_pscedc","w6_pscedh",
-#                            "w7_pscedb","w7_pscedc","w7_pscedh"),
-#                missing = "pairwise", estimator = "WLSMV", 
-#                parameterization = "theta")
-# 
-# # summarise fit results
-# summary(fit.hyp,  fit.measures = T, standardized = T, ci = T)
-# 
-# 
-# # 3.3) Diabetes
-# # ---------------
-# 
-# # set diabetes for placeholder
-# data$pred  <- data$diab
-# data$int.a <- data$pred*data$w2_age_c 
-# data$int.s <- data$pred*data$w2_sex
-# 
-# # fit model
-# fit.dia <- sem(m.pred, data = data, 
-#                ordered = c("w2_pscedb","w2_pscedc","w2_pscedh",
-#                            "w3_pscedb","w3_pscedc","w3_pscedh",
-#                            "w4_pscedb","w4_pscedc","w4_pscedh",
-#                            "w5_pscedb","w5_pscedc","w5_pscedh",
-#                            "w6_pscedb","w6_pscedc","w6_pscedh",
-#                            "w7_pscedb","w7_pscedc","w7_pscedh"),
-#                missing = "pairwise", estimator = "WLSMV", 
-#                parameterization = "theta")
-# 
-# # summarise fit results
-# summary(fit.dia,  fit.measures = T, standardized = T, ci = T)
-# 
-# 
-# # 3.4) Smoking  
-# # --------------
-# 
-# # set smoking for placeholder
-# data$pred  <- data$w2_HESka 
-# data$int.a <- data$pred*data$w2_age_c 
-# data$int.s <- data$pred*data$w2_sex
-# 
-# # fit model
-# fit.smo <- sem(m.pred, data = data, 
-#                ordered = c("w2_pscedb","w2_pscedc","w2_pscedh",
-#                            "w3_pscedb","w3_pscedc","w3_pscedh",
-#                            "w4_pscedb","w4_pscedc","w4_pscedh",
-#                            "w5_pscedb","w5_pscedc","w5_pscedh",
-#                            "w6_pscedb","w6_pscedc","w6_pscedh",
-#                            "w7_pscedb","w7_pscedc","w7_pscedh"),
-#                missing = "pairwise", estimator = "WLSMV", 
-#                parameterization = "theta")
-# 
-# # summarise fit results
-# summary(fit.smo,  fit.measures = T, standardized = T, ci = T)
-# 
-# 
-# # 3.5) BMI 
-# # -----------
-# 
-# # set BMI for placeholder
-# data$pred  <- data$w2_bmival 
-# data$int.a <- data$pred*data$w2_age_c 
-# data$int.s <- data$pred*data$w2_sex
-# 
-# # fit model
-# fit.bmi <- sem(m.pred, data = data, 
-#                ordered = c("w2_pscedb","w2_pscedc","w2_pscedh",
-#                            "w3_pscedb","w3_pscedc","w3_pscedh",
-#                            "w4_pscedb","w4_pscedc","w4_pscedh",
-#                            "w5_pscedb","w5_pscedc","w5_pscedh",
-#                            "w6_pscedb","w6_pscedc","w6_pscedh",
-#                            "w7_pscedb","w7_pscedc","w7_pscedh"),
-#                missing = "pairwise", estimator = "WLSMV", 
-#                parameterization = "theta")
-# 
-# # summarise fit results
-# summary(fit.bmi,  fit.measures = T, standardized = T, ci = T) 
-# 
-# 
-# # 3.6) Hypercholesterolemia 
-# # --------------------------
-# 
-# # set cholesterol for placeholder
-# data$pred  <- data$chol 
-# data$int.a <- data$pred*data$w2_age_c 
-# data$int.s <- data$pred*data$w2_sex
-# 
-# # fit model
-# fit.chol <- sem(m.pred, data = data, 
-#                 ordered = c("w2_pscedb","w2_pscedc","w2_pscedh",
-#                             "w3_pscedb","w3_pscedc","w3_pscedh",
-#                             "w4_pscedb","w4_pscedc","w4_pscedh",
-#                             "w5_pscedb","w5_pscedc","w5_pscedh",
-#                             "w6_pscedb","w6_pscedc","w6_pscedh",
-#                             "w7_pscedb","w7_pscedc","w7_pscedh"),
-#                 missing = "pairwise", estimator = "WLSMV", 
-#                 parameterization = "theta")
-# 
-# # summarise fit results
-# summary(fit.chol,  fit.measures = T, standardized = T, ci = T)
-# 
-
-# # ----------------------------------------------------------
-# # 4) Conditional LGM with all risk factors simultaneously
-# # ----------------------------------------------------------
-# 
-# # define model
-# m.all <- '
-# 
-# # measurement models wit constrained factor loadings
-# W2_DEP =~ 1*w2_psceda + l1*w2_pscedb + l2*w2_pscedd + l3*w2_pscede + l4*w2_pscedg
-# W3_DEP =~ 1*w3_psceda + l1*w3_pscedb + l2*w3_pscedd + l3*w3_pscede + l4*w3_pscedg
-# W4_DEP =~ 1*w4_psceda + l1*w4_pscedb + l2*w4_pscedd + l3*w4_pscede + l4*w4_pscedg
-# W5_DEP =~ 1*w5_psceda + l1*w5_pscedb + l2*w5_pscedd + l3*w5_pscede + l4*w5_pscedg
-# W6_DEP =~ 1*w6_psceda + l1*w6_pscedb + l2*w6_pscedd + l3*w6_pscede + l4*w6_pscedg
-# W7_DEP =~ 1*w7_psceda + l1*w7_pscedb + l2*w7_pscedd + l3*w7_pscede + l4*w7_pscedg
-# 
-# # define tresholds
-# w2_psceda | 0*t1
-# w3_psceda | 0*t1
-# w4_psceda | 0*t1
-# w5_psceda | 0*t1
-# w6_psceda | 0*t1
-# w7_psceda | 0*t1
-# 
-# w2_pscedb | b*t1
-# w3_pscedb | b*t1
-# w4_pscedb | b*t1
-# w5_pscedb | b*t1
-# w6_pscedb | b*t1
-# w7_pscedb | b*t1
-# 
-# w2_pscedd | c*t1
-# w3_pscedd | c*t1
-# w4_pscedd | c*t1
-# w5_pscedd | c*t1
-# w6_pscedd | c*t1
-# w7_pscedd | c*t1
-# 
-# w2_pscede | d*t1
-# w3_pscede | d*t1
-# w4_pscede | d*t1
-# w5_pscede | d*t1
-# w6_pscede | d*t1
-# w7_pscede | d*t1
-# 
-# w2_pscedg | e*t1
-# w3_pscedg | e*t1
-# w4_pscedg | e*t1
-# w5_pscedg | e*t1
-# w6_pscedg | e*t1
-# w7_pscedg | e*t1
-# 
-# # define latent factor means
-# W2_DEP ~ 0*1
-# W3_DEP ~ 0*1
-# W4_DEP ~ 0*1
-# W5_DEP ~ 0*1
-# W6_DEP ~ 0*1
-# W7_DEP ~ 0*1
-# 
-# # define unique variance terms
-# w2_psceda ~~ 1*w2_psceda
-# w3_psceda ~~ 1*w3_psceda
-# w4_psceda ~~ 1*w4_psceda
-# w5_psceda ~~ 1*w5_psceda
-# w6_psceda ~~ 1*w6_psceda
-# w7_psceda ~~ 1*w7_psceda
-# 
-# w2_pscedb ~~ 1*w2_pscedb
-# w3_pscedb ~~ 1*w3_pscedb
-# w4_pscedb ~~ 1*w4_pscedb
-# w5_pscedb ~~ 1*w5_pscedb
-# w6_pscedb ~~ 1*w6_pscedb
-# w7_pscedb ~~ 1*w7_pscedb
-# 
-# w2_pscedd ~~ 1*w2_pscedd
-# w3_pscedd ~~ 1*w3_pscedd
-# w4_pscedd ~~ 1*w4_pscedd
-# w5_pscedd ~~ 1*w5_pscedd
-# w6_pscedd ~~ 1*w6_pscedd
-# w7_pscedd ~~ 1*w7_pscedd
-# 
-# w2_pscede ~~ 1*w2_pscede
-# w3_pscede ~~ 1*w3_pscede
-# w4_pscede ~~ 1*w4_pscede
-# w5_pscede ~~ 1*w5_pscede
-# w6_pscede ~~ 1*w6_pscede
-# w7_pscede ~~ 1*w7_pscede
-# 
-# w2_pscedg ~~ 1*w2_pscedg
-# w3_pscedg ~~ 1*w3_pscedg
-# w4_pscedg ~~ 1*w4_pscedg
-# w5_pscedg ~~ 1*w5_pscedg
-# w6_pscedg ~~ 1*w6_pscedg
-# w7_pscedg ~~ 1*w7_pscedg
-# 
-# # residual correlations
-# w2_psceda ~~ w3_psceda + w4_psceda + w5_psceda + w6_psceda + w7_psceda
-# w3_psceda ~~ w4_psceda + w5_psceda + w6_psceda + w7_psceda
-# w4_psceda ~~ w5_psceda + w6_psceda + w7_psceda
-# w5_psceda ~~ w6_psceda + w7_psceda
-# w6_psceda ~~ w7_psceda
-# 
-# w2_pscedb ~~ w3_pscedb + w4_pscedb + w5_pscedb + w6_pscedb + w7_pscedb
-# w3_pscedb ~~ w4_pscedb + w5_pscedb + w6_pscedb + w7_pscedb
-# w4_pscedb ~~ w5_pscedb + w6_pscedb + w7_pscedb
-# w5_pscedb ~~ w6_pscedb + w7_pscedb
-# w6_pscedb ~~ w7_pscedb
-# 
-# w2_pscedd ~~ w3_pscedd + w4_pscedd + w5_pscedd + w6_pscedd + w7_pscedd
-# w3_pscedd ~~ w4_pscedd + w5_pscedd + w6_pscedd + w7_pscedd
-# w4_pscedd ~~ w5_pscedd + w6_pscedd + w7_pscedd
-# w5_pscedd ~~ w6_pscedd + w7_pscedd
-# w6_pscedd ~~ w7_pscedd
-# 
-# w2_pscede ~~ w3_pscede + w4_pscede + w5_pscede + w6_pscede + w7_pscede
-# w3_pscede ~~ w4_pscede + w5_pscede + w6_pscede + w7_pscede
-# w4_pscede ~~ w5_pscede + w6_pscede + w7_pscede
-# w5_pscede ~~ w6_pscede + w7_pscede
-# w6_pscede ~~ w7_pscede
-# 
-# w2_pscedg ~~ w3_pscedg + w4_pscedg + w5_pscedg + w6_pscedg + w7_pscedg
-# w3_pscedg ~~ w4_pscedg + w5_pscedg + w6_pscedg + w7_pscedg
-# w4_pscedg ~~ w5_pscedg + w6_pscedg + w7_pscedg
-# w5_pscedg ~~ w6_pscedg + w7_pscedg
-# w6_pscedg ~~ w7_pscedg
-# 
-# # intercept and slope with fixed coefficients
-# i =~ 1*W2_DEP + 1*W3_DEP + 1*W4_DEP + 1*W5_DEP + 1*W6_DEP + 1*W7_DEP
-# s =~ 0*W2_DEP + 1*W3_DEP + 2*W4_DEP + 3*W5_DEP + 4*W6_DEP + 5*W7_DEP
-# 
-# # intercept and slope variances and covariance
-# i ~~ i
-# s ~~ s
-# i ~~ s
-# 
-# # intercept and slope means
-# i ~ 1
-# s ~ 1
-# 
-# # regressions
-# i ~ w2_age_c + w2_sex + w2_eth + w0_edu + hyp + w2_HESka + w2_bmival + diab + chol
-# s ~ w2_age_c + w2_sex + w2_eth + w0_edu + hyp + w2_HESka + w2_bmival + diab + chol
-# '
-# 
-# # fit model
-# fit.all <- sem(m.all, data = data, 
-#                ordered = c("w2_psceda","w2_pscedb","w2_pscedd", "w2_pscede","w2_pscedg", 
-#                            "w3_psceda","w3_pscedb","w3_pscedd", "w3_pscede","w3_pscedg",
-#                            "w4_psceda","w4_pscedb","w4_pscedd", "w4_pscede","w4_pscedg", 
-#                            "w5_psceda","w5_pscedb","w5_pscedd", "w5_pscede","w5_pscedg", 
-#                            "w6_psceda","w6_pscedb","w6_pscedd", "w6_pscede","w6_pscedg", 
-#                            "w7_psceda","w7_pscedb","w7_pscedd", "w7_pscede","w7_pscedg"), 
-#                missing = "pairwise", estimator = "WLSMV", 
-#                parameterization = "theta")
-# 
-# # summarise fit results
-# summary(fit.all,  fit.measures = T, standardized = T, ci = T)
-# 
-
-# --------------------
-# 5) Create figures
-# --------------------
-
-# 5.1) Figure 2 F-I: Single risk factors
-
-# create get_parameters() function to extract parameters from the simple and the full model
-get_parameters <- function(fit.simple, i.simple, s.simple, i.all, s.all){
-  beta         <- standardizedSolution(fit.simple)$est.std[c(i.simple, s.simple)]
-  ci.l         <- standardizedSolution(fit.simple)$ci.lower[c(i.simple, s.simple)]
-  ci.u         <- standardizedSolution(fit.simple)$ci.upper[c(i.simple, s.simple)]
-  coeff.simple <- data.frame(beta, ci.l, ci.u)
-  beta         <- standardizedSolution(fit.all)$est.std[c(i.all, s.all)]
-  ci.l         <- standardizedSolution(fit.all)$ci.lower[c(i.all, s.all)]
-  ci.u         <- standardizedSolution(fit.all)$ci.upper[c(i.all, s.all)]
-  coeff.all    <- data.frame(beta, ci.l, ci.u)
-  
-  coeff           <- rbind(coeff.simple, coeff.all)
-  coeff$parameter <- c("Intercept", "Slope", "Intercept", "Slope")
-  coeff$model     <- c("1", "1", "2", "2") #1 = Simple, 2 = All
-  
-  return(coeff)
-}
-
-# create get_plot() function to plot models with both model results
-# note that plot is automatically saved using ggsave 
-get_plot <- function(coeffs, title) {
-  ggplot(coeffs, aes(x = parameter, y = beta, ymin = ci.l, ymax = ci.u)) +
-    geom_hline(yintercept = 0, linetype = "dashed", size = 0.4) +
-    geom_errorbar(aes(color = model), width = 0.2, size = 1.1, 
-                  position = position_dodge(0.3)) +
-    geom_point(aes(color = model), size = 3.8, position = position_dodge(0.3))+
-    ggtitle(title) +
-    labs(x = "", y = "Standard. beta (95% CI)") +
-    scale_y_continuous(limits = c(-0.3, 0.6)) +
-    theme_classic(base_size = 19) +
-    theme(axis.text  = element_text(colour = "black", size = 19), 
-          axis.title = element_text(colour = "black", size = 19), 
-          plot.title = element_text(hjust = 0.5, face = "bold", size = 19), 
-          legend.position = "none") +
-    scale_color_manual(values=c('#18345C','#AC95BF'), 
-                       name="",
-                       breaks=c("1", "2"),
-                       labels=c("One predictor", "All predictors"))
-}
-
-
-# now create and save plots using functions
-# hypertension
-coeff.hyp <- get_parameters(fit.simple = fit.hyp, i.simple = 193, s.simple = 198, 
-                            i.all = 193, s.all = 201)
-p1 <- get_plot(coeffs = coeff.hyp, title = "Hypertension")
-
-# diabetes
-coeff.dia <- get_parameters(fit.simple = fit.dia, i.simple = 193, s.simple = 198, 
-                            i.all = 196, s.all = 204)
-p2<- get_plot(coeffs = coeff.dia, title = "Diabetes") 
-
-# smoking
-coeff.smo <- get_parameters(fit.simple = fit.smo, i.simple = 193, s.simple = 198, 
-                            i.all = 194, s.all = 202)
-p3 <- get_plot(coeffs = coeff.smo, title = "Current smoking") 
-
-# bmi
-coeff.bmi <- get_parameters(fit.simple = fit.bmi, i.simple = 193, s.simple = 198, 
-                            i.all = 195, s.all = 203)
-p4 <- get_plot(coeffs = coeff.bmi, title = "Body mass index")
-
-
-# 5.2) Figure 2J: Multiple risk factors 
-
-# create get_parameters_s() function to extract parameters from the simple model
-get_parameters_s  <- function(fit.simple, i.simple, s.simple, i.all, s.all){
-  beta            <- standardizedSolution(fit.simple)$est.std[c(i.simple, s.simple)]
-  ci.l            <- standardizedSolution(fit.simple)$ci.lower[c(i.simple, s.simple)]
-  ci.u            <- standardizedSolution(fit.simple)$ci.upper[c(i.simple, s.simple)]
-  coeff.simple    <- data.frame(beta, ci.l, ci.u)
-  coeff.simple$parameter <- c("Intercept", "Slope")
-  return(coeff.simple)
-}
-
-# create get_plot_s() function to plot models with one model result
-# note that plot is automatically saved using ggsave 
-get_plot_s <- function(coeffs, title) {
-  ggplot(coeffs, aes(x = parameter, y = beta, ymin = ci.l, ymax = ci.u)) +
-    geom_hline(yintercept = 0, linetype = "dashed", size = 0.4) +
-    geom_errorbar(width = 0.1, size = 1.1, colour = '#18345C') +
-    geom_point(size = 3.8, colour = '#18345C')+
-    ggtitle(title) +
-    labs(x = "", y = "Standard. beta (95% CI)") +
-    scale_y_continuous(limits = c(-0.4, 0.6)) +
-    theme_classic(base_size = 19) +
-    theme(axis.text  = element_text(colour = "black", size = 19), 
-          axis.title = element_text(colour = "black", size = 19), 
-          plot.title = element_text(hjust = 0.5, face = "bold", size = 19), 
-          legend.position = "none")
-}
-
-
-# now create and save plot using functions
-coeff.mul <- get_parameters_s(fit.simple = fit.mul, i.simple = 193, s.simple = 198)
-p5 <- get_plot_s(coeffs = coeff.mul, title = "Multiple risk factors")
-
-
-# 5.3) Combine and save plots
-ggarrange(p1, p2, p3, p4, p5,
-          labels = c("F", "G", "H", "I", "J"),
-          font.label = list(size = 26),
-          hjust = -0.2, vjust = 1,
-          ncol = 5, nrow = 1)
-
-ggsave("output/elsa/combined_elsa.png", dpi = 600, width = 20, height = 4)
+# model 2b: with cholesterol as predictor
+fit_hchol_2b_som <- sem(model_2b_som, data = data, 
+                        ordered = c("w2_psceda","w2_pscedd","w2_pscede","w2_pscedf","w2_pscedg", 
+                                    "w3_psceda","w3_pscedd","w3_pscede","w3_pscedf","w3_pscedg", 
+                                    "w4_psceda","w4_pscedd","w4_pscede","w4_pscedf","w4_pscedg", 
+                                    "w5_psceda","w5_pscedd","w5_pscede","w5_pscedf","w5_pscedg", 
+                                    "w6_psceda","w6_pscedd","w6_pscede","w6_pscedf","w6_pscedg", 
+                                    "w7_psceda","w7_pscedd","w7_pscede","w7_pscedf","w7_pscedg"), 
+                        missing = "pairwise", estimator = "WLSMV", 
+                        parameterization = "theta")
+summary(fit_hchol_2b_som, fit.measures = T, standardized = T, ci = T) 

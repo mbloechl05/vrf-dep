@@ -1,6 +1,6 @@
 # ================================================================
 # Cardiovascular Risk and Trajectories of Depressive Symptoms
-# Script 2.1: Measurement Invariance for Affective Symptoms
+# Script 21: Measurement Invariance for Affective Symptoms
 # ================================================================
 
 # clean work space
@@ -18,7 +18,7 @@ load("data/elsa/processed/elsa_proc_data.RData")
 # ------------------------
 
 # define model 
-model.baseline <- '
+model_baseline_aff <- '
 
 # measurement models without constrained factor loadings
 
@@ -142,8 +142,8 @@ w6_pscedg ~~ w7_pscedg
 '
 
 # fit model
-fit.baseline.aff <- 
-  cfa(model.baseline, data = data, 
+fit_baseline_aff <- 
+  cfa(model_baseline_aff, data = data, 
       ordered = c("w2_psceda","w2_pscedd","w2_pscede","w2_pscedf","w2_pscedg", 
                   "w3_psceda","w3_pscedd","w3_pscede","w3_pscedf","w3_pscedg", 
                   "w4_psceda","w4_pscedd","w4_pscede","w4_pscedf","w4_pscedg", 
@@ -154,7 +154,7 @@ fit.baseline.aff <-
       parameterization = "theta" )
 
 # summarise fit results
-summary(fit.baseline, fit.measures = T)    
+summary(fit_baseline_aff, fit.measures = T)    
 
 
 # -----------------------------
@@ -162,7 +162,7 @@ summary(fit.baseline, fit.measures = T)
 # -----------------------------
 
 # define model
-model.weak <- '
+model_loading_aff <- '
 
 # measurement models with constrained factor loadings
 w2_dep =~ 1*w2_psceda + l1*w2_pscedd + l2*w2_pscede + l3*w2_pscedf + l4*w2_pscedg
@@ -285,8 +285,8 @@ w6_pscedg ~~ w7_pscedg
 '
 
 # fit model
-fit.weak.aff <- 
-  cfa(model.weak, data = data, 
+fit_loading_aff <- 
+  cfa(model_loading_aff, data = data, 
       ordered = c("w2_psceda","w2_pscedd","w2_pscede","w2_pscedf","w2_pscedg", 
                   "w3_psceda","w3_pscedd","w3_pscede","w3_pscedf","w3_pscedg", 
                   "w4_psceda","w4_pscedd","w4_pscede","w4_pscedf","w4_pscedg", 
@@ -297,7 +297,7 @@ fit.weak.aff <-
       parameterization = "theta" )
 
 # summarise fit results
-summary(fit.weak, fit.measures = T)     
+summary(fit_loading_aff, fit.measures = T)     
 
 
 # ------------------------------------
@@ -305,9 +305,9 @@ summary(fit.weak, fit.measures = T)
 # -------------------------------------
 
 # define model
-model.strict <- '
+model_ufactor_aff <- '
 
-# measurement models wit constrained factor loadings
+# measurement models with constrained factor loadings
 w2_dep =~ 1*w2_psceda + l1*w2_pscedd + l2*w2_pscede + l3*w2_pscedf + l4*w2_pscedg
 w3_dep =~ 1*w3_psceda + l1*w3_pscedd + l2*w3_pscede + l3*w3_pscedf + l4*w3_pscedg
 w4_dep =~ 1*w4_psceda + l1*w4_pscedd + l2*w4_pscede + l3*w4_pscedf + l4*w4_pscedg
@@ -428,8 +428,8 @@ w6_pscedg ~~ w7_pscedg
 '
 
 # fit model
-fit.strict.aff <- 
-  cfa(model.strict, data = data, 
+fit_ufactor_aff <- 
+  cfa(model_ufactor_aff, data = data, 
       ordered = c("w2_psceda","w2_pscedd","w2_pscede","w2_pscedf","w2_pscedg", 
                   "w3_psceda","w3_pscedd","w3_pscede","w3_pscedf","w3_pscedg", 
                   "w4_psceda","w4_pscedd","w4_pscede","w4_pscedf","w4_pscedg", 
@@ -440,7 +440,7 @@ fit.strict.aff <-
       parameterization = "theta" )
 
 # summarise fit results
-summary(fit.strict, fit.measures = T)   
+summary(fit_ufactor_aff, fit.measures = T)   
 
 
 # -----------------------
@@ -448,11 +448,11 @@ summary(fit.strict, fit.measures = T)
 # -----------------------
 
 # show fit measures for each model
-fitMeasures(fit.baseline.aff, c("rmsea.scaled", "cfi.scaled", "srmr"))
-fitMeasures(fit.weak.aff,     c("rmsea.scaled", "cfi.scaled", "srmr"))
-fitMeasures(fit.strict.aff,   c("rmsea.scaled", "cfi.scaled", "srmr"))
+fitMeasures(fit_baseline_aff, c("rmsea.scaled", "cfi.scaled", "srmr"))
+fitMeasures(fit_loading_aff,  c("rmsea.scaled", "cfi.scaled", "srmr"))
+fitMeasures(fit_ufactor_aff,  c("rmsea.scaled", "cfi.scaled", "srmr"))
 
 # perform model comparison
-anova(fit.baseline.aff, fit.weak.aff, fit.strict.aff)
+anova(fit_baseline_aff, fit_loading_aff, fit_ufactor_aff)
 
 

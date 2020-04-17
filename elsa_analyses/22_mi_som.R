@@ -1,6 +1,6 @@
 # ================================================================
 # Cardiovascular Risk and Trajectories of Depressive Symptoms
-# Script 2.2: Measurement Invariance for Somatic Symptoms
+# Script 22: Measurement Invariance for Somatic Symptoms
 # ================================================================
 
 # clean work space
@@ -13,15 +13,12 @@ library(lavaan)
 load("data/elsa/processed/elsa_proc_data.RData")
 
 
-# ------------------------
-# 2) Somatic symptoms
-# ------------------------
-
-# 2.1) Baseline model
-# ---------------------
+# --------------------
+# 1) Baseline model
+# --------------------
 
 # define model
-model.baseline <- '
+model_baseline_som <- '
 
 # measurement models without constrained factor loadings
 w2_som =~ 1*w2_pscedb + w2_pscedc + w2_pscedh
@@ -104,7 +101,7 @@ w6_pscedh ~~ w7_pscedh
 '
 
 # fit model
-fit.baseline.som <- cfa(model.baseline, data = data,
+fit_baseline_som <- cfa(model_baseline_som, data = data,
                         ordered = c("w2_pscedb","w2_pscedc","w2_pscedh",
                                     "w3_pscedb","w3_pscedc","w3_pscedh",
                                     "w4_pscedb","w4_pscedc","w4_pscedh",
@@ -115,14 +112,15 @@ fit.baseline.som <- cfa(model.baseline, data = data,
                         parameterization = "theta" )
 
 # summarise fit results
-summary(fit.baseline.som, fit.measures = T)
+summary(fit_baseline_som, fit.measures = T)
 
 
-# 2.2.) Loading invariance model
-# --------------------------------
+# -------------------------------
+# 2.) Loading invariance model
+# -------------------------------
 
 # define model
-model.weak <- '
+model_loading_som <- '
 
 # measurement models with constrained factor loadings
 w2_som =~ 1*w2_pscedb + l1*w2_pscedc + l2*w2_pscedh
@@ -205,25 +203,25 @@ w6_pscedh ~~ w7_pscedh
 '
 
 # fit model
-fit.weak.som <- cfa(model.weak, data = data,
-                    ordered = c("w2_pscedb","w2_pscedc","w2_pscedh",
-                                "w3_pscedb","w3_pscedc","w3_pscedh",
-                                "w4_pscedb","w4_pscedc","w4_pscedh",
-                                "w5_pscedb","w5_pscedc","w5_pscedh",
-                                "w6_pscedb","w6_pscedc","w6_pscedh",
-                                "w7_pscedb","w7_pscedc","w7_pscedh"),
-                    missing = "pairwise", estimator = "WLSMV",
-                    parameterization = "theta" )
+fit_loading_som <- cfa(model_loading_som, data = data,
+                       ordered = c("w2_pscedb","w2_pscedc","w2_pscedh",
+                                   "w3_pscedb","w3_pscedc","w3_pscedh",
+                                   "w4_pscedb","w4_pscedc","w4_pscedh",
+                                   "w5_pscedb","w5_pscedc","w5_pscedh",
+                                   "w6_pscedb","w6_pscedc","w6_pscedh",
+                                   "w7_pscedb","w7_pscedc","w7_pscedh"),
+                       missing = "pairwise", estimator = "WLSMV",
+                       parameterization = "theta" )
 
 # summarise fit results
-summary(fit.weak.som, fit.measures = T)
+summary(fit_loading_som, fit.measures = T)
 
 
 # 2.3) Unique factor invariance model
 # -------------------------------------
 
 # define model
-model.strict <- '
+model_factor_som <- '
 
 # measurement models wit constrained factor loadings
 w2_som =~ 1*w2_pscedb + l1*w2_pscedc + l2*w2_pscedh
@@ -306,7 +304,7 @@ w6_pscedh ~~ w7_pscedh
 '
 
 # fit model
-fit.strict.som <- cfa(model.strict, data = data,
+fit_factor_som <- cfa(model_factor_som, data = data,
                       ordered = c("w2_pscedb","w2_pscedc","w2_pscedh",
                                   "w3_pscedb","w3_pscedc","w3_pscedh",
                                   "w4_pscedb","w4_pscedc","w4_pscedh",
@@ -317,16 +315,17 @@ fit.strict.som <- cfa(model.strict, data = data,
                       parameterization = "theta" )
 
 # summarise fit results
-summary(fit.strict.som, fit.measures = T)
+summary(fit_factor_som, fit.measures = T)
 
 
 # 2.4) Model comparisons
 # -------------------------
 
 # show fit measures for each model
-fitMeasures(fit.baseline.som, c("rmsea.scaled", "cfi.scaled", "srmr"))
-fitMeasures(fit.weak.som,     c("rmsea.scaled", "cfi.scaled", "srmr"))
-fitMeasures(fit.strict.som,   c("rmsea.scaled", "cfi.scaled", "srmr"))
+fitMeasures(fit_baseline_som, c("rmsea.scaled", "cfi.scaled", "srmr"))
+fitMeasures(fit_loading_som,  c("rmsea.scaled", "cfi.scaled", "srmr"))
+fitMeasures(fit_factor_som,   c("rmsea.scaled", "cfi.scaled", "srmr"))
 
 # perform model comparison
-anova(fit.baseline.som, fit.weak.som, fit.strict.som)
+lavTestLRT(fit_baseline_som, fit_loading_som, fit_factor_som, method = "satorra.bentler.2010")
+

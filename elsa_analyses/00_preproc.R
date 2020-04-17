@@ -1,6 +1,6 @@
 # ===============================================================
 # Cardiovascular Risk and Trajectories of Depressive Symptoms
-# Script 0.0: Data Preprocessing
+# Script 00: Data Preprocessing
 # ==============================================================
 
 # clean work space
@@ -35,8 +35,7 @@ wave_6_c <- read.table("data/elsa/raw/tab/wave_6_elsa_data_v2.tab",  sep = "\t",
 wave_7_c <- read.table("data/elsa/raw/tab/wave_7_elsa_data.tab"   ,  sep = "\t", header = T)
 
 # select relevant variables from waves (see codebook for explanations)
-wave_0_c  <- wave_0_c[,c("idauniq", "ager", "topqual2"
-                         )]
+wave_0_c  <- wave_0_c[,c("idauniq", "ager", "topqual2")]
 
 wave_2_c  <- wave_2_c[,c( # demographic variables
                          "idauniq" , "DhSex"   , "dhager"  , "fqethnr" , "sampsta" , 
@@ -58,8 +57,7 @@ wave_2_c  <- wave_2_c[,c( # demographic variables
 wave_2_n <- wave_2_n[,c("idauniq", "confage", 
                         "sys1"   , "sys2"   , "sys3", "sysval", "dias1", "dias2", "dias3", 
                         "fasteli", "fglu"   , "chol",
-                        "bmival" 
-                        )]
+                        "bmival")]
 
 wave_3_c  <- wave_3_c[,c("idauniq", "indager", "psceda", "pscedb", "pscedc", 
                          "pscedd" , "pscede" , "pscedf", "pscedg", "pscedh")]
@@ -364,8 +362,12 @@ data <- data %>% mutate_all(funs(na_if(., -1 )))
 # 99 --> set these as missings
 data$w2_dhager[data$w2_dhager == 99] <- NA
 
+# rename variable for analyses
+names(data)[names(data) == 'w2_dhager'] <- 'w2_age'
+
 # center age variable for analyses
-data$w2_age_c <- scale(data$w2_dhager, center = T, scale = F) # center age 
+data$w2_age_c <- scale(data$w2_age, center = T, scale = F) # center age 
+
 
 
 # 3.3) Sex
