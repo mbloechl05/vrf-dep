@@ -269,7 +269,7 @@ w6_pscedh ~~ w7_pscedh
 
 # intercept and slope with fixed coefficients
 i =~ 1*w2_som + 1*w3_som + 1*w4_som + 1*w5_som + 1*w6_som + 1*w7_som
-s =~ 0*w2_som + a*w3_som + b*w4_som + c*w5_som + d*w6_som + 5*w7_som
+s =~ 0*w2_som + w*w3_som + x*w4_som + y*w5_som + z*w6_som + 1*w7_som
 
 # intercept and slope variances and covariance
 i ~~ i

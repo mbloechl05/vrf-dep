@@ -348,7 +348,7 @@ w6_pscedg ~~ w7_pscedg
 
 # intercept and slope with fixed coefficients
 i =~ 1*w2_dep + 1*w3_dep + 1*w4_dep + 1*w5_dep + 1*w6_dep + 1*w7_dep
-s =~ 0*w2_dep + a*w3_dep + b*w4_dep + c*w5_dep + d*w6_dep + 5*w7_dep
+s =~ 0*w2_dep + w*w3_dep + x*w4_dep + y*w5_dep + z*w6_dep + 1*w7_dep
 
 # intercept and slope variances and covariance
 i ~~ i
@@ -375,7 +375,7 @@ fit_1b_aff <- sem(model_1b_aff, data = data,
 summary(fit_1b_aff,  fit.measures = T, standardized = T)
 
 # compare linear against non-linear fit
-lavTestLRT(fit_1a_aff, fit_1b_aff, method = "satorra.bentler.2010")
+lavTestLRT(fit_1a_aff, fit_1b_aff)
 
 
 # --------------------------------------
