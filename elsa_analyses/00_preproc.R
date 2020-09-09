@@ -1,7 +1,7 @@
-# ===============================================================
-# Cardiovascular Risk and Trajectories of Depressive Symptoms
-# Script 00: Data Preprocessing
-# ==============================================================
+# ==========================================================
+# Cardiovascular Risk and Trajectories of Depressed Mood
+# Script 0: Data Preprocessing
+# ==========================================================
 
 # clean work space
 rm(list = ls()) 
@@ -56,8 +56,7 @@ wave_2_c  <- wave_2_c[,c( # demographic variables
 
 wave_2_n <- wave_2_n[,c("idauniq", "confage", 
                         "sys1"   , "sys2"   , "sys3", "sysval", "dias1", "dias2", "dias3", 
-                        "fasteli", "fglu"   , "chol",
-                        "bmival")]
+                        "fasteli", "fglu"   , "chol", "ldl"   , "bmival")]
 
 wave_3_c  <- wave_3_c[,c("idauniq", "indager", "psceda", "pscedb", "pscedc", 
                          "pscedd" , "pscede" , "pscedf", "pscedg", "pscedh")]
@@ -392,6 +391,7 @@ data$w0_topqual2[data$w0_topqual2 == 6] <- NA # recode foreign / other qual to N
 data$w0_topqual2[data$w0_topqual2 == 8] <- NA # recode full-time students to NA
 data$w0_edu <- ifelse(data$w0_topqual2 == 1, 1, 0) 
 
+
 # 3.6) Activities of daily living
 # ---------------------------------
 
@@ -441,6 +441,9 @@ table(adl$w2_adl, useNA = "always")
 # Merge data 
 data <- merge(data, adl, all.x = T, by = "idauniq", sort = T)
 
+# center variable for analyses
+data$w2_adl_c <- scale(data$w2_adl, center = T, scale = F) 
+
 
 # --------------------------
 # 4) Vascular risk factors
@@ -464,8 +467,8 @@ data$w2_smok <- data$w2_HESka
 # --------------------------------------------
 
 # average all three blood pressure values from wave 2 
-data$w2_mean_sys <- rowMeans(data[,c("w2_sys1" , "w2_sys2" , "w2_sys3" )], na.rm = T)
-data$w2_mean_dia <- rowMeans(data[,c("w2_dias1", "w2_dias2", "w2_dias3")], na.rm = T)
+data$w2_mean_sys <- rowMeans(data[,c("w2_sys1" , "w2_sys2" , "w2_sys3" )], na.rm = F)
+data$w2_mean_dia <- rowMeans(data[,c("w2_dias1", "w2_dias2", "w2_dias3")], na.rm = F)
 
 # create hypertension variable from CVD-variables at wave 1
 data$w1_hypertension <- ifelse(data$w2_behdia01 == 1, 1, 0)
@@ -494,14 +497,14 @@ data$w1_w2_hypertension <- ifelse(data$w1_hypertension == 1, 1, 0)
 data$w1_w2_hypertension[data$w2_hypertension == 1] <- 1
 
 # finally, code variable that includes the measurement of blood pressure in the definition of hypertension
-data$w2_n_hypertension <- ifelse(data$w2_meansys >= 130 & data$w2_meandia >= 80, 1, 0)
+data$w2_n_hypertension <- ifelse(data$w2_mean_sys >= 130 & data$w2_mean_dia >= 80, 1, 0) # error?!
 data$w1_w2_hypertension[data$w2_n_hypertension == 1] <- 1
 
 # rename variable for analyses
-names(data)[names(data) == 'w1_w2_hypertension'] <- 'w2_hypt'
+data$w2_hypt <- data$w1_w2_hypertension
 
 
-# 4.3) Diabetes/ Blood glucose
+# 4.3) Diabetes / Blood glucose
 # --------------------------------
 
 # Only select participants with valid fasting blood samples 
@@ -537,22 +540,20 @@ data$w2_n_diabetes <- ifelse(data$w2_fglu_fasting >= 7, 1, 0)
 data$w1_w2_diabetes[data$w2_n_diabetes == 1] <- 1
 
 # rename variable for analyses
-names(data)[names(data) == 'w1_w2_diabetes'] <- 'w2_diab'
+data$w2_diab <- data$w1_w2_diabetes
 
 
 # 4.4) Body mass index
 # -----------------------
 
 # create a variable that indicates obesity (BMI >= 30)
-data$w2_obese <- ifelse(data$w2_bmi >= 30, 1, 0)
+data$w2_obese <- ifelse(data$w2_bmival >= 30, 1, 0)
 
 
-# 4.5) Hypercholesteremia / cholesterol
+# 4.5) Hypercholesterolemia / cholesterol
 # ---------------------------------------
 
-#data$w2_choln <- data$w2_chol 
-
-# create diabetes variable from CVD-variables at wave 1
+# create hyperchol variable from CVD-variables at wave 1
 data$w1_hypercholest <- ifelse(data$w2_behdia01 == 9, 1, 0)
 data$w1_hypercholest[data$w2_behdia02 == 9]  <- 1
 data$w1_hypercholest[data$w2_behdia03 == 9] <- 1
@@ -561,7 +562,7 @@ data$w1_hypercholest[data$w2_behdia05 == 9] <- 1
 data$w1_hypercholest[data$w2_behdia06 == 9] <- 1
 data$w1_hypercholest[data$w2_behdia07 == 9] <- 1
 
-# create diabetes var from CVD-variables at wave 2 (newly diagn. diabetes)
+# create diabetes var from CVD-variables at wave 2 (newly diagn. high chol)
 data$w2_hypercholest <- ifelse(data$w2_hedia01 == 9, 1, 0)
 data$w2_hypercholest[data$w2_hedia02 == 9] <- 1
 data$w2_hypercholest[data$w2_hedia03 == 9] <- 1
@@ -573,16 +574,19 @@ data$w2_hypercholest[data$w2_hedia08 == 9] <- 1
 data$w2_hypercholest[data$w2_hedia09 == 9] <- 1
 
 # create variable indiating whether participants ever reported having 
-# diabetes in wave 1 or 2 (0 = no, 1 = yes)
+# high chol in wave 1 or 2 (0 = no, 1 = yes)
 data$w1_w2_hypercholest <- ifelse(data$w1_hypercholest == 1, 1, 0)
 data$w1_w2_hypercholest[data$w2_hypercholest == 1] <- 1
 
 # finally create variable that includes the measurement of cholesterol
-data$w2_n_hypercholest <- ifelse(data$w2_hypercholest >= 6.1, 1, 0)
+#data$w2_n_hypercholest  <- ifelse(data$w2_hypercholest >= 6.1, 1, 0)
+#data$w2_n_hypercholest  <- ifelse(data$w2_chol >= 6.1, 1, 0)
+data$w2_n_hypercholest <- ifelse(data$w2_ldl >= 4.1, 1, 0)
+#data$w1_w2_hypercholest[data$w2_n_hypercholest == 1] <- 1
 data$w1_w2_hypercholest[data$w2_n_hypercholest == 1] <- 1
 
 # rename variable for analyses
-names(data)[names(data) == 'w1_w2_hypercholest'] <- 'w2_hchol'
+data$w2_hchol <- data$w1_w2_hypercholest
 
 
 # 4.6) Number of risk factors
@@ -624,42 +628,6 @@ data$w7_pscedf_r <- 1 - data$w7_pscedf
 # 5.1) Measurement model 
 # -------------------------
 
-# One-factor model for full 8-item scale
-
-### define model
-dep1_m <- 'dep =~ w2_psceda + w2_pscedb + w2_pscedc + w2_pscedd + 
-                  w2_pscede + w2_pscedf + w2_pscedg + w2_pscedh'
-
-### fit model
-dep1_f <- cfa(model = dep1_m, data  = data, 
-              ordered = c("w2_psceda", "w2_pscedb", "w2_pscedc", "w2_pscedd",
-                          "w2_pscede", "w2_pscedf", "w2_pscedg", "w2_pscedh"), 
-              missing = "pairwise", estimator = "WLSMV", 
-              parameterization = "theta")
-
-### show model results
-summary(dep1_f, fit.measures = TRUE, standardized = TRUE)
-modindices(dep1_f, sort = TRUE, minimum.value = 100)
-
-
-# Two-factor model for full 8-item scale
-
-### define model
-dep2_m <- 'aff =~ w2_psceda + w2_pscedd + w2_pscede + w2_pscedf + w2_pscedg 
-           som =~ w2_pscedb + w2_pscedc + w2_pscedh'
-
-### fit model
-dep2_f <- cfa(model = dep2_m, data  = data, 
-              ordered = c("w2_psceda", "w2_pscedb", "w2_pscedc", "w2_pscedd",
-                          "w2_pscede", "w2_pscedf", "w2_pscedg", "w2_pscedh"), 
-              missing = "pairwise", estimator = "WLSMV", 
-              parameterization = "theta")
-
-### show model results
-summary(dep2_f, fit.measures = TRUE, standardized = TRUE)
-modindices(dep2_f, sort = TRUE, minimum.value = 100) 
-
-
 # One-factor model: affective symptoms (5 symptoms)
 
 ### define model
@@ -676,26 +644,8 @@ summary(aff_f, fit.measures = TRUE, standardized = TRUE)
 modindices(aff_f, sort = TRUE, minimum.value = 100) 
 
 
-# One-factor model: somatic symptoms (3 symptoms)
-
-### define model
-som_m <- 'som =~ w2_pscedb + w2_pscedc + w2_pscedh'
-
-### fit model
-som_f <- cfa(model = som_m, data = data, 
-             ordered = c("w2_pscedb", "w2_pscedc", "w2_pscedh"), 
-             missing = "pairwise", estimator = "WLSMV", 
-             parameterization = "theta")
-
-### show model results
-summary(som_f, fit.measures = TRUE, standardized = TRUE)
-modindices(som_f, sort = TRUE, minimum.value = 100) # modification indices
-
-
 # 5.2) Internal consistency
 # ---------------------------
-
-# 5.2.1) Affective symptoms
 
 # select affective items CES-D items for each wave 
 w2_aff_items <- data[,c("w2_psceda", "w2_pscedd_r", "w2_pscede", "w2_pscedf_r", "w2_pscedg")] 
@@ -714,26 +664,8 @@ psych::alpha(w5_aff_items)
 psych::alpha(w6_aff_items)
 psych::alpha(w7_aff_items)
 
-# 5.2.2) Somatic symptoms
 
-# select affective items CES-D items for each wave 
-w2_som_items <- data[,c("w2_pscedb", "w2_pscedc", "w2_pscedh")] 
-w3_som_items <- data[,c("w3_pscedb", "w3_pscedc", "w3_pscedh")] 
-w4_som_items <- data[,c("w4_pscedb", "w4_pscedc", "w4_pscedh")] 
-w5_som_items <- data[,c("w5_pscedb", "w5_pscedc", "w5_pscedh")] 
-w6_som_items <- data[,c("w6_pscedb", "w6_pscedc", "w6_pscedh")] 
-w7_som_items <- data[,c("w7_pscedb", "w7_pscedc", "w7_pscedh")] 
-
-# calculate Cronbach's alpha 
-# note: reduces to Kuder-Richardson formula for dichotomous items (implemented in alpha())
-psych::alpha(w2_som_items) 
-psych::alpha(w3_som_items) 
-psych::alpha(w4_som_items) 
-psych::alpha(w5_som_items) 
-psych::alpha(w6_som_items) 
-psych::alpha(w7_som_items) 
-
-# 5.3) Calculate means 
+# 5.3) Calculate sum scores
 # --------------------------------------
 # i.e. proportion of yes answers for descriptive stats
 
@@ -745,16 +677,7 @@ data$w5_aff_sum <- rowSums(w5_aff_items)
 data$w6_aff_sum <- rowSums(w6_aff_items)
 data$w7_aff_sum <- rowSums(w7_aff_items)
 
-# 5.3.2) Somatic symptoms
-data$w2_som_sum <- rowSums(w2_som_items)
-data$w3_som_sum <- rowSums(w3_som_items)
-data$w4_som_sum <- rowSums(w4_som_items)
-data$w5_som_sum <- rowSums(w5_som_items)
-data$w6_som_sum <- rowSums(w6_som_items)
-data$w7_som_sum <- rowSums(w7_som_items)
-
-# 5.4) 
-
+# 5.3.2) Overall score 
 # select all CES-D items for each wave 
 w2_dep_items <- data[,c("w2_psceda", "w2_pscedb", "w2_pscedc", "w2_pscedd_r", "w2_pscede", "w2_pscedf_r", "w2_pscedg", "w2_pscedh")] # wave 2
 w3_dep_items <- data[,c("w3_psceda", "w3_pscedb", "w3_pscedc", "w3_pscedd_r", "w3_pscede", "w3_pscedf_r", "w3_pscedg", "w3_pscedh")] # wave 3
@@ -763,7 +686,7 @@ w5_dep_items <- data[,c("w5_psceda", "w5_pscedb", "w5_pscedc", "w5_pscedd_r", "w
 w6_dep_items <- data[,c("w6_psceda", "w6_pscedb", "w6_pscedc", "w6_pscedd_r", "w6_pscede", "w6_pscedf_r", "w6_pscedg", "w6_pscedh")] # wave 6
 w7_dep_items <- data[,c("w7_psceda", "w7_pscedb", "w7_pscedc", "w7_pscedd_r", "w7_pscede", "w7_pscedf_r", "w7_pscedg", "w7_pscedh")] # wave 7
 
-# 5.3.3) Overall sum score
+# Calculate Score
 data$w2_dep_sum <- rowSums(w2_dep_items)
 data$w3_dep_sum <- rowSums(w3_dep_items)
 data$w4_dep_sum <- rowSums(w4_dep_items)

@@ -1,7 +1,7 @@
-# ================================================================
-# Cardiovascular Risk and Trajectories of Depressive Symptoms
-# Script 21: Measurement Invariance for Affective Symptoms
-# ================================================================
+# ==========================================================
+# Cardiovascular Risk and Trajectories of Depressed Mood
+# Script 2: Measurement Invariance 
+# ==========================================================
 
 # clean work space
 rm(list = ls())
