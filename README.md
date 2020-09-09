@@ -1,16 +1,14 @@
-# GitLab: Vascular risk factors and depressed mood
+# GitLab: Vascular risk factors and trajectories of depressed mood
 
-This gitLab-repro contains analysis codes for the project 'Vascular risk factors and the long-term course of depressed mood'. 
+This gitLab-repro contains analysis codes for the project 'Vascular risk factors and trajectories of depressed mood'. 
 
-Two datasets were analysed: The English Longitudinal Study of Ageing (ELSA), and Midlife in the United States (MIDUS)
+Data from the English Longitudinal Study of Ageing (ELSA) was analysed.
 
-For both datasets, the analysis code is split into different subscripts:
+The analysis code is split into different subscripts:
 
-1. Data preprocessing ('1_preproc.R')
-2. Descriptive statistics ('2_descriptives.R')
-3. Testing measurement invariance ('3_measurementinvar.R')
-4. Fitting the growth models ('4_growthmodels.R')
+1. Data preprocessing ('00_preproc.R')
+2. Descriptive statistics ('10_descr.R')
+3. Testing measurement invariance ('21_mi_aff.R')
+4. Fitting the growth models ('31_gm_aff.R')
 
-All data to run the analyses can be downloaded [here](https://www.icpsr.umich.edu/icpsrweb/ICPSR/series/203)* and [here](https://beta.ukdataservice.ac.uk/datacatalogue/series/series?id=200011), respectively. 
-
-*MIDUS 1: ICPSR 2760, MIDUS 2: ICPSR 4652, MIDUS 3: ICPSR 36346
+All data to run the analyses can be downloaded [here](https://beta.ukdataservice.ac.uk/datacatalogue/series/series?id=200011).
