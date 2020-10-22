@@ -636,48 +636,6 @@ data_pred_60$age <-  -5.62
 data_pred_70$age <-   4.38
 data_pred_80$age <-  14.38
 
-
-# # calculate 10th and 90th percentile for each age range
-# perc_50 <- quantile(data_pred_50$i, probs = c(0.1, 0.9))
-# perc_60 <- quantile(data_pred_60$i, probs = c(0.1, 0.9), na.rm = T)
-# perc_70 <- quantile(data_pred_70$i, probs = c(0.1, 0.9), na.rm = T)
-# perc_80 <- quantile(data_pred_80$i, probs = c(0.1, 0.9))
-# 
-# # bind frame again
-# perc_frame <- data.frame(perc_50, perc_60, perc_70, perc_80)
-# 
-# # reshape to long format
-# perc_frame_l <- reshape2::melt(perc_frame)
-# 
-# # add age and id variables
-# perc_frame_l$age <- c(-15.62, -15.62, -5.62, -5.62, 4.38, 4.38, 14.38, 14.38)
-# perc_frame_l$id  <- c(1:8)
-# 
-# # now add time information by duplicating data frames and adding time variables
-# perc_frame_2 <- perc_frame_l
-# perc_frame_3 <- perc_frame_l
-# perc_frame_4 <- perc_frame_l
-# perc_frame_5 <- perc_frame_l
-# perc_frame_6 <- perc_frame_l
-# perc_frame_7 <- perc_frame_l
-# perc_frame_2$time <- 2
-# perc_frame_3$time <- 3
-# perc_frame_4$time <- 4
-# perc_frame_5$time <- 5
-# perc_frame_6$time <- 6
-# perc_frame_7$time <- 7
-# 
-# # recombine information again into one data frame
-# perc_frame <- rbind(perc_frame_2, perc_frame_3, perc_frame_4, perc_frame_5, 
-#                     perc_frame_6, perc_frame_7)
-# 
-# # calculate predicted values for affective symptoms
-# perc_frame$y <- (perc_frame$value - 0.001*perc_frame$age) + 
-#                 ((-0.072 + 0.005*perc_frame$age)*perc_frame$time)
-# 
-# # make some variables factors
-# perc_frame$age <- as.factor(perc_frame$age)
-
 # create id variable
 data_pred_50$id <- c(1:57)
 data_pred_60$id <- c(1:240)
@@ -774,8 +732,8 @@ plot_frame_l$age <- as.factor(plot_frame_l$age)
 
 
 ggplot() +
-  geom_line(aes(time, y, group = id), data = plot_frame_l, colour = "grey80", alpha = 0.4) +
-  geom_line(aes(time, y, colour = vrf), data = plot_frame, size = 1.0) +
+  geom_line(aes(time, y, group = id), data = plot_frame_l, colour = "grey80", size = 0.2, alpha = 0.4) +
+  geom_line(aes(time, y, linetype = vrf), data = plot_frame, size = 0.6, colour = '#254D60') +
 #  geom_line(aes(time, y, group = id), data = perc_frame, linetype = 2) +
   facet_rep_grid(.~ age, 
                  labeller = labeller(age = age_labs)) + 
@@ -789,62 +747,22 @@ ggplot() +
   geom_segment(aes_all(c('x', 'y', 'xend', 'yend')),
                data = data.frame(x = c(1.7, 2), xend = c(1.7, 7), 
                                  y = c(-4,-4.4), yend = c(2, -4.4))) +
-  theme_tufte(base_size = 14) +
-  theme(axis.text  = element_text(colour = "black", size = 15, family = "serif"), 
-        axis.title = element_text(colour = "black", size = 15, family = "serif"), 
-        plot.title = element_text(hjust = 0.5, face = "bold", size = 18, family = "serif"), 
-        strip.text.x = element_text(size = 15, family = "serif", face = "bold"),
+  theme_tufte(base_size = 14) + 
+  scale_linetype_manual(values= c(3, 2, 1), 
+                        name = "",
+                        breaks = c("-1.46", "0.54", "3.54"),
+                        labels = c("0 Vascular risk factors", "2 Vascular risk factors", 
+                                   "5 Vascular risk factors")) +
+  theme(axis.text  = element_text(colour = "black", size = 15), 
+        axis.title = element_text(colour = "black", size = 15), 
+        plot.title = element_text(hjust = 0.5, face = "bold", size = 18), 
+        strip.text.x = element_text(size = 15, face = "bold"),
         strip.background = element_rect(color = NA, fill = NA),
         legend.position = c(0.92,0.11), 
         legend.background = element_rect(fill = "white", color = NA, size = 0.25), 
-        legend.title = element_text(size = 1, family = "serif"), 
-        legend.text = element_text(size = 13, family = "serif"), 
+        legend.title = element_text(size = 1), 
+        legend.text = element_text(size = 13), 
         legend.key.width = unit(1, "cm"), 
-        legend.key.height = unit(0.4, "cm")) + 
-  scale_color_manual(values = c('#d7aebe', '#9e5371', '#69374b'), 
-                     name = "",
-                     breaks = c("-1.46", "0.54", "3.54"),
-                     labels = c("0 Vascular risk factors", "2 Vascular risk factors", 
-                                "5 Vascular risk factors")) 
+        legend.key.height = unit(0.4, "cm"))
 
-ggsave("figures/interact.png", dpi = 500, width = 16, height = 5)
-
-# '#9CC9D0', '#457495', "#243C58"
-
-# green yellow red
-# ('#E8789A', '#FCCE77', "#53787D"), -- 5/10
-
-# purple, pink, yellow
-# ('#FFC36D', '#E267AA', "#7C50B9"), -- 5/10
-
-# purple pink yellow dark
-# ('#F5CC71', '#B9656F', "#722769"), -- 6/10
-
-# purple pink yellow dark II
-# ('#FCBD8B', '#E8789A', "#6F1D57"), -- 7/10
-
-# blue pink rose
-# ('#FDC2C2', '#F38CB1', "#314D77"), -- 7/10
-
-# navy blue pink
-# ('#E793B7', '#1E5A88', "#172F42"), -- 7/10
-
-# purple to pink
-# ('#FB98B8', '#C668AA', "#572F5E"), -- 7/10
-
-# teal green palette
-# ('#A8D8CD', '#377375', "#2A484E"), -- 6/10
-
-# blue palette I
-# ('#D3D4D7', '#7396D1', "#44435F"), -- 3/10
-
-# blue palette II
-# ('#7396D1', '#505F99', "#44435F"), -- 3/10
-
-# blue palette III
-# ('#9CC9D0', '#457495', "#243C58"), -- 7/10
-
-
-
-
-
+ggsave("figures/interact.jpg", width = 16, height = 5, dpi = 600)
