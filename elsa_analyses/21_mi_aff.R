@@ -1,5 +1,5 @@
 # ==========================================================
-# Cardiovascular Risk and Trajectories of Depressed Mood
+# Age, Vascular Risk Factors and Depressed Mood
 # Script 2: Measurement Invariance 
 # ==========================================================
 

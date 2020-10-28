@@ -1,5 +1,5 @@
 # =========================================================
-# Cardiovascular Risk and Trajectories of Depressed Mood
+# Age, Vascular Risk Factors and Depressed Mood
 # Script 3: Latent Growth Models 
 # =========================================================
 
@@ -531,7 +531,7 @@ i ~ w2_age_c + w2_sex + w2_eth + w0_edu + w2_adl_c + w2_pred + w2_pred_age
 s ~ w2_age_c + w2_sex + w2_eth + w0_edu + w2_adl_c + w2_pred + w2_pred_age
 '
 
-# set cardiovascular risk variable for placeholder
+# set vascular risk variable for placeholder
 data$w2_pred     <- data$w2_cvrisk_c
 data$w2_pred_age <- data$w2_cvrisk_c*data$w2_age_c 
 
@@ -723,22 +723,11 @@ plot_frame_l$age <- as.factor(plot_frame_l$age)
 # 3.3) Finally, create plot
 # ---------------------------
 
-# text_10 <- data.frame(
-#   label = c("10th", "10th", "10th", "10th"),
-#   age   = factor(c(-15.62, -5.62, 4.38, 14.38)),
-#   y     = c(-1.2, -0.4, 0.4, 1.4),
-#   x     = c(7, 7, 7, 7)
-# )
-
-
 ggplot() +
   geom_line(aes(time, y, group = id), data = plot_frame_l, colour = "grey80", size = 0.2, alpha = 0.4) +
   geom_line(aes(time, y, linetype = vrf), data = plot_frame, size = 0.6, colour = '#254D60') +
-#  geom_line(aes(time, y, group = id), data = perc_frame, linetype = 2) +
   facet_rep_grid(.~ age, 
                  labeller = labeller(age = age_labs)) + 
-#  geom_text(data = text_10, mapping = aes(x = x, y = y, label = label), 
-#            size = 3.6, family = "serif") +
   scale_x_continuous(name = "Years since baseline", breaks = c(2,3,4,5,6,7), 
                      labels = c(0,2,4,6,8,10), limits = c(1.7, 7.3),
                      expand = c(0,0)) + 
