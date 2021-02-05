@@ -34,11 +34,10 @@ wave_5_c <- read.table("data/elsa/raw/tab/wave_5_elsa_data_v4.tab",  sep = "\t",
 wave_6_c <- read.table("data/elsa/raw/tab/wave_6_elsa_data_v2.tab",  sep = "\t", header = T)
 wave_7_c <- read.table("data/elsa/raw/tab/wave_7_elsa_data.tab"   ,  sep = "\t", header = T)
 
-# select relevant variables from waves (see codebook for explanations)
+# select relevant variables from waves 
 wave_0_c  <- wave_0_c[,c("idauniq", "ager", "topqual2")]
 
-wave_2_c  <- wave_2_c[,c( # demographic variables
-                         "idauniq" , "DhSex"   , "dhager"  , "fqethnr" , "sampsta" , 
+wave_2_c  <- wave_2_c[,c("idauniq" , "DhSex"   , "dhager"  , "fqethnr" , "sampsta" , 
                          "hedia01" , "hedia02" , "hedia03" , "hedia04" , "hedia05" , 
                          "hedia06" , "hedia07" , "hedia08" , "hedia09" , 
                          "behdia01", "behdia02", "behdia03", "behdia04", "behdia05", 
@@ -52,7 +51,6 @@ wave_2_c  <- wave_2_c[,c( # demographic variables
                          "HeDibW6" , "HeDibW7" , "HeDibW8" , "HeDibW9" , 
                          "heada01" , "heada02" , "heada03" , "heada04" , "heada05" , 
                          "heada06" , "heada07" , "heada08" , "heada09" , "heada10")]
-
 
 wave_2_n <- wave_2_n[,c("idauniq", "confage", 
                         "sys1"   , "sys2"   , "sys3", "sysval", "dias1", "dias2", "dias3", 
@@ -598,8 +596,7 @@ data$w2_cvrisk <- rowSums(risk_factors)
 
 # center variable
 data$w2_cvrisk_c <- scale(data$w2_cvrisk, center = T, scale = F) 
-
-
+                    
 # -------------------------
 # 5) Depressive symptoms
 # -------------------------
@@ -695,9 +692,22 @@ data$w6_dep_sum <- rowSums(w6_dep_items)
 data$w7_dep_sum <- rowSums(w7_dep_items)
 
 
+# --------------------------------------
+# 6) Further exclusion of participants
+# --------------------------------------
+
+# rename data set with missing covariate data to keep it for later
+data_miss_cov <- data
+
+# only keep participants with available data on all covariates
+data <- data_miss_cov[complete.cases(
+  data_miss_cov[ , c("w2_age_c", "w2_sex", "w2_eth", 
+                     "w0_edu"  , "w2_adl", "w2_cvrisk")]), ]
+
+
 # ---------------------------
-# 6) Save preprocessed data
+# 7) Save preprocessed data
 # ---------------------------
 
-save(data, file = "data/elsa/processed/elsa_proc_data.RData")
+save(data, data_miss_cov, file = "data/elsa/processed/elsa_proc_data.RData")
 

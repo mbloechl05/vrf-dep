@@ -213,15 +213,16 @@ s ~ 1
 '
 
 # fit model
-fit_1a_aff <- sem(model_1a_aff, data = data, 
-                  ordered = c("w2_psceda","w2_pscedd","w2_pscede","w2_pscedf","w2_pscedg", 
-                              "w3_psceda","w3_pscedd","w3_pscede","w3_pscedf","w3_pscedg", 
-                              "w4_psceda","w4_pscedd","w4_pscede","w4_pscedf","w4_pscedg", 
-                              "w5_psceda","w5_pscedd","w5_pscede","w5_pscedf","w5_pscedg", 
-                              "w6_psceda","w6_pscedd","w6_pscede","w6_pscedf","w6_pscedg", 
-                              "w7_psceda","w7_pscedd","w7_pscede","w7_pscedf","w7_pscedg"), 
-                  missing = "pairwise", estimator = "WLSMV", 
-                  parameterization = "theta" )
+fit_1a_aff <- 
+  sem(model_1a_aff, data = data, 
+      ordered = c("w2_psceda","w2_pscedd","w2_pscede","w2_pscedf","w2_pscedg", 
+                  "w3_psceda","w3_pscedd","w3_pscede","w3_pscedf","w3_pscedg", 
+                  "w4_psceda","w4_pscedd","w4_pscede","w4_pscedf","w4_pscedg", 
+                  "w5_psceda","w5_pscedd","w5_pscede","w5_pscedf","w5_pscedg", 
+                  "w6_psceda","w6_pscedd","w6_pscede","w6_pscedf","w6_pscedg", 
+                  "w7_psceda","w7_pscedd","w7_pscede","w7_pscedf","w7_pscedg"), 
+      missing = "pairwise", estimator = "WLSMV", 
+      parameterization = "theta" )
 
 # summarise fit results
 summary(fit_1a_aff,  fit.measures = T, standardized = T, ci = T)
@@ -366,15 +367,16 @@ s ~ 1
 '
 
 # fit model
-fit_1b_aff <- sem(model_1b_aff, data = data, 
-                  ordered = c("w2_psceda","w2_pscedd","w2_pscede","w2_pscedf","w2_pscedg", 
-                              "w3_psceda","w3_pscedd","w3_pscede","w3_pscedf","w3_pscedg", 
-                              "w4_psceda","w4_pscedd","w4_pscede","w4_pscedf","w4_pscedg", 
-                              "w5_psceda","w5_pscedd","w5_pscede","w5_pscedf","w5_pscedg", 
-                              "w6_psceda","w6_pscedd","w6_pscede","w6_pscedf","w6_pscedg", 
-                              "w7_psceda","w7_pscedd","w7_pscede","w7_pscedf","w7_pscedg"), 
-                  missing = "pairwise", estimator = "WLSMV", 
-                  parameterization = "theta" )
+fit_1b_aff <- 
+  sem(model_1b_aff, data = data, 
+      ordered = c("w2_psceda","w2_pscedd","w2_pscede","w2_pscedf","w2_pscedg", 
+                  "w3_psceda","w3_pscedd","w3_pscede","w3_pscedf","w3_pscedg", 
+                  "w4_psceda","w4_pscedd","w4_pscede","w4_pscedf","w4_pscedg", 
+                  "w5_psceda","w5_pscedd","w5_pscede","w5_pscedf","w5_pscedg", 
+                  "w6_psceda","w6_pscedd","w6_pscede","w6_pscedf","w6_pscedg", 
+                  "w7_psceda","w7_pscedd","w7_pscede","w7_pscedf","w7_pscedg"), 
+      missing = "pairwise", estimator = "WLSMV", 
+      parameterization = "theta" )
 
 # summarise fit results
 summary(fit_1b_aff,  fit.measures = T, standardized = T)
@@ -527,8 +529,8 @@ i ~ 1
 s ~ 1
 
 # regressions
-i ~ w2_age_c + w2_sex + w2_eth + w0_edu + w2_adl_c + w2_pred + w2_pred_age 
-s ~ w2_age_c + w2_sex + w2_eth + w0_edu + w2_adl_c + w2_pred + w2_pred_age
+i ~ w2_age_c + w2_sex + w2_eth + w0_edu + w2_pred + w2_adl + w2_pred_age 
+s ~ w2_age_c + w2_sex + w2_eth + w0_edu + w2_pred + w2_adl + w2_pred_age
 '
 
 # set vascular risk variable for placeholder
@@ -536,15 +538,16 @@ data$w2_pred     <- data$w2_cvrisk_c
 data$w2_pred_age <- data$w2_cvrisk_c*data$w2_age_c 
 
 # fit model
-fit_2_aff <- sem(model_2_aff, data = data, 
-                  ordered = c("w2_psceda","w2_pscedd","w2_pscede","w2_pscedf","w2_pscedg", 
-                              "w3_psceda","w3_pscedd","w3_pscede","w3_pscedf","w3_pscedg", 
-                              "w4_psceda","w4_pscedd","w4_pscede","w4_pscedf","w4_pscedg", 
-                              "w5_psceda","w5_pscedd","w5_pscede","w5_pscedf","w5_pscedg", 
-                              "w6_psceda","w6_pscedd","w6_pscede","w6_pscedf","w6_pscedg", 
-                              "w7_psceda","w7_pscedd","w7_pscede","w7_pscedf","w7_pscedg"), 
-                  missing = "pairwise", estimator = "WLSMV", 
-                  parameterization = "theta")
+fit_2_aff <- 
+  sem(model_2_aff, data = data, 
+      ordered = c("w2_psceda","w2_pscedd","w2_pscede","w2_pscedf","w2_pscedg", 
+                  "w3_psceda","w3_pscedd","w3_pscede","w3_pscedf","w3_pscedg", 
+                  "w4_psceda","w4_pscedd","w4_pscede","w4_pscedf","w4_pscedg", 
+                  "w5_psceda","w5_pscedd","w5_pscede","w5_pscedf","w5_pscedg", 
+                  "w6_psceda","w6_pscedd","w6_pscede","w6_pscedf","w6_pscedg", 
+                  "w7_psceda","w7_pscedd","w7_pscede","w7_pscedf","w7_pscedg"), 
+      missing = "pairwise", estimator = "WLSMV", 
+      parameterization = "theta")
 
 # summarise fit results
 summary(fit_2_aff,  fit.measures = T, standardized = T, ci = T)

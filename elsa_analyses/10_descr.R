@@ -24,18 +24,20 @@ load("data/elsa/processed/elsa_proc_data.RData")
 
 # descriptive stats for continuous variables (binary vars only included to get 
 # valid Ns)
-psych::describe(data[,c("w2_age"    , "w2_sex"    , "w2_eth"    , "w0_edu"    , "w2_hypt"   , 
-                        "w2_obese"  , "w2_diab"   , "w2_smok"   , "w2_hchol"  , "w2_cvrisk" , 
-                        "w2_aff_sum", "w3_aff_sum", "w4_aff_sum", "w5_aff_sum", "w6_aff_sum",
-                        "w7_aff_sum", "w2_adl"    , "w2_cvrisk")]) 
+psych::describe(data[,c("w2_age"    , "w2_sex"    , "w2_eth"    , "w0_edu"    , 
+                        "w2_hypt"   , "w2_obese"  , "w2_diab"   , "w2_smok"   , 
+                        "w2_hchol"  , "w2_cvrisk" , "w2_aff_sum", "w3_aff_sum", 
+                        "w4_aff_sum", "w5_aff_sum", "w6_aff_sum", "w7_aff_sum", 
+                        "w2_adl"    , "w2_cvrisk")]) 
 
 # descriptive stats for dichotomous variables
-tables <- lapply(data[,c("w2_sex" , "w2_eth"  , "w0_edu"   , "w2_hypt"  , "w2_diab"   , 
-                         "w2_smok", "w2_obese", "w2_hchol" , "w2_cvrisk")], table)
+tables <- lapply(data[,c("w2_sex" , "w2_eth"  , "w0_edu"  , "w2_hypt"  , 
+                         "w2_diab", "w2_smok" , "w2_obese", "w2_hchol" , 
+                         "w2_cvrisk")], table)
 tables # absolute frequencies
 lapply(tables, prop.table) # relative frequencies
 
-# absolute and relative frequency of depressiove symptoms >2
+# absolute and relative frequency of depressive symptoms >2
 clin_dep <- cumsum(tables$w2_dep_sum[4:9])
 clin_dep
 
@@ -47,9 +49,11 @@ clin_dep
 # ------------------------------------------------
 
 # select variables for corr matrix
-vars <- data[,c("w2_age"    , "w2_sex"    , "w2_eth"    , "w0_edu"    , "w2_hypt", 
-                "w2_obese"  , "w2_diab"   , "w2_smok"   , "w2_hchol"  , "w2_cvrisk" , "w2_adl",
-                "w2_aff_sum", "w3_aff_sum", "w4_aff_sum", "w5_aff_sum", "w6_aff_sum", "w7_aff_sum")]  
+vars <- data[,c("w2_age"    , "w2_sex"    , "w2_eth"    , "w0_edu"    , 
+                "w2_hypt"   , "w2_obese"  , "w2_diab"   , "w2_smok"   , 
+                "w2_hchol"  , "w2_cvrisk" , "w2_adl"    , "w2_aff_sum", 
+                "w3_aff_sum", "w4_aff_sum", "w5_aff_sum", "w6_aff_sum", 
+                "w7_aff_sum")]  
 
 # create corr matrix (rounded to 2 dec places)
 zo_corr <- rcorr(as.matrix(vars))
