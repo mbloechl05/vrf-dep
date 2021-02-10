@@ -50,7 +50,8 @@ wave_2_c  <- wave_2_c[,c("idauniq" , "DhSex"   , "dhager"  , "fqethnr" , "sampst
                          "hedibw1" , "HeDibW2" , "HeDibW3" , "HeDibW4" , "HeDibW5" , 
                          "HeDibW6" , "HeDibW7" , "HeDibW8" , "HeDibW9" , 
                          "heada01" , "heada02" , "heada03" , "heada04" , "heada05" , 
-                         "heada06" , "heada07" , "heada08" , "heada09" , "heada10")]
+                         "heada06" , "heada07" , "heada08" , "heada09" , "heada10", 
+                         "w2wgt")]
 
 wave_2_n <- wave_2_n[,c("idauniq", "confage", 
                         "sys1"   , "sys2"   , "sys3", "sysval", "dias1", "dias2", "dias3", 

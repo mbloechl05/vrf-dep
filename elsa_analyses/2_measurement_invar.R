@@ -440,8 +440,7 @@ fit_ufactor_aff <-
       parameterization = "theta" )
 
 # summarise fit results
-summary(fit_ufactor_aff, fit.measures = T)   
-
+summary(fit_ufactor_aff, fit.measures = T, standardized = T)   
 
 # -----------------------
 # 4) Model comparisons 

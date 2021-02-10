@@ -220,3 +220,18 @@ fit_fiml_2 <- growth(model_fiml, data = data_miss_cov,
 summary(fit_fiml_2,  fit.measures = T, standardized = T, ci = T)
 
 
+# 2.3) Analyses Including Sampling Weights
+# ------------------------------------------
+
+# set vascular risk variable for placeholder
+data$w2_pred     <- data$w2_cvrisk_c
+data$w2_pred_age <- data$w2_cvrisk_c*data$w2_age_c 
+
+# fit model
+fit_fiml_3 <- growth(model_fiml, data = data, missing = "fiml", estimator = "MLR", 
+                     sampling.weights = "w2_w2wgt")
+
+# summarise fit results
+summary(fit_fiml_3,  fit.measures = T, standardized = T, ci = T)
+
+
