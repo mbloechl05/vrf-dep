@@ -561,15 +561,11 @@ summary(fit_2_aff,  fit.measures = T, standardized = T, ci = T)
 # -----------------------------------------------------------------------
 
 # create age and vrf variable
-age <- c(-15.62, -5.62, 4.38, 14.38, 
-         -15.62, -5.62, 4.38, 14.38, 
-#         -15.62, -5.62, 4.38, 14.38, 
-         -15.62, -5.62, 4.38, 14.38) # age is cenetered so 0 = 65.62y
+age <- c(-15.36, -5.36, 4.64, 14.64, 
+         -15.36, -5.36, 4.64, 14.64, 
+         -15.36, -5.36, 4.64, 14.64) # age is cenetered so 0 = 65.36y
 vrf <- c(-1.46, -1.46, -1.46, -1.46, 
-#         -0.46, -0.46, -0.46, -0.46,
           0.54,  0.54,  0.54,  0.54, 
-#          1.54,  1.54,  1.54,  1.54, 
-#          2.54,  2.54,  2.54,  2.54, 
           3.54,  3.54,  3.54,  3.54) # vrf variable is centered so 0 = 1.46
 
 # put variables into one data frame
@@ -597,9 +593,13 @@ plot_frame <- rbind(plot_frame_2, plot_frame_3, plot_frame_4, plot_frame_5,
                     plot_frame_6, plot_frame_7)
 
 # calculate predicted values for affective symptoms
-plot_frame$y <- (-1.842 - 0.001*plot_frame$age + 0.076*plot_frame$vrf + 
-                   -0.007*plot_frame$vrf*plot_frame$age) + 
-                ((-0.072 + 0.005*plot_frame$age + 0.004*plot_frame$vrf)*plot_frame$time)
+plot_frame$y <- (-2.297 
+                 - 0.001*plot_frame$age 
+                 + 0.081*plot_frame$vrf 
+                 + -0.007*plot_frame$vrf*plot_frame$age) + (
+                   (-0.076 
+                    + 0.005*plot_frame$age 
+                    + 0.004*plot_frame$vrf)*plot_frame$time)
 
 # make some variables factors
 plot_frame$age <- as.factor(plot_frame$age)
@@ -607,7 +607,7 @@ plot_frame$vrf <- as.factor(plot_frame$vrf)
 
 # change names for facet labels
 age_labs <- c("50 years", "60 years", "70 years", "80 years")
-names(age_labs) <- c("-15.62", "-5.62", "4.38", "14.38")
+names(age_labs) <- c("-15.36", "-5.36", "4.64", "14.64")
 
 
 # 3.2) Now extract and add individual predicted trajectories 
@@ -634,10 +634,10 @@ names(data_pred_70)[names(data_pred_70) == "w2_age_c"] <- "age"
 names(data_pred_80)[names(data_pred_80) == "w2_age_c"] <- "age"
 
 # recode age variable
-data_pred_50$age <- -15.62
-data_pred_60$age <-  -5.62
-data_pred_70$age <-   4.38
-data_pred_80$age <-  14.38
+data_pred_50$age <- -15.36
+data_pred_60$age <-  -5.36
+data_pred_70$age <-   4.64
+data_pred_80$age <-  14.64
 
 # create id variable
 data_pred_50$id <- c(1:57)
@@ -684,7 +684,7 @@ data_pred_80 <- reshape2::melt(data_pred_80[c(1:50),], id = c("id", "age", "w2_s
 
 # rename columns
 names(data_pred_50) <- c("id", "age", "sex", "time", "y")
-names(data_pred_60) <- c("id", "age", "sex","time", "y")
+names(data_pred_60) <- c("id", "age", "sex", "time", "y")
 names(data_pred_70) <- c("id", "age", "sex", "time", "y")
 names(data_pred_80) <- c("id", "age", "sex", "time", "y")
 
@@ -726,9 +726,14 @@ plot_frame_l$age <- as.factor(plot_frame_l$age)
 # 3.3) Finally, create plot
 # ---------------------------
 
+# create plot 
 ggplot() +
-  geom_line(aes(time, y, group = id), data = plot_frame_l, colour = "grey80", size = 0.2, alpha = 0.4) +
-  geom_line(aes(time, y, linetype = vrf), data = plot_frame, size = 0.6, colour = '#254D60') +
+  geom_line(aes(time, y, group = id), 
+            data = plot_frame_l, 
+            colour = "grey80", size = 0.3, alpha = 0.4) +
+  geom_line(aes(time, y, linetype = vrf), 
+            data = plot_frame, 
+            size = 0.65, colour = '#254D60') +
   facet_rep_grid(.~ age, 
                  labeller = labeller(age = age_labs)) + 
   scale_x_continuous(name = "Years since baseline", breaks = c(2,3,4,5,6,7), 
@@ -739,22 +744,27 @@ ggplot() +
   geom_segment(aes_all(c('x', 'y', 'xend', 'yend')),
                data = data.frame(x = c(1.7, 2), xend = c(1.7, 7), 
                                  y = c(-4,-4.4), yend = c(2, -4.4))) +
-  theme_tufte(base_size = 14) + 
+  theme_tufte(base_size = 15, base_family = "sans") + 
   scale_linetype_manual(values= c(3, 2, 1), 
                         name = "",
                         breaks = c("-1.46", "0.54", "3.54"),
-                        labels = c("0 Vascular risk factors", "2 Vascular risk factors", 
-                                   "5 Vascular risk factors")) +
-  theme(axis.text  = element_text(colour = "black", size = 15), 
-        axis.title = element_text(colour = "black", size = 15), 
-        plot.title = element_text(hjust = 0.5, face = "bold", size = 18), 
-        strip.text.x = element_text(size = 15, face = "bold"),
+                        labels = c("0 VRFs", 
+                                   "2 VRFs", 
+                                   "5 VRFs")) +
+  theme(axis.text  = element_text(colour = "black", size = 17), 
+        axis.title.y = element_text(colour = "black", size = 17, 
+                                    margin = margin(t = 0, r = 10, b = 0, l = 0)), 
+        axis.title.x = element_text(colour = "black", size = 17, 
+                                    margin = margin(t = 10, r = 0, b = 0, l = 0)), 
+        plot.title = element_text(hjust = 0.5, face = "bold", size = 19), 
+        strip.text.x = element_text(size = 17),
         strip.background = element_rect(color = NA, fill = NA),
-        legend.position = c(0.92,0.11), 
+        legend.position = c(0.94,0.14), 
         legend.background = element_rect(fill = "white", color = NA, size = 0.25), 
         legend.title = element_text(size = 1), 
         legend.text = element_text(size = 13), 
         legend.key.width = unit(1, "cm"), 
         legend.key.height = unit(0.4, "cm"))
 
-ggsave("figures/interact.jpg", width = 16, height = 5, dpi = 600)
+# save plot as pdf
+ggsave("figures/figure_2.pdf", width = 14.5, height = 4.53, units = "in")
